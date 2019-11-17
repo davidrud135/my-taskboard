@@ -4,6 +4,15 @@
 
 export const environment = {
   production: false,
+  firebaseConfig: {
+    apiKey: 'AIzaSyAnSauJSmqle0JvVJyiLrOiMX3IU9eb278',
+    authDomain: 'my-taskboard-dev.firebaseapp.com',
+    databaseURL: 'https://my-taskboard-dev.firebaseio.com',
+    projectId: 'my-taskboard-dev',
+    storageBucket: 'my-taskboard-dev.appspot.com',
+    messagingSenderId: '964301933848',
+    appId: '1:964301933848:web:56edd15d1f88f1ce28a26d',
+  },
 };
 
 /*
