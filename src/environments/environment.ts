@@ -13,6 +13,7 @@ export const environment = {
     messagingSenderId: '964301933848',
     appId: '1:964301933848:web:56edd15d1f88f1ce28a26d',
   },
+  projectTitle: 'MyTaskboard',
 };
 
 /*

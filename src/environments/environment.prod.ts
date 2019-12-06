@@ -10,4 +10,5 @@ export const environment = {
     appId: '1:168592643320:web:6d0538a0aea56ab8ddd70d',
     measurementId: 'G-SYTW18GEVQ',
   },
+  projectTitle: 'MyTaskboard',
 };
