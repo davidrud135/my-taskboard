@@ -1,0 +1,75 @@
+<div class="wrapper" fxLayout="row" fxLayoutAlign="center center" fxFlexFill>
+  <ng-template #loading>
+    <mat-card fxFlex="40%" fxFlex.xs="95%">
+      <mat-card-content fxLayout="column" fxLayoutAlign="center center">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Loading...</p>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
+  <mat-card fxFlex="40%" fxFlex.xs="95%" *ngIf="!isLoading; else loading">
+    <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+      <mat-card-header fxLayout="row" fxLayoutAlign="center">
+        <mat-card-title>
+          Register to
+          <span class="proj-title">{{projectTitle}}</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayout="column">
+        <mat-form-field appearance="fill">
+          <mat-label>Full Name</mat-label>
+          <input matInput type="text" formControlName="fullName" />
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="pass" />
+          <mat-hint *ngIf="signUpForm.get('pass').dirty" align="end">
+            {{ signUpForm.get('pass').value.length }} / {{ passwordMinLength }}
+          </mat-hint>
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="signUpForm.invalid"
+        >
+          Sign Up
+        </button>
+        <div
+          class="method-separator"
+          fxLayout="row"
+          fxLayoutAlign="center center"
+        >
+          <span>OR</span>
+        </div>
+        <button
+          type="button"
+          mat-stroked-button
+          color="primary"
+          (click)="onGoogleSignIn()"
+        >
+          Continue with Google
+        </button>
+      </mat-card-content>
+    </form>
+    <mat-divider></mat-divider>
+    <div
+      class="bottom-form-link"
+      fxLayout="row"
+      fxLayout.xs="column"
+      fxLayoutAlign="center center"
+      fxLayoutGap="5px"
+    >
+      <span>Already have an account?</span>
+      <a routerLink="/sign-in">Sign In.</a>
+    </div>
+  </mat-card>
+</div>
