@@ -1,0 +1,18 @@
+.header-proj-title {
+  font-family: "Lobster", cursive;
+  font-size: 22.5px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  background-size: cover;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.menu-username {
+  font-size: 14px;
+  padding: 0 5px;
+}

@@ -1,0 +1,35 @@
+<mat-toolbar *ngIf="user$ | async as user" color="primary">
+  <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+    <button mat-button fxHide.xs>
+      <mat-icon>dashboard</mat-icon>
+      Boards
+    </button>
+    <button mat-icon-button fxHide fxShow.xs>
+      <mat-icon>dashboard</mat-icon>
+    </button>
+    <span class="header-proj-title">{{ projectTitle }}</span>
+    <div
+      class="user-avatar"
+      [matMenuTriggerFor]="userMenu"
+      [matMenuTriggerData]="user"
+      [style.background-image]="applyUserAvatar(user)"
+    ></div>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-menu #userMenu="matMenu">
+  <ng-template matMenuContent let-username="username">
+    <div fxLayout="row" fxLayoutAlign="center center" class="menu-username">
+      <p>{{ username }}</p>
+    </div>
+  </ng-template>
+  <mat-divider></mat-divider>
+  <button mat-menu-item routerLink="/profile">
+    <mat-icon>account_box</mat-icon>
+    <span>Profile</span>
+  </button>
+  <button mat-menu-item (click)="onSignOut()">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Log out</span>
+  </button>
+</mat-menu>
