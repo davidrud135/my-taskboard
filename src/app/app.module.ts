@@ -13,10 +13,17 @@ import { AuthModule } from './auth/auth.module';
 import { environment } from './../environments/environment';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
+import { BoardsComponent } from './boards/boards.component';
+import { CreateBoardDialogComponent } from './core/components/create-board-dialog/create-board-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent],
-
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    BoardsComponent,
+    CreateBoardDialogComponent,
+  ],
+  entryComponents: [CreateBoardDialogComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

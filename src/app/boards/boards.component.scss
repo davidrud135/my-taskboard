@@ -1,0 +1,52 @@
+.boards-section {
+  margin: 15px 0;
+  padding: 0 10px;
+
+  .header {
+    padding: 10px 5px;
+
+    .title {
+      color: #172b4d;
+
+      h4 {
+        display: inline-block;
+        margin: 0;
+      }
+    }
+  }
+
+  .board-card {
+    box-sizing: border-box;
+    min-height: 80px;
+    margin: 0 5px 10px 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1;
+
+    mat-card-header {
+      width: 100%;
+      max-height: 45px;
+      color: whitesmoke;
+      word-break: break-all;
+      overflow: hidden;
+
+      mat-card-title {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .board-card:hover {
+    opacity: 0.75;
+  }
+}
+
+.board-card-xs {
+  width: 100% !important;
+  margin: 0 0 10px 0 !important;
+  min-height: 40px !important;
+}

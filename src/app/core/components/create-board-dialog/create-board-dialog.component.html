@@ -1,0 +1,27 @@
+<div fxLayout="column" class="wrapper" ngClass.xs="wrapper-xs">
+  <mat-dialog-content fxLayout="column">
+    <mat-form-field appearance="outline">
+      <mat-label>Board Title:</mat-label>
+      <input matInput [(ngModel)]="newBoardTitle" required />
+    </mat-form-field>
+    <p>Board Color:</p>
+    <div fxLayout="row wrap" fxLayoutAlign="center center">
+      <mat-card
+        *ngFor="let color of boardBackColors"
+        [ngStyle]="{ 'background-color': color }"
+        (click)="newBoardSelectedColor = color"
+        fxLayout="row"
+        fxLayoutAlign="center center"
+        class="color-card"
+      >
+        <mat-icon *ngIf="newBoardSelectedColor === color">check</mat-icon>
+      </mat-card>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+    <button mat-raised-button color="primary" [disabled]="newBoardTitle === ''">
+      Create Board
+    </button>
+    <button mat-stroked-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</div>

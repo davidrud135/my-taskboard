@@ -1,0 +1,53 @@
+<div class="boards-section" fxLayout="column">
+  <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+    <div
+      class="title"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      fxLayoutGap="5px"
+    >
+      <mat-icon>person</mat-icon>
+      <h4>Personal Boards</h4>
+    </div>
+    <button
+      mat-stroked-button
+      color="primary"
+      fxHide.xs
+      (click)="onCreateBoard()"
+    >
+      <mat-icon>add</mat-icon>
+      Create Board
+    </button>
+    <button
+      mat-icon-button
+      color="primary"
+      fxHide
+      fxShow.xs
+      (click)="onCreateBoard()"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <div
+    fxLayout="row wrap"
+    fxLayoutAlign="start center"
+    fxLayout.xs="column"
+    fxLayoutAlign.xs="center stretch"
+  >
+    <mat-card
+      *ngFor="let board of boards"
+      class="board-card"
+      ngClass.xs="board-card-xs"
+      [ngStyle]="{ 'background-color': board.backgroundColor }"
+      fxFlex.sm="0 0 calc(25% - 10px)"
+      fxFlex.md="0 0 calc(20% - 10px)"
+      fxFlex.lg="0 0 calc(16.66% - 10px)"
+      fxFlex.xl="0 0 calc(8.33% - 10px)"
+    >
+      <mat-card-header>
+        <mat-card-title>{{ board.title }}</mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>
+<router-outlet></router-outlet>
