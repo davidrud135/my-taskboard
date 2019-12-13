@@ -2,5 +2,14 @@
   "extends": ["tslint-config-prettier", "tslint-config-airbnb"],
   "linterOptions": {
     "exclude": ["node_modules/**"]
+  },
+  "rules": {
+    "max-line-length": [
+      true,
+      {
+        "limit": 80,
+        "ignore-pattern": "^import [^,]+ from |^export | implements "
+      }
+    ]
   }
 }
