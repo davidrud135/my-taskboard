@@ -1,6 +1,5 @@
 {
-  "extends": "tslint-config-airbnb",
-  "rulesDirectory": ["node_modules/codelyzer"],
+  "extends": ["tslint-config-prettier", "tslint-config-airbnb"],
   "linterOptions": {
     "exclude": ["node_modules/**"]
   }
