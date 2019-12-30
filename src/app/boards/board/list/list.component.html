@@ -1,0 +1,76 @@
+<div class="list" fxLayout="column">
+  <div class="header" fxLayout="row" fxLayoutAlign="start start">
+    <div class="field-wrapper" fxFlex>
+      <textarea
+        #listTitleField
+        matInput
+        class="field"
+        cdkTextareaAutosize
+        [value]="list.title"
+        (keydown.enter)="$event.preventDefault()"
+        (keyup.enter)="$event.target.blur(); onEditListTitle(list.title)"
+        (focusout)="onEditListTitle(list.title)"
+      ></textarea>
+    </div>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="listMenu"
+      [matMenuTriggerData]="{ listId: list.id, listTitle: list.title }"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+
+  <div class="body thin-scrollbar" fxLayout="column" fxLayoutGap="5px">
+    <mat-card
+      *ngFor="let card of list.cards"
+      class="card"
+      (click)="openCardDialog(card)"
+    >
+      <span>{{ card.title }}</span>
+    </mat-card>
+
+    <button
+      mat-flat-button
+      [fxHide]="isNewCardTemplateOpened"
+      (click)="openNewCardTemplate()"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Add Card</span>
+    </button>
+
+    <mat-card
+      fxLayout="column"
+      [fxShow]="isNewCardTemplateOpened"
+      (focusout)="closeNewCardTemplate()"
+    >
+      <mat-form-field>
+        <mat-label>New Card Title</mat-label>
+        <textarea
+          #newCardTitleField
+          matInput
+          cdkTextareaAutosize
+          (keydown.enter)="$event.preventDefault()"
+          (keyup.enter)="onAddCardToList()"
+        ></textarea>
+      </mat-form-field>
+    </mat-card>
+  </div>
+</div>
+
+<mat-menu #listMenu="matMenu">
+  <ng-template matMenuContent let-id="listId" let-title="listTitle">
+    <button mat-menu-item (click)="openNewCardTemplate()">
+      <mat-icon>add</mat-icon>
+      <span>Add Card</span>
+    </button>
+    <button
+      mat-menu-item
+      (click)="openListRemovalConfirmDialog(title)"
+      class="remove-list-btn"
+    >
+      <mat-icon color="warn">delete</mat-icon>
+      <span>Remove List</span>
+    </button>
+  </ng-template>
+</mat-menu>

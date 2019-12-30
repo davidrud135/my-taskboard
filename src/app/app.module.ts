@@ -15,6 +15,10 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { BoardsComponent } from './boards/boards.component';
 import { CreateBoardDialogComponent } from './core/components/create-board-dialog/create-board-dialog.component';
+import { BoardComponent } from './boards/board/board.component';
+import { ListComponent } from './boards/board/list/list.component';
+import { CardDialogComponent } from './core/components/card-dialog/card-dialog.component';
+import { RemovalConfirmDialogComponent } from './core/components/removal-confirm-dialog/removal-confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -22,8 +26,16 @@ import { CreateBoardDialogComponent } from './core/components/create-board-dialo
     HeaderComponent,
     BoardsComponent,
     CreateBoardDialogComponent,
+    BoardComponent,
+    ListComponent,
+    CardDialogComponent,
+    RemovalConfirmDialogComponent,
   ],
-  entryComponents: [CreateBoardDialogComponent],
+  entryComponents: [
+    CreateBoardDialogComponent,
+    CardDialogComponent,
+    RemovalConfirmDialogComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
