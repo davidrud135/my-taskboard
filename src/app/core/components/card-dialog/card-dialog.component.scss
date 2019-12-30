@@ -1,0 +1,83 @@
+@import '../../../../scss/variables.scss';
+
+.wrapper {
+  position: relative;
+  color: $darkBlueColor;
+
+  button[mat-icon-button][mat-dialog-close] {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    margin: 0 !important;
+  }
+
+  .card-content-section {
+    padding-right: 15px;
+
+    .content-block-header {
+      min-height: 25px;
+
+      .label {
+        font-size: 18px;
+        padding-left: 5px;
+      }
+
+      .card-title-field-wrapper {
+        padding-right: 10px;
+
+        .card-title-field {
+          padding: 5px;
+          font-size: 20px;
+          word-wrap: break-word;
+          border-radius: 5px;
+          overflow: hidden;
+          border: 1px solid transparent;
+        }
+
+        .card-title-field:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+        }
+
+        .card-title-field:focus {
+          background-color: white;
+          border: 1px solid $darkBlueColor;
+          cursor: text;
+        }
+      }
+    }
+
+    .content-block-body {
+      margin-top: 5px;
+      padding-left: 30px;
+
+      .card-location-text {
+        font-size: 12px;
+
+        .card-list-title {
+          font-style: italic;
+          font-weight: bold;
+        }
+      }
+
+      .card-description-field {
+        min-height: 50px;
+      }
+    }
+
+    .lt-sm_content-block-body {
+      padding: 0;
+    }
+  }
+
+  .card-panel {
+    padding-top: 20px;
+  }
+
+  .lt-sm_card-panel {
+    button {
+      margin-bottom: 10px;
+      width: calc(50% - 10px);
+    }
+  }
+}

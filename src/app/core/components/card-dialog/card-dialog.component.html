@@ -1,0 +1,111 @@
+<div class="wrapper" fxLayout="row" fxLayout.lt-sm="column">
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>clear</mat-icon>
+  </button>
+
+  <section
+    class="card-content-section"
+    fxLayout="column"
+    fxLayoutGap="30px"
+    fxFlex
+  >
+    <div fxLayout="column">
+      <div fxLayout="row" class="content-block-header">
+        <mat-icon>short_text</mat-icon>
+        <div class="card-title-field-wrapper" fxFlex>
+          <textarea
+            #cardTitleField
+            matInput
+            cdkTextareaAutosize
+            class="card-title-field"
+            [value]="card.title"
+            (keydown.enter)="$event.preventDefault()"
+            (keyup.enter)="$event.target.blur(); onCardTitleEdit(card.title)"
+          ></textarea>
+        </div>
+      </div>
+      <div class="content-block-body">
+        <span class="card-location-text">
+          in list
+          <span class="card-list-title">{{ data.listTitle }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div fxLayout="column">
+      <div
+        fxLayout="row"
+        class="content-block-header"
+        fxLayoutAlign="start center"
+      >
+        <mat-icon>description</mat-icon>
+        <span class="label">Description</span>
+      </div>
+      <mat-form-field
+        appearance="fill"
+        class="content-block-body"
+        ngClass.lt-sm="lt-sm_content-block-body"
+      >
+        <textarea
+          #cardDescriptionField
+          matInput
+          cdkTextareaAutosize
+          class="card-description-field"
+          [value]="card.description"
+          (focusout)="
+            $event.target.blur(); onCardDescriptionEdit(card.description)
+          "
+        ></textarea>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section
+    class="card-panel"
+    ngClass.lt-sm="lt-sm_card-panel"
+    fxFlex.gt-sm="20%"
+    fxLayout="column"
+    fxLayoutAlign="start stretch"
+  >
+    <p>Add to card</p>
+    <div fxLayout="column" fxLayoutGap="10px" fxLayout.lt-sm="row wrap">
+      <button mat-stroked-button>
+        <mat-icon>people</mat-icon>
+        <span>Members</span>
+      </button>
+      <button mat-stroked-button>
+        <mat-icon>label</mat-icon>
+        <span>Tag</span>
+      </button>
+      <button mat-stroked-button>
+        <mat-icon>attachment</mat-icon>
+        <span>Attachment</span>
+      </button>
+      <button mat-stroked-button>
+        <mat-icon>wallpaper</mat-icon>
+        <span>Cover</span>
+      </button>
+    </div>
+
+    <p>Actions</p>
+    <div fxLayout="column" fxLayoutGap="10px" fxLayout.lt-sm="row wrap">
+      <button mat-stroked-button>
+        <mat-icon>file_copy</mat-icon>
+        <span>Copy</span>
+      </button>
+      <button mat-stroked-button>
+        <mat-icon>arrow_forward</mat-icon>
+        <span>Move</span>
+      </button>
+      <button mat-stroked-button>
+        <mat-icon>thumb_up</mat-icon>
+        <span>Vote</span>
+      </button>
+      <mat-divider fxHide.lt-sm></mat-divider>
+      <button mat-stroked-button color="warn" (click)="onCardRemove()">
+        <mat-icon>delete</mat-icon>
+        <span>Remove</span>
+      </button>
+    </div>
+  </section>
+</div>
