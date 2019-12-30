@@ -1,12 +1,14 @@
+@import '../../scss/variables.scss';
+
 .boards-section {
-  margin: 15px 0;
-  padding: 0 10px;
+  padding: 10px;
+  box-sizing: border-box;
 
   .header {
     padding: 10px 5px;
 
     .title {
-      color: #172b4d;
+      color: $darkBlueColor;
 
       h4 {
         display: inline-block;
@@ -22,6 +24,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     opacity: 1;
+    outline: none;
 
     mat-card-header {
       width: 100%;
