@@ -1,0 +1,10 @@
+$headerHeight: 64px;
+$xsHeaderHeight: 56px;
+
+.root-wrapper {
+  height: calc(100% - #{$headerHeight});
+}
+
+.root-wrapper-xs {
+  height: calc(100% - #{$xsHeaderHeight});
+}
