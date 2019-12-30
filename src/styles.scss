@@ -12,7 +12,26 @@ body {
 }
 
 .proj-title {
-  font-family: "Lobster", cursive;
+  font-family: 'Lobster', cursive;
   font-size: 22.5px;
   color: $primaryColor;
+}
+
+.thick-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  margin: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $darkerWhiteColor;
+  border-radius: 5px;
 }
