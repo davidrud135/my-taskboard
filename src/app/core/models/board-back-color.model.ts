@@ -6,7 +6,7 @@ export enum BoardBackColor {
   Purple = '#89609e',
   Blue = '#4363d8',
   Orange = '#f58231',
-  Pink = '#fabebe',
+  Pink = '#cd5a91',
   Brown = '#9A6324',
   Red = '#e6194B',
   Navy = '#000075',
