@@ -1,14 +1,15 @@
-<mat-toolbar *ngIf="user$ | async as user" color="primary">
+<mat-toolbar color="primary">
   <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
     <button mat-button fxHide.xs routerLink="/boards">
-      <mat-icon>dashboard</mat-icon>
+      <mat-icon>view_module</mat-icon>
       Boards
     </button>
     <button mat-icon-button fxHide fxShow.xs routerLink="/boards">
-      <mat-icon>dashboard</mat-icon>
+      <mat-icon>view_module</mat-icon>
     </button>
     <span class="header-proj-title">{{ projectTitle }}</span>
     <div
+      *ngIf="user$ | async as user"
       class="user-avatar"
       [matMenuTriggerFor]="userMenu"
       [matMenuTriggerData]="user"
