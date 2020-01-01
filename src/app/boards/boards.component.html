@@ -29,26 +29,42 @@
     </button>
   </div>
   <div
-    fxLayout="row wrap"
-    fxLayoutAlign="start center"
-    fxLayout.xs="column"
-    fxLayoutAlign.xs="center stretch"
+    *ngIf="
+      personalBoards$ | async as personalBoards;
+      else loadingPersonalBoards
+    "
   >
-    <mat-card
-      *ngFor="let board of boards"
-      class="board-card"
-      ngClass.xs="board-card-xs"
-      [ngStyle]="{ 'background-color': board.backgroundColor }"
-      fxFlex.sm="0 0 calc(25% - 10px)"
-      fxFlex.md="0 0 calc(20% - 10px)"
-      fxFlex.lg="0 0 calc(16.66% - 10px)"
-      fxFlex.xl="0 0 calc(8.33% - 10px)"
-      [routerLink]="[board.id]"
+    <div
+      *ngIf="personalBoards?.length; else noPersonalBoards"
+      fxLayout="row wrap"
+      fxLayoutAlign="start center"
+      fxLayout.xs="column"
+      fxLayoutAlign.xs="center stretch"
     >
-      <mat-card-header>
-        <mat-card-title>{{ board.title }}</mat-card-title>
-      </mat-card-header>
-    </mat-card>
+      <mat-card
+        *ngFor="let board of personalBoards"
+        class="board-card"
+        ngClass.xs="board-card-xs"
+        [ngStyle]="{ 'background-color': board.backgroundColor }"
+        fxFlex.sm="0 0 calc(25% - 10px)"
+        fxFlex.md="0 0 calc(20% - 10px)"
+        fxFlex.lg="0 0 calc(16.66% - 10px)"
+        fxFlex.xl="0 0 calc(8.33% - 10px)"
+        [routerLink]="[board.id]"
+      >
+        <mat-card-header>
+          <mat-card-title>{{ board.title }}</mat-card-title>
+        </mat-card-header>
+      </mat-card>
+    </div>
+    <ng-template #noPersonalBoards>
+      <span class="no-items-label">No personal boards.</span>
+    </ng-template>
   </div>
+  <ng-template #loadingPersonalBoards>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
 </div>
 <router-outlet></router-outlet>

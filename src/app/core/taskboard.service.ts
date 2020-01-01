@@ -1,61 +1,86 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { firestore } from 'firebase/app';
+import {
+  AngularFirestore,
+  CollectionReference,
+  AngularFirestoreDocument,
+  Action,
+  DocumentSnapshot,
+} from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
+import { switchMap, filter, map } from 'rxjs/operators';
 
+import { AuthService } from '../auth/auth.service';
+import { FirestoreBoard } from './models/firestore-board.model';
 import { Board } from './models/board.model';
-import { BoardBackColor } from './models/board-back-color.model';
-import { List } from './models/list.model';
-import { Card } from './models/card.model';
+import { User } from './models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
-  boards: Board[] = [];
+  private currUserId: string;
+  private currBoardDoc: AngularFirestoreDocument<FirestoreBoard>;
 
-  constructor() {
-    Object.values(BoardBackColor).forEach((color: string, i: number) => {
-      this.boards.push({
-        id: `${i}`,
-        title: `Board #${i + 1}`,
-        adminId: `user${i}`,
-        membersIds: [],
-        backgroundColor: color,
-        createdAt: firestore.Timestamp.now(),
-      });
+  constructor(
+    private afStore: AngularFirestore,
+    private authService: AuthService,
+    private router: Router,
+  ) {
+    this.authService
+      .getUser()
+      .pipe(filter((user: User | null) => user !== null))
+      .subscribe((user: User) => (this.currUserId = user.id));
+  }
+
+  public setCurrBoardDoc(boardId: string): void {
+    this.currBoardDoc = this.afStore.doc<Board>(`boards/${boardId}`);
+  }
+
+  public getPersonalBoards(): Observable<Board[]> {
+    return this.authService.getUser().pipe(
+      switchMap((user: User) => {
+        if (!user) {
+          return of(null);
+        }
+        return this.afStore
+          .collection<FirestoreBoard>('boards', (ref: CollectionReference) =>
+            ref.where('adminId', '==', user.id).orderBy('createdAt', 'desc'),
+          )
+          .valueChanges({ idField: 'id' });
+      }),
+    );
+  }
+
+  public createBoard(
+    title: string,
+    backgroundColor: string,
+  ): Promise<firestore.DocumentReference> {
+    return this.afStore.collection<FirestoreBoard>('boards').add({
+      title,
+      backgroundColor,
+      adminId: this.currUserId,
+      membersIds: [],
+      createdAt: firestore.Timestamp.now(),
     });
   }
 
-  public getBoards(): Board[] {
-    return this.boards;
+  public updateBoardData(data: Partial<FirestoreBoard>): Promise<void> {
+    return this.currBoardDoc.update(data);
   }
 
-  public getBoardData(boardId: string): Board {
-    return this.boards.find((board: Board) => board.id === boardId);
+  public getBoardData(): Observable<Board> {
+    return this.currBoardDoc.snapshotChanges().pipe(map(this.getDocDataWithId));
   }
 
-  public getBoardLists(boardId: string): List[] {
-    const lists: List[] = [];
-    for (let i = 0; i < 10; i += 1) {
-      const list: List = {
-        id: `${i}`,
-        title: `List ${i}`,
-        cards: this.getListCards(`${i}`),
-        createdAt: firestore.Timestamp.now(),
-      };
-      lists.push(list);
-    }
-    return lists;
+  public removeBoard() {
+    this.router.navigateByUrl('/boards');
+    return this.currBoardDoc.delete();
   }
 
-  private getListCards(listId: string): Card[] {
-    const cards: Card[] = [];
-    for (let i = 0; i < 15; i += 1) {
-      const card: Card = {
-        id: `${i}`,
-        title: `Card ${i}`,
-        description: `Description of the card #${i}`,
-        createdAt: firestore.Timestamp.now(),
-      };
-      cards.push(card);
-    }
-    return cards;
+  private getDocDataWithId(action: Action<DocumentSnapshot<any>>) {
+    const { payload } = action;
+    const id = payload.id;
+    const data = payload.data();
+    return { id, ...data };
   }
 }

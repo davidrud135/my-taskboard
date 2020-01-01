@@ -1,4 +1,4 @@
-<mat-sidenav-container>
+<mat-sidenav-container *ngIf="board$ | async as board">
   <mat-sidenav-content
     class="board-wrapper"
     fxLayout="column"
@@ -14,7 +14,7 @@
         type="text"
         class="title-field"
         [value]="board.title"
-        (keyup.enter)="$event.target.blur(); onEditBoardTitle(board.title)"
+        (keyup.enter)="$event.target.blur()"
         (focusout)="onEditBoardTitle(board.title)"
       />
       <button mat-button (click)="boardMenu.toggle()" fxHide.xs>

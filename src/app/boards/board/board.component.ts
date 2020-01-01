@@ -16,6 +16,8 @@ import { Board } from './../../core/models/board.model';
 import { TaskboardService } from './../../core/taskboard.service';
 import { List } from './../../core/models/list.model';
 import { RemovalConfirmDialogComponent } from './../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-board',
@@ -27,7 +29,7 @@ export class BoardComponent implements OnInit {
   boardTitleField: ElementRef;
   @ViewChild('newListTitleField', { static: false })
   newListTitleField: ElementRef;
-  board: Board;
+  board$: Observable<Board>;
   lists: List[];
   isNewListTemplateOpened = false;
   mobileQuery: MediaQueryList;
@@ -45,12 +47,16 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.lists = [];
     this.route.params.subscribe((params: Params) => {
       const { id } = params;
-      this.board = this.taskboardService.getBoardData(id);
-      this.lists = this.taskboardService.getBoardLists(id);
-      this.titleService.setTitle(
-        `${this.board.title} | ${environment.projectTitle}`,
+      this.taskboardService.setCurrBoardDoc(id);
+      this.board$ = this.taskboardService.getBoardData().pipe(
+        tap((board: Board) => {
+          this.titleService.setTitle(
+            `${board.title} | ${environment.projectTitle}`,
+          );
+        }),
       );
     });
   }
@@ -62,9 +68,7 @@ export class BoardComponent implements OnInit {
       nativeElement.value = oldBoardTitle;
       return;
     }
-    console.log(
-      `Change board title from '${oldBoardTitle}' to '${newBoardTitle}'`,
-    );
+    this.taskboardService.updateBoardData({ title: newBoardTitle });
   }
 
   openNewListTemplate(): void {
@@ -81,18 +85,18 @@ export class BoardComponent implements OnInit {
     this.newListTitleField.nativeElement.value = '';
   }
 
-  onAddListToBoard() {
+  onAddListToBoard(boardId: string) {
     const newListTitle = this.newListTitleField.nativeElement.value.trim();
     if (!newListTitle) return;
-    console.log(`Add list '${newListTitle}' to board with id ${this.board.id}`);
+    console.log(`Add list '${newListTitle}' to board with id ${boardId}`);
     this.closeNewListTemplate();
   }
 
-  openBoardRemovalConfirmDialog(title: string) {
+  openBoardRemovalConfirmDialog(boardTitle: string) {
     this.dialog
       .open(RemovalConfirmDialogComponent, {
         data: {
-          headerTitle: title,
+          headerTitle: boardTitle,
           bodyText:
             'Are you sure you want to remove the board and all its lists?',
         },
@@ -100,7 +104,7 @@ export class BoardComponent implements OnInit {
       .afterClosed()
       .subscribe((isConfirmed: boolean) => {
         if (isConfirmed) {
-          console.log(`Remove board with id '${this.board.id}'`);
+          this.taskboardService.removeBoard();
         }
       });
   }

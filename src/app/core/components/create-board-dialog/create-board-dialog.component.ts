@@ -1,5 +1,8 @@
-import { BoardBackColor } from './../../models/board-back-color.model';
 import { Component, OnInit } from '@angular/core';
+
+import { BoardBackColor } from './../../models/board-back-color.model';
+import { TaskboardService } from './../../taskboard.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-board-dialog',
@@ -11,11 +14,21 @@ export class CreateBoardDialogComponent implements OnInit {
   newBoardSelectedColor: string;
   boardBackColors: string[];
 
-  constructor() {}
+  constructor(
+    public dialogRef: MatDialogRef<CreateBoardDialogComponent>,
+    private taskboardService: TaskboardService,
+  ) {}
 
   ngOnInit() {
     this.newBoardTitle = '';
     this.newBoardSelectedColor = BoardBackColor.Green;
     this.boardBackColors = Object.values(BoardBackColor);
+  }
+
+  onBoardCreate() {
+    const title = this.newBoardTitle.trim();
+    if (!title) return;
+    this.taskboardService.createBoard(title, this.newBoardSelectedColor);
+    this.dialogRef.close();
   }
 }

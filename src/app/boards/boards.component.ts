@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 
 import { Board } from '../core/models/board.model';
 import { TaskboardService } from './../core/taskboard.service';
@@ -13,7 +14,7 @@ import { CreateBoardDialogComponent } from './../core/components/create-board-di
   styleUrls: ['./boards.component.scss'],
 })
 export class BoardsComponent implements OnInit {
-  boards: Board[];
+  personalBoards$: Observable<Board[]>;
 
   constructor(
     private route: ActivatedRoute,
@@ -26,7 +27,7 @@ export class BoardsComponent implements OnInit {
     this.route.data.subscribe((data: Data) => {
       this.titleService.setTitle(data['routeTitle']);
     });
-    this.boards = this.taskboardService.getBoards();
+    this.personalBoards$ = this.taskboardService.getPersonalBoards();
   }
 
   onCreateBoard() {
