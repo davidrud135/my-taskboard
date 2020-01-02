@@ -26,7 +26,12 @@
       </button>
     </div>
 
-    <section fxLayout="row" class="lists thin-scrollbar" fxFlex>
+    <section
+      *ngIf="lists$ | async as lists; else loadingLists"
+      fxLayout="row"
+      class="lists thin-scrollbar"
+      fxFlex
+    >
       <app-list *ngFor="let list of lists" [listData]="list"></app-list>
 
       <div class="new-list" fxLayout="column">
@@ -57,6 +62,12 @@
         </mat-card>
       </div>
     </section>
+
+    <ng-template #loadingLists>
+      <div fxLayout="row" fxLayoutAlign="center center" fxFlex>
+        <mat-spinner></mat-spinner>
+      </div>
+    </ng-template>
   </mat-sidenav-content>
 
   <mat-sidenav

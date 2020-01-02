@@ -2,6 +2,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
+import { TaskboardService } from './../../../core/taskboard.service';
 import { Card } from './../../../core/models/card.model';
 import { List } from './../../../core/models/list.model';
 import { CardDialogComponent } from './../../../core/components/card-dialog/card-dialog.component';
@@ -20,20 +21,22 @@ export class ListComponent implements OnInit {
   newCardTitleField: ElementRef;
   isNewCardTemplateOpened = false;
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    private taskboardService: TaskboardService,
+    public dialog: MatDialog,
+  ) {}
 
   ngOnInit() {}
 
-  onEditListTitle(oldListTitle: string): void {
+  onEditListTitle(): void {
+    const oldListTitle = this.list.title;
     const { nativeElement } = this.listTitleField;
     const newListTitle = nativeElement.value.trim();
     if (!newListTitle || oldListTitle === newListTitle) {
       nativeElement.value = oldListTitle;
       return;
     }
-    console.log(
-      `Change board title from '${oldListTitle}' to '${newListTitle}'`,
-    );
+    this.taskboardService.updateListData(this.list.id, { title: newListTitle });
   }
 
   openCardDialog(card: Card) {
@@ -71,11 +74,11 @@ export class ListComponent implements OnInit {
     this.closeNewCardTemplate();
   }
 
-  openListRemovalConfirmDialog(title: string): void {
+  openListRemovalConfirmDialog(): void {
     this.dialog
       .open(RemovalConfirmDialogComponent, {
         data: {
-          headerTitle: title,
+          headerTitle: this.list.title,
           bodyText:
             'Are you sure you want to remove the list and all its cards?',
         },
@@ -83,7 +86,7 @@ export class ListComponent implements OnInit {
       .afterClosed()
       .subscribe((isConfirmed: boolean) => {
         if (isConfirmed) {
-          console.log(`Remove list with id '${this.list.id}'`);
+          this.taskboardService.removeList(this.list.id);
         }
       });
   }

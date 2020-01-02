@@ -10,14 +10,14 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { environment } from './../../../environments/environment.prod';
 import { Board } from './../../core/models/board.model';
 import { TaskboardService } from './../../core/taskboard.service';
 import { List } from './../../core/models/list.model';
 import { RemovalConfirmDialogComponent } from './../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-board',
@@ -30,7 +30,7 @@ export class BoardComponent implements OnInit {
   @ViewChild('newListTitleField', { static: false })
   newListTitleField: ElementRef;
   board$: Observable<Board>;
-  lists: List[];
+  lists$: Observable<List[]>;
   isNewListTemplateOpened = false;
   mobileQuery: MediaQueryList;
 
@@ -47,7 +47,6 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.lists = [];
     this.route.params.subscribe((params: Params) => {
       const { id } = params;
       this.taskboardService.setCurrBoardDoc(id);
@@ -58,6 +57,7 @@ export class BoardComponent implements OnInit {
           );
         }),
       );
+      this.lists$ = this.taskboardService.getBoardLists();
     });
   }
 
@@ -88,7 +88,7 @@ export class BoardComponent implements OnInit {
   onAddListToBoard(boardId: string) {
     const newListTitle = this.newListTitleField.nativeElement.value.trim();
     if (!newListTitle) return;
-    console.log(`Add list '${newListTitle}' to board with id ${boardId}`);
+    this.taskboardService.createList(newListTitle);
     this.closeNewListTemplate();
   }
 

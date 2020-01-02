@@ -13,8 +13,10 @@ import { switchMap, filter, map } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
 import { FirestoreBoard } from './models/firestore-board.model';
+import { FirestoreList } from './models/firestore-list.model';
 import { Board } from './models/board.model';
 import { User } from './models/user.model';
+import { List } from './models/list.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
@@ -72,12 +74,44 @@ export class TaskboardService {
     return this.currBoardDoc.snapshotChanges().pipe(map(this.getDocDataWithId));
   }
 
-  public removeBoard() {
+  public removeBoard(): Promise<void> {
     this.router.navigateByUrl('/boards');
     return this.currBoardDoc.delete();
   }
 
-  private getDocDataWithId(action: Action<DocumentSnapshot<any>>) {
+  public getBoardLists(): Observable<List[]> {
+    return this.currBoardDoc
+      .collection<FirestoreList>('lists', (ref: CollectionReference) =>
+        ref.orderBy('createdAt'),
+      )
+      .valueChanges({ idField: 'id' });
+  }
+
+  public createList(listTitle: string): Promise<firestore.DocumentReference> {
+    return this.currBoardDoc.collection<FirestoreList>('lists').add({
+      title: listTitle,
+      createdAt: firestore.Timestamp.now(),
+    });
+  }
+
+  public updateListData(
+    listId: string,
+    data: Partial<FirestoreList>,
+  ): Promise<void> {
+    return this.currBoardDoc
+      .collection('lists')
+      .doc(listId)
+      .update(data);
+  }
+
+  public removeList(listId: string): Promise<void> {
+    return this.currBoardDoc
+      .collection('lists')
+      .doc(listId)
+      .delete();
+  }
+
+  private getDocDataWithId(action: Action<DocumentSnapshot<any>>): any {
     const { payload } = action;
     const id = payload.id;
     const data = payload.data();
