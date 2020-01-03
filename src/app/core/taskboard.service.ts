@@ -78,8 +78,9 @@ export class TaskboardService {
     return this.currBoardDoc.snapshotChanges().pipe(map(this.getDocDataWithId));
   }
 
-  public removeBoard(): Promise<void> {
+  public async removeBoard(): Promise<void> {
     this.router.navigateByUrl('/boards');
+    await this.removeAllBoardLists();
     return this.currBoardDoc.delete();
   }
 
@@ -110,7 +111,8 @@ export class TaskboardService {
       .update(data);
   }
 
-  public removeList(listId: string): Promise<void> {
+  public async removeList(listId: string): Promise<void> {
+    await this.removeAllListCards(listId);
     return this.currBoardDoc
       .collection('lists')
       .doc(listId)
@@ -168,6 +170,24 @@ export class TaskboardService {
   }
 
   // Additional methods
+
+  private async removeAllBoardLists(): Promise<void> {
+    const listsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
+      .collection('lists')
+      .ref.get();
+    for await (const listDocSnapshot of listsQuerySnapshot.docs) {
+      this.removeList(listDocSnapshot.id);
+    }
+  }
+
+  private async removeAllListCards(listId): Promise<void> {
+    const cardsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
+      .collection(`lists/${listId}/cards`)
+      .ref.get();
+    for await (const cardDocSnapshot of cardsQuerySnapshot.docs) {
+      cardDocSnapshot.ref.delete();
+    }
+  }
 
   private getDocDataWithId(action: Action<DocumentSnapshot<any>>): any {
     const { payload } = action;
