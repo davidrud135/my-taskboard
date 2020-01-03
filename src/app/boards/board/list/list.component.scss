@@ -47,6 +47,10 @@
 
     .card {
       padding: 10px;
+
+      .title {
+        word-wrap: break-word;
+      }
     }
 
     .card:hover {
