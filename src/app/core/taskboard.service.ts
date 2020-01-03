@@ -17,6 +17,8 @@ import { FirestoreList } from './models/firestore-list.model';
 import { Board } from './models/board.model';
 import { User } from './models/user.model';
 import { List } from './models/list.model';
+import { FirestoreCard } from './models/firestore-card.model';
+import { Card } from './models/card.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
@@ -33,6 +35,8 @@ export class TaskboardService {
       .pipe(filter((user: User | null) => user !== null))
       .subscribe((user: User) => (this.currUserId = user.id));
   }
+
+  // Board methods
 
   public setCurrBoardDoc(boardId: string): void {
     this.currBoardDoc = this.afStore.doc<Board>(`boards/${boardId}`);
@@ -79,6 +83,8 @@ export class TaskboardService {
     return this.currBoardDoc.delete();
   }
 
+  // List methods
+
   public getBoardLists(): Observable<List[]> {
     return this.currBoardDoc
       .collection<FirestoreList>('lists', (ref: CollectionReference) =>
@@ -110,6 +116,58 @@ export class TaskboardService {
       .doc(listId)
       .delete();
   }
+
+  // Card methods
+
+  public getCardData(listId: string, cardId: string): Observable<Card> {
+    return this.currBoardDoc
+      .collection(`lists/${listId}/cards`)
+      .doc<FirestoreCard>(cardId)
+      .snapshotChanges()
+      .pipe(map(this.getDocDataWithId));
+  }
+
+  public getListCards(listId: string) {
+    return this.currBoardDoc
+      .collection<FirestoreCard>(
+        `lists/${listId}/cards`,
+        (ref: CollectionReference) => ref.orderBy('createdAt'),
+      )
+      .valueChanges({ idField: 'id' });
+  }
+
+  public createCard(
+    listId: string,
+    title: string,
+  ): Promise<firestore.DocumentReference> {
+    return this.currBoardDoc
+      .collection<FirestoreCard>(`lists/${listId}/cards`)
+      .add({
+        title,
+        description: '',
+        createdAt: firestore.Timestamp.now(),
+      });
+  }
+
+  public updateCardData(
+    listId: string,
+    cardId: string,
+    data: Partial<FirestoreCard>,
+  ): Promise<void> {
+    return this.currBoardDoc
+      .collection(`lists/${listId}/cards`)
+      .doc(cardId)
+      .update(data);
+  }
+
+  public removeCard(listId: string, cardId: string): Promise<void> {
+    return this.currBoardDoc
+      .collection(`lists/${listId}/cards`)
+      .doc(cardId)
+      .delete();
+  }
+
+  // Additional methods
 
   private getDocDataWithId(action: Action<DocumentSnapshot<any>>): any {
     const { payload } = action;

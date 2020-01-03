@@ -1,4 +1,9 @@
-<div class="wrapper" fxLayout="row" fxLayout.lt-sm="column">
+<div
+  *ngIf="card$ | async as card; else loadingCardData"
+  class="wrapper"
+  fxLayout="row"
+  fxLayout.lt-sm="column"
+>
   <button mat-icon-button mat-dialog-close>
     <mat-icon>clear</mat-icon>
   </button>
@@ -51,6 +56,7 @@
           matInput
           cdkTextareaAutosize
           class="card-description-field"
+          placeholder="Add more detailed card description"
           [value]="card.description"
           (focusout)="
             $event.target.blur(); onCardDescriptionEdit(card.description)
@@ -102,10 +108,17 @@
         <span>Vote</span>
       </button>
       <mat-divider fxHide.lt-sm></mat-divider>
-      <button mat-stroked-button color="warn" (click)="onCardRemove()">
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="onCardRemove(card.id, card.title)"
+      >
         <mat-icon>delete</mat-icon>
         <span>Remove</span>
       </button>
     </div>
   </section>
 </div>
+<ng-template #loadingCardData>
+  <mat-spinner></mat-spinner>
+</ng-template>

@@ -23,7 +23,7 @@
 
   <div class="body thin-scrollbar" fxLayout="column" fxLayoutGap="5px">
     <mat-card
-      *ngFor="let card of list.cards"
+      *ngFor="let card of cards$ | async"
       class="card"
       (click)="openCardDialog(card)"
     >

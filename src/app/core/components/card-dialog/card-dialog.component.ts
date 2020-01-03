@@ -5,13 +5,19 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 
+import { TaskboardService } from './../../taskboard.service';
 import { Card } from './../../models/card.model';
 import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/removal-confirm-dialog.component';
 
 interface DialogData {
-  card: Card;
+  cardId: string;
   listId: string;
   listTitle: string;
 }
@@ -26,15 +32,18 @@ export class CardDialogComponent implements OnInit {
   cardTitleField: ElementRef;
   @ViewChild('cardDescriptionField', { static: false })
   cardDescriptionField: ElementRef;
-  card: Card;
+  card$: Observable<Card>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private cardDialogRef: MatDialogRef<CardDialogComponent>,
     public dialog: MatDialog,
+    private taskboardService: TaskboardService,
   ) {}
 
-  ngOnInit() {
-    this.card = this.data.card;
+  ngOnInit(): void {
+    const { listId, cardId } = this.data;
+    this.card$ = this.taskboardService.getCardData(listId, cardId);
   }
 
   onCardTitleEdit(oldCardTitle: string): void {
@@ -44,9 +53,10 @@ export class CardDialogComponent implements OnInit {
       nativeElement.value = oldCardTitle;
       return;
     }
-    console.log(
-      `Change card title from '${oldCardTitle}' to '${newCardTitle}'`,
-    );
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      title: newCardTitle,
+    });
   }
 
   onCardDescriptionEdit(oldCardDesc: string): void {
@@ -56,21 +66,25 @@ export class CardDialogComponent implements OnInit {
       nativeElement.value = oldCardDesc;
       return;
     }
-    console.log(`Change card title from '${oldCardDesc}' to '${newCardDesc}'`);
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      description: newCardDesc,
+    });
   }
 
-  onCardRemove() {
+  onCardRemove(cardId: string, cardTitle: string): void {
     this.dialog
       .open(RemovalConfirmDialogComponent, {
         data: {
-          headerTitle: this.card.title,
+          headerTitle: cardTitle,
           bodyText: 'Are you sure you want to delete this card?',
         },
       })
       .afterClosed()
       .subscribe((isConfirmed: boolean) => {
         if (isConfirmed) {
-          console.log(`Remove card with id '${this.card.id}'`);
+          this.cardDialogRef.close();
+          this.taskboardService.removeCard(this.data.listId, cardId);
         }
       });
   }

@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 // tslint:disable: align
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,6 +16,7 @@ import { RemovalConfirmDialogComponent } from './../../../core/components/remova
 })
 export class ListComponent implements OnInit {
   @Input('listData') list: List;
+  cards$: Observable<Card[]>;
   @ViewChild('listTitleField', { static: false })
   listTitleField: ElementRef;
   @ViewChild('newCardTitleField', { static: false })
@@ -26,7 +28,9 @@ export class ListComponent implements OnInit {
     public dialog: MatDialog,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.cards$ = this.taskboardService.getListCards(this.list.id);
+  }
 
   onEditListTitle(): void {
     const oldListTitle = this.list.title;
@@ -42,7 +46,7 @@ export class ListComponent implements OnInit {
   openCardDialog(card: Card) {
     this.dialog.open(CardDialogComponent, {
       data: {
-        card,
+        cardId: card.id,
         listId: this.list.id,
         listTitle: this.list.title,
       },
@@ -70,7 +74,7 @@ export class ListComponent implements OnInit {
   onAddCardToList() {
     const newCardTitle = this.newCardTitleField.nativeElement.value.trim();
     if (!newCardTitle) return;
-    console.log(`Add card '${newCardTitle}' to list with id ${this.list.id}`);
+    this.taskboardService.createCard(this.list.id, newCardTitle);
     this.closeNewCardTemplate();
   }
 
