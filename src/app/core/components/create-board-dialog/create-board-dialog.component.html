@@ -4,10 +4,15 @@
       <mat-label>Board Title:</mat-label>
       <input
         matInput
-        [(ngModel)]="newBoardTitle"
         (keyup.enter)="onBoardCreate()"
-        required
+        [formControl]="boardTitleControl"
       />
+      <mat-error
+        align="end"
+        *ngIf="boardTitleControl.invalid && boardTitleControl.touched"
+      >
+        Please, provide valid board title
+      </mat-error>
     </mat-form-field>
     <p>Board Color:</p>
     <div fxLayout="row wrap" fxLayoutAlign="center center">
@@ -17,9 +22,9 @@
         [ngStyle]="{ 'background-color': color }"
         fxLayout="row"
         fxLayoutAlign="center center"
-        (click)="newBoardSelectedColor = color"
+        (click)="boardSelectedBackColor = color"
       >
-        <mat-icon *ngIf="newBoardSelectedColor === color">check</mat-icon>
+        <mat-icon *ngIf="boardSelectedBackColor === color">check</mat-icon>
       </mat-card>
     </div>
   </mat-dialog-content>
@@ -27,8 +32,8 @@
     <button
       mat-raised-button
       color="primary"
-      [disabled]="newBoardTitle === ''"
       (click)="onBoardCreate()"
+      [disabled]="boardTitleControl.invalid"
     >
       Create Board
     </button>

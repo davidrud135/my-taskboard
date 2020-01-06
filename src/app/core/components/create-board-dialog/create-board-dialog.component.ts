@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { BoardBackColor } from './../../models/board-back-color.model';
 import { TaskboardService } from './../../taskboard.service';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-board-dialog',
@@ -10,8 +11,8 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./create-board-dialog.component.scss'],
 })
 export class CreateBoardDialogComponent implements OnInit {
-  newBoardTitle: string;
-  newBoardSelectedColor: string;
+  boardTitleControl: FormControl;
+  boardSelectedBackColor: string;
   boardBackColors: string[];
 
   constructor(
@@ -20,15 +21,23 @@ export class CreateBoardDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.newBoardTitle = '';
-    this.newBoardSelectedColor = BoardBackColor.Green;
+    this.boardTitleControl = new FormControl('', [
+      Validators.required,
+      this.noEmptyValueValidator,
+    ]);
+    this.boardSelectedBackColor = BoardBackColor.Green;
     this.boardBackColors = Object.values(BoardBackColor);
   }
 
-  onBoardCreate() {
-    const title = this.newBoardTitle.trim();
-    if (!title) return;
-    this.taskboardService.createBoard(title, this.newBoardSelectedColor);
+  onBoardCreate(): void {
+    if (this.boardTitleControl.invalid) return;
+    const title = this.boardTitleControl.value.trim();
+    this.taskboardService.createBoard(title, this.boardSelectedBackColor);
     this.dialogRef.close();
+  }
+
+  noEmptyValueValidator(control: FormControl): { emptyValue: boolean } | null {
+    const isEmptyValue = control.value.trim().length === 0;
+    return isEmptyValue ? { emptyValue: true } : null;
   }
 }
