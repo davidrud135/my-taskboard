@@ -10,10 +10,9 @@
       fxLayoutAlign="space-between center"
     >
       <input
-        #boardTitleField
         type="text"
         class="title-field"
-        [value]="board.title"
+        [formControl]="boardTitleControl"
         (keyup.enter)="$event.target.blur()"
         (focusout)="onEditBoardTitle(board.title)"
       />

@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Params } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
+import { Validators, FormControl } from '@angular/forms';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -25,8 +26,7 @@ import { RemovalConfirmDialogComponent } from './../../core/components/removal-c
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent implements OnInit {
-  @ViewChild('boardTitleField', { static: false })
-  boardTitleField: ElementRef;
+  boardTitleControl: FormControl;
   @ViewChild('newListTitleField', { static: false })
   newListTitleField: ElementRef;
   board$: Observable<Board>;
@@ -52,6 +52,10 @@ export class BoardComponent implements OnInit {
       this.taskboardService.setCurrBoardDoc(id);
       this.board$ = this.taskboardService.getBoardData().pipe(
         tap((board: Board) => {
+          this.boardTitleControl = new FormControl(
+            board.title,
+            Validators.required,
+          );
           this.titleService.setTitle(
             `${board.title} | ${environment.projectTitle}`,
           );
@@ -62,11 +66,9 @@ export class BoardComponent implements OnInit {
   }
 
   onEditBoardTitle(oldBoardTitle: string): void {
-    const { nativeElement } = this.boardTitleField;
-    const newBoardTitle = nativeElement.value.trim();
-    if (!newBoardTitle || oldBoardTitle === newBoardTitle) {
-      nativeElement.value = oldBoardTitle;
-      return;
+    const newBoardTitle = this.boardTitleControl.value.trim();
+    if (this.boardTitleControl.invalid || newBoardTitle === oldBoardTitle) {
+      return this.boardTitleControl.setValue(oldBoardTitle);
     }
     this.taskboardService.updateBoardData({ title: newBoardTitle });
   }
@@ -85,7 +87,7 @@ export class BoardComponent implements OnInit {
     this.newListTitleField.nativeElement.value = '';
   }
 
-  onAddListToBoard(boardId: string) {
+  onAddListToBoard() {
     const newListTitle = this.newListTitleField.nativeElement.value.trim();
     if (!newListTitle) return;
     this.taskboardService.createList(newListTitle);
