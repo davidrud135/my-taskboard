@@ -1,7 +1,8 @@
-import { Observable } from 'rxjs';
 // tslint:disable: align
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 
 import { TaskboardService } from './../../../core/taskboard.service';
 import { Card } from './../../../core/models/card.model';
@@ -17,8 +18,7 @@ import { RemovalConfirmDialogComponent } from './../../../core/components/remova
 export class ListComponent implements OnInit {
   @Input('listData') list: List;
   cards$: Observable<Card[]>;
-  @ViewChild('listTitleField', { static: false })
-  listTitleField: ElementRef;
+  listTitleControl: FormControl;
   @ViewChild('newCardTitleField', { static: false })
   newCardTitleField: ElementRef;
   isNewCardTemplateOpened = false;
@@ -29,16 +29,17 @@ export class ListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.listTitleControl = new FormControl(
+      this.list.title,
+      Validators.required,
+    );
     this.cards$ = this.taskboardService.getListCards(this.list.id);
   }
 
-  onEditListTitle(): void {
-    const oldListTitle = this.list.title;
-    const { nativeElement } = this.listTitleField;
-    const newListTitle = nativeElement.value.trim();
-    if (!newListTitle || oldListTitle === newListTitle) {
-      nativeElement.value = oldListTitle;
-      return;
+  onEditListTitle(oldListTitle: string): void {
+    const newListTitle = this.listTitleControl.value.trim();
+    if (this.listTitleControl.invalid || oldListTitle === newListTitle) {
+      return this.listTitleControl.setValue(oldListTitle);
     }
     this.taskboardService.updateListData(this.list.id, { title: newListTitle });
   }
