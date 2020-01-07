@@ -5,6 +5,7 @@ import {
   ViewChild,
   ElementRef,
   ChangeDetectorRef,
+  OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -25,7 +26,7 @@ import { RemovalConfirmDialogComponent } from './../../core/components/removal-c
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit, OnDestroy {
   boardTitleControl: FormControl;
   @ViewChild('newListTitleField', { static: false })
   newListTitleField: ElementRef;
@@ -33,6 +34,7 @@ export class BoardComponent implements OnInit {
   lists$: Observable<List[]>;
   isNewListTemplateOpened = false;
   mobileQuery: MediaQueryList;
+  mobileMediaListener: any;
 
   constructor(
     private taskboardService: TaskboardService,
@@ -43,7 +45,8 @@ export class BoardComponent implements OnInit {
     public dialog: MatDialog,
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 599px)');
-    this.mobileQuery.addListener(() => changeDetectorRef.detectChanges());
+    this.mobileMediaListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this.mobileMediaListener);
   }
 
   ngOnInit() {
@@ -63,6 +66,10 @@ export class BoardComponent implements OnInit {
       );
       this.lists$ = this.taskboardService.getBoardLists();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.mobileQuery.removeListener(this.mobileMediaListener);
   }
 
   onEditBoardTitle(oldBoardTitle: string): void {
