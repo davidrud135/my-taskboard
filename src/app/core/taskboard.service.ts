@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { firestore } from 'firebase/app';
 import {
   AngularFirestore,
-  CollectionReference,
   AngularFirestoreDocument,
   Action,
   DocumentSnapshot,
+  CollectionReference,
 } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { switchMap, filter, map } from 'rxjs/operators';
@@ -19,6 +19,7 @@ import { User } from './models/user.model';
 import { List } from './models/list.model';
 import { FirestoreCard } from './models/firestore-card.model';
 import { Card } from './models/card.model';
+import { ListSorting } from './models/list-sorting.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
@@ -129,13 +130,29 @@ export class TaskboardService {
       .pipe(map(this.getDocDataWithId));
   }
 
-  public getListCards(listId: string) {
-    return this.currBoardDoc
-      .collection<FirestoreCard>(
-        `lists/${listId}/cards`,
-        (ref: CollectionReference) => ref.orderBy('createdAt'),
-      )
-      .valueChanges({ idField: 'id' });
+  public getListCards(
+    listId: string,
+    listSortingStrategy$: Observable<ListSorting>,
+  ): Observable<Card[]> {
+    return listSortingStrategy$.pipe(
+      switchMap((sorting: ListSorting) => {
+        return this.currBoardDoc
+          .collection<FirestoreCard>(
+            `lists/${listId}/cards`,
+            (ref: CollectionReference) => {
+              switch (sorting) {
+                case 'asc':
+                  return ref.orderBy('createdAt');
+                case 'desc':
+                  return ref.orderBy('createdAt', 'desc');
+                default:
+                  return ref.orderBy('title');
+              }
+            },
+          )
+          .valueChanges({ idField: 'id' });
+      }),
+    );
   }
 
   public createCard(

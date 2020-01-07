@@ -63,6 +63,10 @@
       <mat-icon>add</mat-icon>
       <span>Add Card</span>
     </button>
+    <button mat-menu-item [matMenuTriggerFor]="listSortingSubmenu">
+      <mat-icon>sort</mat-icon>
+      <span>Sort List</span>
+    </button>
     <button
       mat-menu-item
       (click)="openListRemovalConfirmDialog()"
@@ -72,4 +76,16 @@
       <span>Remove List</span>
     </button>
   </ng-template>
+</mat-menu>
+
+<mat-menu #listSortingSubmenu="matMenu">
+  <button mat-menu-item (click)="onListSort('asc')">
+    Ascending (Oldest First)
+  </button>
+  <button mat-menu-item (click)="onListSort('desc')">
+    Descending (Newest First)
+  </button>
+  <button mat-menu-item (click)="onListSort('alphabet')">
+    Card Title (Alphabetically)
+  </button>
 </mat-menu>

@@ -2,11 +2,12 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { TaskboardService } from './../../../core/taskboard.service';
 import { Card } from './../../../core/models/card.model';
 import { List } from './../../../core/models/list.model';
+import { ListSorting } from './../../../core/models/list-sorting.model';
 import { CardDialogComponent } from './../../../core/components/card-dialog/card-dialog.component';
 import { RemovalConfirmDialogComponent } from './../../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
 
@@ -18,6 +19,7 @@ import { RemovalConfirmDialogComponent } from './../../../core/components/remova
 export class ListComponent implements OnInit {
   @Input('listData') list: List;
   cards$: Observable<Card[]>;
+  listSortingStrategy$ = new BehaviorSubject<ListSorting>('asc');
   listTitleControl: FormControl;
   @ViewChild('newCardTitleField', { static: false })
   newCardTitleField: ElementRef;
@@ -33,7 +35,10 @@ export class ListComponent implements OnInit {
       this.list.title,
       Validators.required,
     );
-    this.cards$ = this.taskboardService.getListCards(this.list.id);
+    this.cards$ = this.taskboardService.getListCards(
+      this.list.id,
+      this.listSortingStrategy$,
+    );
   }
 
   onEditListTitle(oldListTitle: string): void {
@@ -94,5 +99,9 @@ export class ListComponent implements OnInit {
           this.taskboardService.removeList(this.list.id);
         }
       });
+  }
+
+  onListSort(sorting: ListSorting): void {
+    this.listSortingStrategy$.next(sorting);
   }
 }
