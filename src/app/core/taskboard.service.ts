@@ -192,8 +192,8 @@ export class TaskboardService {
     const listsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
       .collection('lists')
       .ref.get();
-    for await (const listDocSnapshot of listsQuerySnapshot.docs) {
-      this.removeList(listDocSnapshot.id);
+    for (const listDocSnapshot of listsQuerySnapshot.docs) {
+      await this.removeList(listDocSnapshot.id);
     }
   }
 
@@ -201,8 +201,8 @@ export class TaskboardService {
     const cardsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .ref.get();
-    for await (const cardDocSnapshot of cardsQuerySnapshot.docs) {
-      cardDocSnapshot.ref.delete();
+    for (const cardDocSnapshot of cardsQuerySnapshot.docs) {
+      await cardDocSnapshot.ref.delete();
     }
   }
 
