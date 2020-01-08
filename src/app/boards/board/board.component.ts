@@ -20,6 +20,7 @@ import { Board } from './../../core/models/board.model';
 import { TaskboardService } from './../../core/taskboard.service';
 import { List } from './../../core/models/list.model';
 import { RemovalConfirmDialogComponent } from './../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
+import { BoardBackColor } from './../../core/models/board-back-color.model';
 
 @Component({
   selector: 'app-board',
@@ -35,6 +36,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   isNewListTemplateOpened = false;
   mobileQuery: MediaQueryList;
   mobileMediaListener: any;
+  isBoardBackColorsBlockOpened = false;
+  boardBackColors: string[];
 
   constructor(
     private taskboardService: TaskboardService,
@@ -66,6 +69,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       );
       this.lists$ = this.taskboardService.getBoardLists();
     });
+    this.boardBackColors = Object.values(BoardBackColor);
   }
 
   ngOnDestroy(): void {
@@ -116,5 +120,20 @@ export class BoardComponent implements OnInit, OnDestroy {
           this.taskboardService.removeBoard();
         }
       });
+  }
+
+  toggleBoardBackColorBlock(): void {
+    this.isBoardBackColorsBlockOpened = !this.isBoardBackColorsBlockOpened;
+  }
+
+  onChangeBoardBackColor(
+    currBoardBackColor: string,
+    newBoardBackColor: string,
+  ): void {
+    if (currBoardBackColor !== newBoardBackColor) {
+      this.taskboardService.updateBoardData({
+        backgroundColor: newBoardBackColor,
+      });
+    }
   }
 }

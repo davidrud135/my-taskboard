@@ -88,10 +88,27 @@
         <mat-icon matListIcon>add</mat-icon>
         <h3 matLine>Add List</h3>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item (click)="toggleBoardBackColorBlock()">
         <mat-icon matListIcon>color_lens</mat-icon>
         <h3 matLine>Change Background Color</h3>
+        <mat-icon>{{
+          isBoardBackColorsBlockOpened ? 'arrow_drop_up' : 'arrow_drop_down'
+        }}</mat-icon>
       </mat-list-item>
+      <div *ngIf="isBoardBackColorsBlockOpened" class="board-back-colors-block">
+        <mat-card fxLayout="row wrap" fxLayoutAlign="center center">
+          <mat-card
+            *ngFor="let color of boardBackColors"
+            class="color-card"
+            [ngStyle]="{ 'background-color': color }"
+            fxLayout="row"
+            fxLayoutAlign="center center"
+            (click)="onChangeBoardBackColor(board.backgroundColor, color)"
+          >
+            <mat-icon *ngIf="board.backgroundColor === color">check</mat-icon>
+          </mat-card>
+        </mat-card>
+      </div>
       <mat-list-item
         class="delete-board-btn"
         (click)="openBoardRemovalConfirmDialog(board.title)"

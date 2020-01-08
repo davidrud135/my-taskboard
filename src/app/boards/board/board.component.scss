@@ -56,6 +56,24 @@ mat-sidenav-container {
       padding-left: 10px;
     }
 
+    .board-back-colors-block {
+      padding: 5px;
+
+      .color-card {
+        width: calc(50% - 5px);
+        height: 50px;
+        box-sizing: border-box;
+        color: whitesmoke;
+        margin: 0 5px 10px 0;
+        opacity: 1;
+      }
+
+      .color-card:hover {
+        cursor: pointer;
+        opacity: 0.8;
+      }
+    }
+
     .delete-board-btn {
       color: $warnColor !important;
     }
