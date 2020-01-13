@@ -8,7 +8,7 @@ import {
   DocumentSnapshot,
   CollectionReference,
 } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import { switchMap, filter, map } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
@@ -20,6 +20,7 @@ import { List } from './models/list.model';
 import { FirestoreCard } from './models/firestore-card.model';
 import { Card } from './models/card.model';
 import { ListSorting } from './models/list-sorting.model';
+import { FirestoreUser } from './models/firestore-user.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
@@ -40,7 +41,7 @@ export class TaskboardService {
   // Board methods
 
   public setCurrBoardDoc(boardId: string): void {
-    this.currBoardDoc = this.afStore.doc<Board>(`boards/${boardId}`);
+    this.currBoardDoc = this.afStore.doc<FirestoreBoard>(`boards/${boardId}`);
   }
 
   public getPersonalBoards(): Observable<Board[]> {
@@ -51,7 +52,9 @@ export class TaskboardService {
         }
         return this.afStore
           .collection<FirestoreBoard>('boards', (ref: CollectionReference) =>
-            ref.where('adminId', '==', user.id).orderBy('createdAt', 'desc'),
+            ref
+              .where('membersIds', 'array-contains', user.id)
+              .orderBy('createdAt', 'desc'),
           )
           .valueChanges({ idField: 'id' });
       }),
@@ -66,7 +69,7 @@ export class TaskboardService {
       title,
       backgroundColor,
       adminId: this.currUserId,
-      membersIds: [],
+      membersIds: [this.currUserId],
       createdAt: firestore.Timestamp.now(),
     });
   }
@@ -76,7 +79,24 @@ export class TaskboardService {
   }
 
   public getBoardData(): Observable<Board> {
-    return this.currBoardDoc.snapshotChanges().pipe(map(this.getDocDataWithId));
+    let boardData;
+    return this.currBoardDoc.snapshotChanges().pipe(
+      map(this.getDocDataWithId),
+      switchMap((firestoreBoard: FirestoreBoard & { id: string }) => {
+        const { membersIds, ...board } = firestoreBoard;
+        boardData = board;
+        const members$: Observable<User>[] = membersIds.map((userId: string) =>
+          this.afStore
+            .doc<FirestoreUser>(`users/${userId}`)
+            .snapshotChanges()
+            .pipe(map(this.getDocDataWithId)),
+        );
+        return combineLatest(members$);
+      }),
+      map((members: User[]) => {
+        return { members, ...boardData };
+      }),
+    );
   }
 
   public async removeBoard(): Promise<void> {
