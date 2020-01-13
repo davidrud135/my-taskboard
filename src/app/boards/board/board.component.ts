@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Validators, FormControl } from '@angular/forms';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 
 import { environment } from './../../../environments/environment.prod';
 import { Board } from './../../core/models/board.model';
@@ -21,6 +21,8 @@ import { TaskboardService } from './../../core/taskboard.service';
 import { List } from './../../core/models/list.model';
 import { RemovalConfirmDialogComponent } from './../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
 import { BoardBackColor } from './../../core/models/board-back-color.model';
+import { User } from './../../core/models/user.model';
+import { AuthService } from './../../auth/auth.service';
 
 @Component({
   selector: 'app-board',
@@ -38,9 +40,11 @@ export class BoardComponent implements OnInit, OnDestroy {
   mobileMediaListener: any;
   isBoardBackColorsBlockOpened = false;
   boardBackColors: string[];
+  currUserId: string;
 
   constructor(
     private taskboardService: TaskboardService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private titleService: Title,
     private changeDetectorRef: ChangeDetectorRef,
@@ -69,6 +73,10 @@ export class BoardComponent implements OnInit, OnDestroy {
       );
       this.lists$ = this.taskboardService.getBoardLists();
     });
+    this.authService
+      .getUser()
+      .pipe(filter((user: User | null) => !!user))
+      .subscribe((user: User) => (this.currUserId = user.id));
     this.boardBackColors = Object.values(BoardBackColor);
   }
 
@@ -135,5 +143,13 @@ export class BoardComponent implements OnInit, OnDestroy {
         backgroundColor: newBoardBackColor,
       });
     }
+  }
+
+  applyBoardMemberAvatar(avatarURL: string): string {
+    return `url(${avatarURL})`;
+  }
+
+  isBoardAdmin(adminId: string, memberId: string): boolean {
+    return adminId === memberId;
   }
 }

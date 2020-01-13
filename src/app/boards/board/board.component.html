@@ -9,14 +9,33 @@
       fxLayout="row"
       fxLayoutAlign="space-between center"
     >
-      <input
-        type="text"
-        class="title-field"
-        [formControl]="boardTitleControl"
-        (keyup.enter)="$event.target.blur()"
-        (focusout)="onEditBoardTitle(board.title)"
-      />
-      <button mat-button (click)="boardMenu.toggle()" fxHide.xs>
+      <div fxLayout="row" fxLayoutGap="5px">
+        <input
+          type="text"
+          class="title-field"
+          [formControl]="boardTitleControl"
+          (keyup.enter)="$event.target.blur()"
+          (focusout)="onEditBoardTitle(board.title)"
+        />
+        <mat-divider [vertical]="true"></mat-divider>
+        <div *ngIf="!mobileQuery.matches" fxLayout="row" fxLayoutGap="5px">
+          <div fxLayout="row">
+            <div
+              *ngFor="let member of board.members"
+              [matTooltip]="member.username"
+              class="board-member-avatar"
+              [style.background-image]="
+                applyBoardMemberAvatar(member.avatarURL)
+              "
+            ></div>
+          </div>
+          <button mat-stroked-button>
+            <mat-icon>person_add</mat-icon>
+            <span>Invite</span>
+          </button>
+        </div>
+      </div>
+      <button mat-stroked-button (click)="boardMenu.toggle()" fxHide.xs>
         <mat-icon>menu</mat-icon>
         Board Menu
       </button>
@@ -71,51 +90,104 @@
 
   <mat-sidenav
     fxLayout="column"
-    class="board-menu"
     #boardMenu
     position="end"
     [mode]="mobileQuery.matches ? 'over' : 'side'"
   >
-    <div fxLayout="row" fxLayoutAlign="space-between center" class="header">
-      <p>Menu</p>
-      <button mat-icon-button (click)="boardMenu.close()">
-        <mat-icon>clear</mat-icon>
-      </button>
-    </div>
-    <mat-divider></mat-divider>
-    <mat-action-list>
-      <mat-list-item (click)="boardMenu.close(); openNewListTemplate()">
-        <mat-icon matListIcon>add</mat-icon>
-        <h3 matLine>Add List</h3>
-      </mat-list-item>
-      <mat-list-item (click)="toggleBoardBackColorBlock()">
-        <mat-icon matListIcon>color_lens</mat-icon>
-        <h3 matLine>Change Background Color</h3>
-        <mat-icon>{{
-          isBoardBackColorsBlockOpened ? 'arrow_drop_up' : 'arrow_drop_down'
-        }}</mat-icon>
-      </mat-list-item>
-      <div *ngIf="isBoardBackColorsBlockOpened" class="board-back-colors-block">
-        <mat-card fxLayout="row wrap" fxLayoutAlign="center center">
-          <mat-card
-            *ngFor="let color of boardBackColors"
-            class="color-card"
-            [ngStyle]="{ 'background-color': color }"
-            fxLayout="row"
-            fxLayoutAlign="center center"
-            (click)="onChangeBoardBackColor(board.backgroundColor, color)"
-          >
-            <mat-icon *ngIf="board.backgroundColor === color">check</mat-icon>
-          </mat-card>
-        </mat-card>
+    <div class="board-menu-container">
+      <div fxLayout="row" fxLayoutAlign="space-between center" class="header">
+        <h4>Menu</h4>
+        <button
+          mat-icon-button
+          (click)="boardMenu.close(); isBoardBackColorsBlockOpened = false"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
-      <mat-list-item
-        class="delete-board-btn"
-        (click)="openBoardRemovalConfirmDialog(board.title)"
-      >
-        <mat-icon matListIcon>delete</mat-icon>
-        <h3 matLine>Delete Board</h3>
-      </mat-list-item>
-    </mat-action-list>
+      <mat-divider></mat-divider>
+      <div fxLayout="column" class="body">
+        <mat-action-list>
+          <h3 matSubheader>Actions</h3>
+          <mat-list-item (click)="boardMenu.close(); openNewListTemplate()">
+            <mat-icon matListIcon>add</mat-icon>
+            <h3 matLine>Add List</h3>
+          </mat-list-item>
+          <mat-list-item (click)="toggleBoardBackColorBlock()">
+            <mat-icon matListIcon>color_lens</mat-icon>
+            <h3 matLine>Change Background Color</h3>
+            <mat-icon>{{
+              isBoardBackColorsBlockOpened ? 'arrow_drop_up' : 'arrow_drop_down'
+            }}</mat-icon>
+          </mat-list-item>
+          <div
+            *ngIf="isBoardBackColorsBlockOpened"
+            class="board-back-colors-block"
+          >
+            <mat-card fxLayout="row wrap" fxLayoutAlign="center center">
+              <mat-card
+                *ngFor="let color of boardBackColors"
+                class="color-card"
+                [ngStyle]="{ 'background-color': color }"
+                fxLayout="row"
+                fxLayoutAlign="center center"
+                (click)="onChangeBoardBackColor(board.backgroundColor, color)"
+              >
+                <mat-icon *ngIf="board.backgroundColor === color"
+                  >check</mat-icon
+                >
+              </mat-card>
+            </mat-card>
+          </div>
+          <mat-list-item
+            *ngIf="isBoardAdmin(board.adminId, currUserId)"
+            class="warn-color"
+            (click)="openBoardRemovalConfirmDialog(board.title)"
+          >
+            <mat-icon matListIcon>delete</mat-icon>
+            <h3 matLine>Delete Board</h3>
+          </mat-list-item>
+          <mat-list-item
+            class="warn-color"
+            *ngIf="!isBoardAdmin(board.adminId, currUserId)"
+          >
+            <mat-icon matListIcon>arrow_forward</mat-icon>
+            <h3 matLine>Leave Board</h3>
+          </mat-list-item>
+        </mat-action-list>
+        <mat-list>
+          <h3 matSubheader>Members</h3>
+          <mat-list-item *ngFor="let member of board.members">
+            <img
+              matListAvatar
+              [src]="member.avatarURL"
+              [alt]="member.username"
+            />
+            <h3 matLine>
+              {{ member.fullName }} ({{
+                isBoardAdmin(board.adminId, member.id) ? 'Admin' : 'Member'
+              }})
+            </h3>
+            <p matLine>
+              <span> @{{ member.username }} </span>
+            </p>
+            <button
+              mat-icon-button
+              color="warn"
+              matTooltip="Remove from board"
+              *ngIf="
+                isBoardAdmin(board.adminId, currUserId) &&
+                member.id !== board.adminId
+              "
+            >
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+        <button mat-button color="primary">
+          <mat-icon>person_add</mat-icon>
+          <span>Add member</span>
+        </button>
+      </div>
+    </div>
   </mat-sidenav>
 </mat-sidenav-container>

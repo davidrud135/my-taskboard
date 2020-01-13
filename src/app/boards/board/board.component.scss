@@ -35,6 +35,14 @@ mat-sidenav-container {
         color: $darkBlueColor;
         cursor: default;
       }
+
+      .board-member-avatar {
+        width: 35px;
+        height: 35px;
+        background-size: cover;
+        border-radius: 50%;
+        cursor: pointer;
+      }
     }
 
     .lists {
@@ -48,34 +56,42 @@ mat-sidenav-container {
     }
   }
 
-  mat-sidenav.board-menu {
-    width: 300px;
-    color: $darkBlueColor;
+  mat-sidenav {
+    .board-menu-container {
+      width: 300px;
+      height: 100%;
+      color: $darkBlueColor;
 
-    .header {
-      padding-left: 10px;
-    }
-
-    .board-back-colors-block {
-      padding: 5px;
-
-      .color-card {
-        width: calc(50% - 5px);
-        height: 50px;
-        box-sizing: border-box;
-        color: whitesmoke;
-        margin: 0 5px 10px 0;
-        opacity: 1;
+      .header {
+        padding-left: 10px;
       }
 
-      .color-card:hover {
-        cursor: pointer;
-        opacity: 0.8;
-      }
-    }
+      .body {
+        overflow-y: auto;
+        overflow-x: hidden;
 
-    .delete-board-btn {
-      color: $warnColor !important;
+        .board-back-colors-block {
+          padding: 5px;
+
+          .color-card {
+            width: calc(50% - 5px);
+            height: 50px;
+            box-sizing: border-box;
+            color: white;
+            margin: 0 5px 10px 0;
+            opacity: 1;
+          }
+
+          .color-card:hover {
+            cursor: pointer;
+            opacity: 0.8;
+          }
+        }
+
+        .warn-color {
+          color: $warnColor !important;
+        }
+      }
     }
   }
 }
