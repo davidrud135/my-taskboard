@@ -91,7 +91,27 @@ mat-sidenav-container {
         .warn-color {
           color: $warnColor !important;
         }
+
+        .member-role {
+          font-size: 12px;
+          font-style: italic;
+        }
       }
+    }
+  }
+}
+
+.cdk-overlay-pane {
+  max-width: 300px;
+
+  .add-member-menu {
+    max-width: 300px;
+    width: 300px;
+    box-sizing: border-box;
+    padding: 0 5px;
+
+    .header {
+      padding-left: 10px;
     }
   }
 }

@@ -1,4 +1,4 @@
-<mat-sidenav-container *ngIf="board$ | async as board">
+<mat-sidenav-container *ngIf="board">
   <mat-sidenav-content
     class="board-wrapper"
     fxLayout="column"
@@ -29,7 +29,7 @@
               "
             ></div>
           </div>
-          <button mat-stroked-button>
+          <button mat-stroked-button [matMenuTriggerFor]="addMemberMenu">
             <mat-icon>person_add</mat-icon>
             <span>Invite</span>
           </button>
@@ -139,7 +139,7 @@
             </mat-card>
           </div>
           <mat-list-item
-            *ngIf="isBoardAdmin(board.adminId, currUserId)"
+            *ngIf="isBoardAdmin(board.adminId, currUser.id)"
             class="warn-color"
             (click)="openBoardRemovalConfirmDialog(board.title)"
           >
@@ -148,14 +148,14 @@
           </mat-list-item>
           <mat-list-item
             class="warn-color"
-            *ngIf="!isBoardAdmin(board.adminId, currUserId)"
+            *ngIf="!isBoardAdmin(board.adminId, currUser.id)"
           >
             <mat-icon matListIcon>arrow_forward</mat-icon>
             <h3 matLine>Leave Board</h3>
           </mat-list-item>
         </mat-action-list>
         <mat-list>
-          <h3 matSubheader>Members</h3>
+          <h3 matSubheader>Members ({{ board.members.length }})</h3>
           <mat-list-item *ngFor="let member of board.members">
             <img
               matListAvatar
@@ -163,9 +163,12 @@
               [alt]="member.username"
             />
             <h3 matLine>
-              {{ member.fullName }} ({{
-                isBoardAdmin(board.adminId, member.id) ? 'Admin' : 'Member'
-              }})
+              {{ member.fullName }}
+              <span class="member-role">
+                ({{
+                  isBoardAdmin(board.adminId, member.id) ? 'Admin' : 'Member'
+                }})
+              </span>
             </h3>
             <p matLine>
               <span> @{{ member.username }} </span>
@@ -175,7 +178,7 @@
               color="warn"
               matTooltip="Remove from board"
               *ngIf="
-                isBoardAdmin(board.adminId, currUserId) &&
+                isBoardAdmin(board.adminId, currUser.id) &&
                 member.id !== board.adminId
               "
             >
@@ -183,7 +186,7 @@
             </button>
           </mat-list-item>
         </mat-list>
-        <button mat-button color="primary">
+        <button mat-button color="primary" [matMenuTriggerFor]="addMemberMenu">
           <mat-icon>person_add</mat-icon>
           <span>Add member</span>
         </button>
@@ -191,3 +194,46 @@
     </div>
   </mat-sidenav>
 </mat-sidenav-container>
+
+<mat-menu #addMemberMenu="matMenu" class="add-member-menu">
+  <div fxLayout="column" fxLayoutGap="5px" (click)="$event.stopPropagation()">
+    <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+      <span>Add Member To Board</span>
+      <button
+        mat-icon-button
+        (click)="newMemberNameControl.reset(); menuTrigger.closeMenu()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="body" fxLayout="column">
+      <mat-form-field appearance="outline">
+        <mat-label>Write new member username</mat-label>
+        <input
+          matInput
+          placeholder="john123"
+          [formControl]="newMemberNameControl"
+          (keyup.enter)="onAddNewMember()"
+        />
+        <mat-error *ngIf="newMemberNameControl.hasError('emptyValue')">
+          Please, provide valid username.
+        </mat-error>
+        <mat-error *ngIf="newMemberNameControl.hasError('selfInvitation')">
+          You can't invite yourself.
+        </mat-error>
+        <mat-error *ngIf="newMemberNameControl.hasError('alreadyMember')">
+          This user is already a board member.
+        </mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onAddNewMember()"
+        [disabled]="newMemberNameControl.invalid"
+      >
+        Add Member
+      </button>
+    </div>
+  </div>
+</mat-menu>

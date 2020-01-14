@@ -6,12 +6,15 @@ import {
   ElementRef,
   ChangeDetectorRef,
   OnDestroy,
+  ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { Validators, FormControl } from '@angular/forms';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
 
@@ -23,24 +26,29 @@ import { RemovalConfirmDialogComponent } from './../../core/components/removal-c
 import { BoardBackColor } from './../../core/models/board-back-color.model';
 import { User } from './../../core/models/user.model';
 import { AuthService } from './../../auth/auth.service';
+import { noEmptyValueValidator } from './../../utils/no-empty-value.validator';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class BoardComponent implements OnInit, OnDestroy {
+  board: Board;
   boardTitleControl: FormControl;
+  newMemberNameControl: FormControl;
   @ViewChild('newListTitleField', { static: false })
   newListTitleField: ElementRef;
-  board$: Observable<Board>;
+  @ViewChild(MatMenuTrigger, { static: false })
+  menuTrigger: MatMenuTrigger;
   lists$: Observable<List[]>;
   isNewListTemplateOpened = false;
   mobileQuery: MediaQueryList;
   mobileMediaListener: any;
   isBoardBackColorsBlockOpened = false;
   boardBackColors: string[];
-  currUserId: string;
+  currUser: User;
 
   constructor(
     private taskboardService: TaskboardService,
@@ -50,34 +58,39 @@ export class BoardComponent implements OnInit, OnDestroy {
     private changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,
     public dialog: MatDialog,
+    public snackBar: MatSnackBar,
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 599px)');
     this.mobileMediaListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this.mobileMediaListener);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
       const { id } = params;
       this.taskboardService.setCurrBoardDoc(id);
-      this.board$ = this.taskboardService.getBoardData().pipe(
-        tap((board: Board) => {
-          this.boardTitleControl = new FormControl(
-            board.title,
-            Validators.required,
-          );
-          this.titleService.setTitle(
-            `${board.title} | ${environment.projectTitle}`,
-          );
-        }),
-      );
+      this.taskboardService.getBoardData().subscribe((boardData: Board) => {
+        this.board = boardData;
+        this.boardTitleControl = new FormControl(
+          boardData.title,
+          Validators.required,
+        );
+        this.titleService.setTitle(
+          `${boardData.title} | ${environment.projectTitle}`,
+        );
+      });
       this.lists$ = this.taskboardService.getBoardLists();
     });
     this.authService
       .getUser()
       .pipe(filter((user: User | null) => !!user))
-      .subscribe((user: User) => (this.currUserId = user.id));
+      .subscribe((user: User) => (this.currUser = user));
     this.boardBackColors = Object.values(BoardBackColor);
+    this.newMemberNameControl = new FormControl('', [
+      Validators.required,
+      noEmptyValueValidator,
+      this.newMemberValidator,
+    ]);
   }
 
   ngOnDestroy(): void {
@@ -152,4 +165,38 @@ export class BoardComponent implements OnInit, OnDestroy {
   isBoardAdmin(adminId: string, memberId: string): boolean {
     return adminId === memberId;
   }
+
+  onAddNewMember(): void {
+    if (this.newMemberNameControl.invalid) return;
+    const newMemberUsername = this.newMemberNameControl.value.trim();
+    this.taskboardService
+      .addMemberToBoard(newMemberUsername)
+      .then(() => this.menuTrigger.closeMenu())
+      .catch((errMsg: string) => {
+        this.snackBar.open(`⚠️${errMsg}⚠️`, 'OK', {
+          duration: 7000,
+          horizontalPosition: 'left',
+          verticalPosition: 'top',
+        });
+      });
+  }
+
+  // tslint:disable: semicolon
+  newMemberValidator = (control: FormControl): object | null => {
+    const controlValue = control.value;
+    if (controlValue) {
+      control.markAsTouched();
+      const newMemberUsername = controlValue.trim();
+      if (newMemberUsername === this.currUser.username) {
+        return { selfInvitation: true };
+      }
+      const isAlreadyMember = this.board.members.find(
+        (user: User) => user.username === newMemberUsername,
+      );
+      if (isAlreadyMember) {
+        return { alreadyMember: true };
+      }
+      return null;
+    }
+  };
 }

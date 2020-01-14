@@ -78,6 +78,24 @@ export class TaskboardService {
     return this.currBoardDoc.update(data);
   }
 
+  public async addMemberToBoard(
+    newMemberUsername: string,
+  ): Promise<string | void> {
+    const snapshot: firestore.QuerySnapshot = await this.afStore
+      .collection('users', (ref: CollectionReference) =>
+        ref.where('username', '==', newMemberUsername),
+      )
+      .get()
+      .toPromise();
+    if (snapshot.empty) {
+      return Promise.reject(`User (${newMemberUsername}) was not found`);
+    }
+    const newMemberId = snapshot.docs[0].id;
+    return this.updateBoardData({
+      membersIds: firestore.FieldValue.arrayUnion(newMemberId),
+    });
+  }
+
   public getBoardData(): Observable<Board> {
     let boardData;
     return this.currBoardDoc.snapshotChanges().pipe(
