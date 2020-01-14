@@ -96,6 +96,12 @@ export class TaskboardService {
     });
   }
 
+  public removeMemberFromBoard(memberId: string): Promise<void> {
+    return this.updateBoardData({
+      membersIds: firestore.FieldValue.arrayRemove(memberId),
+    });
+  }
+
   public getBoardData(): Observable<Board> {
     let boardData;
     return this.currBoardDoc.snapshotChanges().pipe(

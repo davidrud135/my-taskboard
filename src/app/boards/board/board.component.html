@@ -181,6 +181,7 @@
                 isBoardAdmin(board.adminId, currUser.id) &&
                 member.id !== board.adminId
               "
+              (click)="onRemoveMember(member.id)"
             >
               <mat-icon>remove_circle</mat-icon>
             </button>
