@@ -97,6 +97,9 @@ export class TaskboardService {
   }
 
   public removeMemberFromBoard(memberId: string): Promise<void> {
+    if (memberId === this.currUserId) {
+      this.router.navigateByUrl('/boards');
+    }
     return this.updateBoardData({
       membersIds: firestore.FieldValue.arrayRemove(memberId),
     });

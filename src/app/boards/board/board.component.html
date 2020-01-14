@@ -149,6 +149,7 @@
           <mat-list-item
             class="warn-color"
             *ngIf="!isBoardAdmin(board.adminId, currUser.id)"
+            (click)="onRemoveMember(currUser.id)"
           >
             <mat-icon matListIcon>arrow_forward</mat-icon>
             <h3 matLine>Leave Board</h3>
