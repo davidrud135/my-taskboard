@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 import { TaskboardService } from './../../taskboard.service';
 import { Card } from './../../models/card.model';
 import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/removal-confirm-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface DialogData {
   cardId: string;
@@ -37,8 +38,9 @@ export class CardDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private cardDialogRef: MatDialogRef<CardDialogComponent>,
-    public dialog: MatDialog,
     private taskboardService: TaskboardService,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -82,10 +84,15 @@ export class CardDialogComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((isConfirmed: boolean) => {
-        if (isConfirmed) {
-          this.cardDialogRef.close();
-          this.taskboardService.removeCard(this.data.listId, cardId);
-        }
+        if (!isConfirmed) return;
+        this.taskboardService
+          .removeCard(this.data.listId, cardId)
+          .then(() => {
+            this.cardDialogRef.close();
+          })
+          .catch((errMsg: string) => {
+            this.snackBar.open(`❗${errMsg}❗`, 'OK');
+          });
       });
   }
 }

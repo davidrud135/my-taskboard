@@ -211,6 +211,7 @@ export class TaskboardService {
       .add({
         title,
         description: '',
+        creatorId: this.currUserId,
         createdAt: firestore.Timestamp.now(),
       });
   }
@@ -230,7 +231,14 @@ export class TaskboardService {
     return this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .doc(cardId)
-      .delete();
+      .delete()
+      .catch((err: firestore.FirestoreError) => {
+        if (err.code === 'permission-denied') {
+          return Promise.reject(
+            'Only admin or creator have permission to delete this card.',
+          );
+        }
+      });
   }
 
   // Additional methods
