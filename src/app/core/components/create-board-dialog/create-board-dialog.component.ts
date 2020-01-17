@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 import { BoardBackColor } from './../../models/board-back-color.model';
 import { TaskboardService } from './../../taskboard.service';
+import { noEmptyValueValidator } from './../../../utils/no-empty-value.validator';
 
 @Component({
   selector: 'app-create-board-dialog',
@@ -23,7 +24,7 @@ export class CreateBoardDialogComponent implements OnInit {
   ngOnInit() {
     this.boardTitleControl = new FormControl('', [
       Validators.required,
-      this.noEmptyValueValidator,
+      noEmptyValueValidator,
     ]);
     this.boardSelectedBackColor = BoardBackColor.Green;
     this.boardBackColors = Object.values(BoardBackColor);
@@ -34,10 +35,5 @@ export class CreateBoardDialogComponent implements OnInit {
     const title = this.boardTitleControl.value.trim();
     this.taskboardService.createBoard(title, this.boardSelectedBackColor);
     this.dialogRef.close();
-  }
-
-  noEmptyValueValidator(control: FormControl): { emptyValue: boolean } | null {
-    const isEmptyValue = control.value.trim().length === 0;
-    return isEmptyValue ? { emptyValue: true } : null;
   }
 }

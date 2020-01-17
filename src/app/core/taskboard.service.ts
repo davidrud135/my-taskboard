@@ -7,8 +7,9 @@ import {
   Action,
   DocumentSnapshot,
   CollectionReference,
+  DocumentData,
 } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import { switchMap, filter, map } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
@@ -20,6 +21,7 @@ import { List } from './models/list.model';
 import { FirestoreCard } from './models/firestore-card.model';
 import { Card } from './models/card.model';
 import { ListSorting } from './models/list-sorting.model';
+import { FirestoreUser } from './models/firestore-user.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
@@ -40,7 +42,7 @@ export class TaskboardService {
   // Board methods
 
   public setCurrBoardDoc(boardId: string): void {
-    this.currBoardDoc = this.afStore.doc<Board>(`boards/${boardId}`);
+    this.currBoardDoc = this.afStore.doc<FirestoreBoard>(`boards/${boardId}`);
   }
 
   public getPersonalBoards(): Observable<Board[]> {
@@ -51,7 +53,9 @@ export class TaskboardService {
         }
         return this.afStore
           .collection<FirestoreBoard>('boards', (ref: CollectionReference) =>
-            ref.where('adminId', '==', user.id).orderBy('createdAt', 'desc'),
+            ref
+              .where('membersIds', 'array-contains', user.id)
+              .orderBy('createdAt', 'desc'),
           )
           .valueChanges({ idField: 'id' });
       }),
@@ -66,7 +70,7 @@ export class TaskboardService {
       title,
       backgroundColor,
       adminId: this.currUserId,
-      membersIds: [],
+      membersIds: [this.currUserId],
       createdAt: firestore.Timestamp.now(),
     });
   }
@@ -75,8 +79,52 @@ export class TaskboardService {
     return this.currBoardDoc.update(data);
   }
 
+  public async addMemberToBoard(
+    newMemberUsername: string,
+  ): Promise<string | void> {
+    const snapshot: firestore.QuerySnapshot = await this.afStore
+      .collection('users', (ref: CollectionReference) =>
+        ref.where('username', '==', newMemberUsername),
+      )
+      .get()
+      .toPromise();
+    if (snapshot.empty) {
+      return Promise.reject(`User (${newMemberUsername}) was not found`);
+    }
+    const newMemberId = snapshot.docs[0].id;
+    return this.updateBoardData({
+      membersIds: firestore.FieldValue.arrayUnion(newMemberId),
+    });
+  }
+
+  public removeMemberFromBoard(memberId: string): Promise<void> {
+    if (memberId === this.currUserId) {
+      this.router.navigateByUrl('/boards');
+    }
+    return this.updateBoardData({
+      membersIds: firestore.FieldValue.arrayRemove(memberId),
+    });
+  }
+
   public getBoardData(): Observable<Board> {
-    return this.currBoardDoc.snapshotChanges().pipe(map(this.getDocDataWithId));
+    let boardData;
+    return this.currBoardDoc.snapshotChanges().pipe(
+      map(this.getDocDataWithId),
+      switchMap((firestoreBoard: FirestoreBoard & { id: string }) => {
+        const { membersIds, ...board } = firestoreBoard;
+        boardData = board;
+        const members$: Observable<User>[] = membersIds.map((userId: string) =>
+          this.afStore
+            .doc<FirestoreUser>(`users/${userId}`)
+            .snapshotChanges()
+            .pipe(map(this.getDocDataWithId)),
+        );
+        return combineLatest(members$);
+      }),
+      map((members: User[]) => {
+        return { members, ...boardData };
+      }),
+    );
   }
 
   public async removeBoard(): Promise<void> {
@@ -98,6 +146,7 @@ export class TaskboardService {
   public createList(listTitle: string): Promise<firestore.DocumentReference> {
     return this.currBoardDoc.collection<FirestoreList>('lists').add({
       title: listTitle,
+      creatorId: this.currUserId,
       createdAt: firestore.Timestamp.now(),
     });
   }
@@ -112,8 +161,18 @@ export class TaskboardService {
       .update(data);
   }
 
-  public async removeList(listId: string): Promise<void> {
-    await this.removeAllListCards(listId);
+  public async removeList(
+    listId: string,
+    listCreatorId?: string,
+  ): Promise<string | void> {
+    if (listCreatorId !== this.currUserId) {
+      return Promise.reject(
+        'Only admin or creator have permission to delete this list.',
+      );
+    }
+    await this.removeAllListCards(listId).catch(() =>
+      Promise.reject("Can't delete list since it has other members cards."),
+    );
     return this.currBoardDoc
       .collection('lists')
       .doc(listId)
@@ -164,6 +223,7 @@ export class TaskboardService {
       .add({
         title,
         description: '',
+        creatorId: this.currUserId,
         createdAt: firestore.Timestamp.now(),
       });
   }
@@ -183,7 +243,14 @@ export class TaskboardService {
     return this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .doc(cardId)
-      .delete();
+      .delete()
+      .catch((err: firestore.FirestoreError) => {
+        if (err.code === 'permission-denied') {
+          return Promise.reject(
+            'Only admin or creator have permission to delete this card.',
+          );
+        }
+      });
   }
 
   // Additional methods
@@ -197,12 +264,21 @@ export class TaskboardService {
     }
   }
 
-  private async removeAllListCards(listId): Promise<void> {
+  private async removeAllListCards(listId: string): Promise<void> {
     const cardsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .ref.get();
-    for (const cardDocSnapshot of cardsQuerySnapshot.docs) {
-      await cardDocSnapshot.ref.delete();
+    const { docs } = cardsQuerySnapshot;
+    const hasPermissionToDelete = docs.every(
+      (cardSnapshot: firestore.QueryDocumentSnapshot) => {
+        const cardData: DocumentData = cardSnapshot.data();
+        return cardData['creatorId'] === this.currUserId;
+      },
+    );
+    if (!hasPermissionToDelete) return Promise.reject();
+    for (const cardDocSnapshot of docs) {
+      const cardToDeleteData = cardDocSnapshot.data();
+      // await cardDocSnapshot.ref.delete();
     }
   }
 

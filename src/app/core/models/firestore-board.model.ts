@@ -12,7 +12,7 @@ import { firestore } from 'firebase/app';
 export interface FirestoreBoard {
   title: string;
   adminId: string;
-  membersIds: string[];
+  membersIds: any;
   backgroundColor: string;
   createdAt: firestore.Timestamp;
 }

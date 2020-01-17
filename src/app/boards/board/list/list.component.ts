@@ -2,6 +2,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import { TaskboardService } from './../../../core/taskboard.service';
@@ -28,6 +29,7 @@ export class ListComponent implements OnInit {
   constructor(
     private taskboardService: TaskboardService,
     public dialog: MatDialog,
+    public snackBar: MatSnackBar,
   ) {}
 
   ngOnInit() {
@@ -95,9 +97,13 @@ export class ListComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((isConfirmed: boolean) => {
-        if (isConfirmed) {
-          this.taskboardService.removeList(this.list.id);
-        }
+        if (!isConfirmed) return;
+        const { id, creatorId } = this.list;
+        this.taskboardService
+          .removeList(id, creatorId)
+          .catch((errMsg: string) => {
+            this.snackBar.open(`❗${errMsg}❗`, 'OK');
+          });
       });
   }
 
