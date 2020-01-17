@@ -7,6 +7,7 @@ import {
   Action,
   DocumentSnapshot,
   CollectionReference,
+  DocumentData,
 } from '@angular/fire/firestore';
 import { Observable, of, combineLatest } from 'rxjs';
 import { switchMap, filter, map } from 'rxjs/operators';
@@ -145,6 +146,7 @@ export class TaskboardService {
   public createList(listTitle: string): Promise<firestore.DocumentReference> {
     return this.currBoardDoc.collection<FirestoreList>('lists').add({
       title: listTitle,
+      creatorId: this.currUserId,
       createdAt: firestore.Timestamp.now(),
     });
   }
@@ -159,8 +161,18 @@ export class TaskboardService {
       .update(data);
   }
 
-  public async removeList(listId: string): Promise<void> {
-    await this.removeAllListCards(listId);
+  public async removeList(
+    listId: string,
+    listCreatorId?: string,
+  ): Promise<string | void> {
+    if (listCreatorId !== this.currUserId) {
+      return Promise.reject(
+        'Only admin or creator have permission to delete this list.',
+      );
+    }
+    await this.removeAllListCards(listId).catch(() =>
+      Promise.reject("Can't delete list since it has other members cards."),
+    );
     return this.currBoardDoc
       .collection('lists')
       .doc(listId)
@@ -252,12 +264,21 @@ export class TaskboardService {
     }
   }
 
-  private async removeAllListCards(listId): Promise<void> {
+  private async removeAllListCards(listId: string): Promise<void> {
     const cardsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .ref.get();
-    for (const cardDocSnapshot of cardsQuerySnapshot.docs) {
-      await cardDocSnapshot.ref.delete();
+    const { docs } = cardsQuerySnapshot;
+    const hasPermissionToDelete = docs.every(
+      (cardSnapshot: firestore.QueryDocumentSnapshot) => {
+        const cardData: DocumentData = cardSnapshot.data();
+        return cardData['creatorId'] === this.currUserId;
+      },
+    );
+    if (!hasPermissionToDelete) return Promise.reject();
+    for (const cardDocSnapshot of docs) {
+      const cardToDeleteData = cardDocSnapshot.data();
+      // await cardDocSnapshot.ref.delete();
     }
   }
 
