@@ -1,4 +1,6 @@
-<app-header></app-header>
-<div class="root-wrapper" ngClass.xs="xs_root-wrapper">
-  <router-outlet></router-outlet>
+<div fxLayout="column" fxFlexFill>
+  <app-header *ngIf="!isAuthPage"></app-header>
+  <div fxFlex>
+    <router-outlet></router-outlet>
+  </div>
 </div>
