@@ -61,6 +61,7 @@ export class ListComponent implements OnInit {
       autoFocus: false,
       maxWidth: '95vw',
       width: '700px',
+      height: '95vh',
     });
   }
 
