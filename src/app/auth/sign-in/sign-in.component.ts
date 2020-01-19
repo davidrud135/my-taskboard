@@ -30,7 +30,7 @@ export class SignInComponent implements OnInit {
     this.route.data.subscribe((data: Data) => {
       this.titleService.setTitle(data['routeTitle']);
     });
-    this.onSuccessSignIn();
+    this.redirectOnSuccessfulLogin();
     this.signInForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       pass: new FormControl('', Validators.required),
@@ -47,20 +47,21 @@ export class SignInComponent implements OnInit {
     this.authService.signInWithGoogle().catch(this.showErrorSnackBar);
   }
 
-  onSuccessSignIn(): void {
+  redirectOnSuccessfulLogin(): void {
     this.authService.isAuthenticated().subscribe((isAuth: boolean) => {
       if (isAuth) {
         this.isLoading = false;
+        this.snackBar.dismiss();
         this.router.navigateByUrl('');
       }
     });
   }
 
-  // As a callback function
+  // tslint:disable: semicolon
   showErrorSnackBar = (errMsg: string) => {
     this.snackBar.open(errMsg, 'OK', {
       verticalPosition: 'top',
     });
     this.isLoading = false;
-  }
+  };
 }

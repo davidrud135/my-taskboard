@@ -31,7 +31,7 @@ export class SignUpComponent implements OnInit {
     this.route.data.subscribe((data: Data) => {
       this.titleService.setTitle(data['routeTitle']);
     });
-    this.onSuccessSignUp();
+    this.redirectOnSuccessfulRegistration();
     this.signUpForm = new FormGroup({
       fullName: new FormControl('', Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -54,20 +54,21 @@ export class SignUpComponent implements OnInit {
     this.authService.signInWithGoogle().catch(this.showErrorSnackBar);
   }
 
-  onSuccessSignUp(): void {
+  redirectOnSuccessfulRegistration(): void {
     this.authService.isAuthenticated().subscribe((isAuth: boolean) => {
       if (isAuth) {
         this.isLoading = false;
+        this.snackBar.dismiss();
         this.router.navigateByUrl('');
       }
     });
   }
 
-  // As a callback function
+  // tslint:disable: semicolon
   showErrorSnackBar = (errMsg: string): void => {
     this.snackBar.open(errMsg, 'OK', {
       verticalPosition: 'top',
     });
     this.isLoading = false;
-  }
+  };
 }
