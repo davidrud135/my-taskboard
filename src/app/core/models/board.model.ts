@@ -9,6 +9,7 @@ import { User } from './user.model';
  * @property {string} adminId - id of the board's creator.
  * @property {User[]} members - array of users who are members of the board.
  * @property {string} backgroundColor - background color of the board.
+ * @property {string[]} usersIdsWhoseBoardIsFavorite - list of user's ids who marked the board as favorite.
  * @property {firestore.Timestamp} createdAt - timestamp when the board was created.
  */
 export interface Board {
@@ -17,5 +18,6 @@ export interface Board {
   adminId: string;
   members: User[];
   backgroundColor: string;
+  usersIdsWhoseBoardIsFavorite: any;
   createdAt: firestore.Timestamp;
 }

@@ -185,6 +185,16 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.taskboardService.removeMemberFromBoard(memberId);
   }
 
+  changeBoardFavor(): void {
+    this.isUsersFavoriteBoard()
+      ? this.taskboardService.removeBoardFromFavorites()
+      : this.taskboardService.addBoardToFavorites();
+  }
+
+  isUsersFavoriteBoard(): boolean {
+    return this.board.usersIdsWhoseBoardIsFavorite.includes(this.currUser.id);
+  }
+
   // tslint:disable: semicolon
   newMemberValidator = (control: FormControl): object | null => {
     const controlValue = control.value;

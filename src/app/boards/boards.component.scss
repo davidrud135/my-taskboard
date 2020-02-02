@@ -5,7 +5,7 @@
   box-sizing: border-box;
 
   .header {
-    padding: 10px 5px;
+    padding: 10px 7px;
 
     .title {
       color: $darkBlueColor;
@@ -25,7 +25,7 @@
   .board-card {
     box-sizing: border-box;
     min-height: 80px;
-    margin: 0 5px 10px 5px;
+    margin: 0 7px 10px 7px;
     cursor: pointer;
     transition: all 0.3s ease;
     opacity: 1;

@@ -45,7 +45,7 @@ export class TaskboardService {
     this.currBoardDoc = this.afStore.doc<FirestoreBoard>(`boards/${boardId}`);
   }
 
-  public getPersonalBoards(): Observable<Board[]> {
+  public getPersonalBoards(): Observable<(FirestoreBoard & { id: string })[]> {
     return this.authService.getUser().pipe(
       switchMap((user: User) => {
         if (!user) {
@@ -55,6 +55,23 @@ export class TaskboardService {
           .collection<FirestoreBoard>('boards', (ref: CollectionReference) =>
             ref
               .where('membersIds', 'array-contains', user.id)
+              .orderBy('createdAt', 'desc'),
+          )
+          .valueChanges({ idField: 'id' });
+      }),
+    );
+  }
+
+  public getFavoriteBoards(): Observable<(FirestoreBoard & { id: string })[]> {
+    return this.authService.getUser().pipe(
+      switchMap((user: User) => {
+        if (!user) {
+          return of(null);
+        }
+        return this.afStore
+          .collection<FirestoreBoard>('boards', (ref: CollectionReference) =>
+            ref
+              .where('usersIdsWhoseBoardIsFavorite', 'array-contains', user.id)
               .orderBy('createdAt', 'desc'),
           )
           .valueChanges({ idField: 'id' });
@@ -72,6 +89,7 @@ export class TaskboardService {
       adminId: this.currUserId,
       membersIds: [this.currUserId],
       createdAt: firestore.Timestamp.now(),
+      usersIdsWhoseBoardIsFavorite: [],
     });
   }
 
@@ -159,6 +177,22 @@ export class TaskboardService {
       .collection('lists')
       .doc(listId)
       .update(data);
+  }
+
+  addBoardToFavorites(): Promise<void> {
+    return this.updateBoardData({
+      usersIdsWhoseBoardIsFavorite: firestore.FieldValue.arrayUnion(
+        this.currUserId,
+      ),
+    });
+  }
+
+  removeBoardFromFavorites(): Promise<void> {
+    return this.updateBoardData({
+      usersIdsWhoseBoardIsFavorite: firestore.FieldValue.arrayRemove(
+        this.currUserId,
+      ),
+    });
   }
 
   public async removeList(

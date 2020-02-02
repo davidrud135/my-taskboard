@@ -1,4 +1,44 @@
-<div class="boards-section" fxLayout="column">
+<section
+  class="boards-section"
+  fxLayout="column"
+  *ngIf="(favoriteBoards$ | async)?.length"
+>
+  <div class="header" fxLayout="row" fxLayoutAlign="start center">
+    <div
+      class="title"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      fxLayoutGap="5px"
+    >
+      <mat-icon>star</mat-icon>
+      <h4>Favorite Boards</h4>
+    </div>
+  </div>
+  <div
+    fxLayout="row wrap"
+    fxLayoutAlign="start center"
+    fxLayout.xs="column"
+    fxLayoutAlign.xs="center stretch"
+  >
+    <mat-card
+      *ngFor="let board of favoriteBoards$ | async"
+      class="board-card"
+      ngClass.xs="board-card-xs"
+      [ngStyle]="{ 'background-color': board.backgroundColor }"
+      fxFlex.sm="0 0 calc(25% - 14px)"
+      fxFlex.md="0 0 calc(20% - 14px)"
+      fxFlex.lg="0 0 calc(16.66% - 14px)"
+      fxFlex.xl="0 0 calc(10% - 14px)"
+      [routerLink]="[board.id]"
+    >
+      <mat-card-header>
+        <mat-card-title>{{ board.title }}</mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</section>
+
+<section class="boards-section" fxLayout="column">
   <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
     <div
       class="title"
@@ -45,11 +85,16 @@
         *ngFor="let board of personalBoards"
         class="board-card"
         ngClass.xs="board-card-xs"
+        matBadge="★"
+        matBadgeColor="accent"
+        [matBadgeHidden]="
+          !board.usersIdsWhoseBoardIsFavorite.includes((currUser$ | async)?.id)
+        "
         [ngStyle]="{ 'background-color': board.backgroundColor }"
-        fxFlex.sm="0 0 calc(25% - 10px)"
-        fxFlex.md="0 0 calc(20% - 10px)"
-        fxFlex.lg="0 0 calc(16.66% - 10px)"
-        fxFlex.xl="0 0 calc(10% - 10px)"
+        fxFlex.sm="0 0 calc(25% - 14px)"
+        fxFlex.md="0 0 calc(20% - 14px)"
+        fxFlex.lg="0 0 calc(16.66% - 14px)"
+        fxFlex.xl="0 0 calc(10% - 14px)"
         [routerLink]="[board.id]"
       >
         <mat-card-header>
@@ -66,5 +111,5 @@
       <mat-spinner></mat-spinner>
     </div>
   </ng-template>
-</div>
+</section>
 <router-outlet></router-outlet>

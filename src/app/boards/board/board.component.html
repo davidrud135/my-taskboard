@@ -19,6 +19,21 @@
         />
         <mat-divider [vertical]="true"></mat-divider>
         <div *ngIf="!mobileQuery.matches" fxLayout="row" fxLayoutGap="5px">
+          <button
+            mat-icon-button
+            color="accent"
+            (click)="changeBoardFavor()"
+            [matTooltip]="
+              isUsersFavoriteBoard()
+                ? 'Remove from favorites'
+                : 'Add to favorites'
+            "
+          >
+            <mat-icon>
+              {{ isUsersFavoriteBoard() ? 'start' : 'star_border' }}
+            </mat-icon>
+          </button>
+          <mat-divider [vertical]="true"></mat-divider>
           <div fxLayout="row">
             <div
               *ngFor="let member of board.members"
@@ -111,6 +126,18 @@
           <mat-list-item (click)="boardMenu.close(); openNewListTemplate()">
             <mat-icon matListIcon>add</mat-icon>
             <h3 matLine>Add List</h3>
+          </mat-list-item>
+          <mat-list-item (click)="changeBoardFavor()">
+            <mat-icon matListIcon>{{
+              isUsersFavoriteBoard() ? 'star' : 'star_border'
+            }}</mat-icon>
+            <h3 matLine>
+              {{
+                isUsersFavoriteBoard()
+                  ? 'Remove Board From Favorites'
+                  : 'Add Board To Favorites'
+              }}
+            </h3>
           </mat-list-item>
           <mat-list-item (click)="toggleBoardBackColorBlock()">
             <mat-icon matListIcon>color_lens</mat-icon>

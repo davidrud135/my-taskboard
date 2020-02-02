@@ -7,6 +7,7 @@ import { firestore } from 'firebase/app';
  * @property {string} adminId - id of user who created the board.
  * @property {string[]} membersIds - list of board members id.
  * @property {string} backgroundColor - background color of the board.
+ * @property {string[]} usersIdsWhoseBoardIsFavorite - list of user's ids who marked the board as favorite.
  * @property {firestore.Timestamp} createdAt - timestamp when the board was created.
  */
 export interface FirestoreBoard {
@@ -14,5 +15,6 @@ export interface FirestoreBoard {
   adminId: string;
   membersIds: any;
   backgroundColor: string;
+  usersIdsWhoseBoardIsFavorite: any;
   createdAt: firestore.Timestamp;
 }
