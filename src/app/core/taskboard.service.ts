@@ -258,6 +258,7 @@ export class TaskboardService {
         title,
         description: '',
         creatorId: this.currUserId,
+        usersIdsWhoVoted: [],
         createdAt: firestore.Timestamp.now(),
       });
   }

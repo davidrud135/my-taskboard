@@ -10,12 +10,15 @@ import {
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { firestore } from 'firebase/app';
+import { Subscription } from 'rxjs';
 
 import { TaskboardService } from './../../taskboard.service';
+import { AuthService } from './../../../auth/auth.service';
+import { User } from '../../models/user.model';
 import { Card } from './../../models/card.model';
 import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/removal-confirm-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface DialogData {
   cardId: string;
@@ -33,19 +36,30 @@ export class CardDialogComponent implements OnInit {
   cardTitleField: ElementRef;
   @ViewChild('cardDescriptionField', { static: false })
   cardDescriptionField: ElementRef;
-  card$: Observable<Card>;
+  card: Card;
+  currUser: User;
+  cardSub: Subscription;
+  userSub: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private cardDialogRef: MatDialogRef<CardDialogComponent>,
     private taskboardService: TaskboardService,
+    private authService: AuthService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
     const { listId, cardId } = this.data;
-    this.card$ = this.taskboardService.getCardData(listId, cardId);
+    this.cardSub = this.taskboardService
+      .getCardData(listId, cardId)
+      .subscribe((cardData: Card) => {
+        this.card = cardData;
+      });
+    this.userSub = this.authService.getUser().subscribe((user: User) => {
+      this.currUser = user;
+    });
   }
 
   onCardTitleEdit(oldCardTitle: string): void {
@@ -74,6 +88,16 @@ export class CardDialogComponent implements OnInit {
     });
   }
 
+  onVoteChange(vote: boolean): void {
+    const { listId, cardId } = this.data;
+    const { id } = this.currUser;
+    this.taskboardService.updateCardData(listId, cardId, {
+      usersIdsWhoVoted: vote
+        ? firestore.FieldValue.arrayUnion(id)
+        : firestore.FieldValue.arrayRemove(id),
+    });
+  }
+
   onCardRemove(cardId: string, cardTitle: string): void {
     this.dialog
       .open(RemovalConfirmDialogComponent, {
@@ -94,5 +118,10 @@ export class CardDialogComponent implements OnInit {
             this.snackBar.open(`❗${errMsg}❗`, 'OK');
           });
       });
+  }
+
+  ngOnDestroy(): void {
+    this.userSub.unsubscribe();
+    this.cardSub.unsubscribe();
   }
 }

@@ -1,5 +1,5 @@
 <div
-  *ngIf="card$ | async as card; else loadingCardData"
+  *ngIf="card; else loadingCardData"
   class="wrapper"
   fxLayout="row"
   fxLayout.lt-sm="column"
@@ -11,7 +11,7 @@
   <section
     class="card-content-section"
     fxLayout="column"
-    fxLayoutGap="30px"
+    fxLayoutGap="15px"
     fxFlex
   >
     <div fxLayout="column">
@@ -35,6 +35,17 @@
           <span class="card-list-title">{{ data.listTitle }}</span>
         </span>
       </div>
+    </div>
+
+    <div
+      *ngIf="card.usersIdsWhoVoted.length as votesAmount"
+      fxLayout="row"
+      class="content-block-header"
+      fxLayoutAlign="start center"
+    >
+      <mat-icon>thumb_up</mat-icon>
+      <span class="label">Votes:&nbsp;</span>
+      <span>{{ votesAmount }}</span>
     </div>
 
     <div fxLayout="column">
@@ -103,7 +114,20 @@
         <mat-icon>arrow_forward</mat-icon>
         <span>Move</span>
       </button>
-      <button mat-stroked-button disabled>
+      <button
+        *ngIf="card.usersIdsWhoVoted.includes(currUser?.id)"
+        mat-flat-button
+        color="primary"
+        (click)="onVoteChange(false)"
+      >
+        <mat-icon>thumb_up</mat-icon>
+        <span>Voted</span>
+      </button>
+      <button
+        *ngIf="!card.usersIdsWhoVoted.includes(currUser?.id)"
+        mat-stroked-button
+        (click)="onVoteChange(true)"
+      >
         <mat-icon>thumb_up</mat-icon>
         <span>Vote</span>
       </button>
@@ -120,5 +144,7 @@
   </section>
 </div>
 <ng-template #loadingCardData>
-  <mat-spinner></mat-spinner>
+  <div fxFlexFill fxLayout="row" fxLayoutAlign="center center">
+    <mat-spinner></mat-spinner>
+  </div>
 </ng-template>

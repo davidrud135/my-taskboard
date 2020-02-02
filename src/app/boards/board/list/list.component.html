@@ -28,11 +28,28 @@
     >
       <span class="title">{{ card.title }}</span>
       <div
-        *ngIf="card.description.length"
-        fxLayout="row"
         class="content-preview"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        fxLayoutGap="5px"
       >
-        <mat-icon>description</mat-icon>
+        <div
+          *ngIf="card.description.length"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+        >
+          <mat-icon>description</mat-icon>
+        </div>
+        <div
+          *ngIf="card.usersIdsWhoVoted.length as votesAmount"
+          class="votes"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          fxLayoutGap="5px"
+        >
+          <mat-icon>thumb_up</mat-icon>
+          <span>{{ votesAmount }}</span>
+        </div>
       </div>
     </mat-card>
 
