@@ -64,7 +64,7 @@ export class CardDialogComponent implements OnInit {
   onCardDescriptionEdit(oldCardDesc: string): void {
     const { nativeElement } = this.cardDescriptionField;
     const newCardDesc = nativeElement.value.trim();
-    if (!newCardDesc || oldCardDesc === newCardDesc) {
+    if (oldCardDesc === newCardDesc) {
       nativeElement.value = oldCardDesc;
       return;
     }
