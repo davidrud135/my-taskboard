@@ -51,6 +51,16 @@
       .title {
         word-wrap: break-word;
       }
+
+      .content-preview {
+        padding-top: 5px;
+
+        mat-icon {
+          font-size: 15px;
+          width: 15px;
+          height: 15px;
+        }
+      }
     }
 
     .card:hover {

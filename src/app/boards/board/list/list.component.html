@@ -27,6 +27,13 @@
       (click)="openCardDialog(card)"
     >
       <span class="title">{{ card.title }}</span>
+      <div
+        *ngIf="card.description.length"
+        fxLayout="row"
+        class="content-preview"
+      >
+        <mat-icon>description</mat-icon>
+      </div>
     </mat-card>
 
     <button
