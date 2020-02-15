@@ -31,11 +31,6 @@ import { RemovalConfirmDialogComponent } from './core/components/removal-confirm
     CardDialogComponent,
     RemovalConfirmDialogComponent,
   ],
-  entryComponents: [
-    CreateBoardDialogComponent,
-    CardDialogComponent,
-    RemovalConfirmDialogComponent,
-  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
