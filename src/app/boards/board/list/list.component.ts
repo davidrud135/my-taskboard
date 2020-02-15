@@ -22,7 +22,7 @@ export class ListComponent implements OnInit {
   cards$: Observable<Card[]>;
   listSortingStrategy$ = new BehaviorSubject<ListSorting>('asc');
   listTitleControl: FormControl;
-  @ViewChild('newCardTitleField', { static: false })
+  @ViewChild('newCardTitleField')
   newCardTitleField: ElementRef;
   isNewCardTemplateOpened = false;
 
