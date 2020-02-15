@@ -38,9 +38,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   board: Board;
   boardTitleControl: FormControl;
   newMemberNameControl: FormControl;
-  @ViewChild('newListTitleField', { static: false })
+  @ViewChild('newListTitleField')
   newListTitleField: ElementRef;
-  @ViewChild(MatMenuTrigger, { static: false })
+  @ViewChild(MatMenuTrigger)
   menuTrigger: MatMenuTrigger;
   lists$: Observable<List[]>;
   isNewListTemplateOpened = false;

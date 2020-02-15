@@ -32,9 +32,9 @@ interface DialogData {
   styleUrls: ['./card-dialog.component.scss'],
 })
 export class CardDialogComponent implements OnInit {
-  @ViewChild('cardTitleField', { static: false })
+  @ViewChild('cardTitleField')
   cardTitleField: ElementRef;
-  @ViewChild('cardDescriptionField', { static: false })
+  @ViewChild('cardDescriptionField')
   cardDescriptionField: ElementRef;
   card: Card;
   currUser: User;
