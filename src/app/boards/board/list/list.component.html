@@ -28,6 +28,9 @@
     >
       <span class="title">{{ card.title }}</span>
       <div
+        *ngIf="
+          card.description.length || card.usersIdsWhoVoted.length as votesAmount
+        "
         class="content-preview"
         fxLayout="row"
         fxLayoutAlign="start center"
@@ -41,7 +44,7 @@
           <mat-icon>description</mat-icon>
         </div>
         <div
-          *ngIf="card.usersIdsWhoVoted.length as votesAmount"
+          *ngIf="votesAmount"
           class="votes"
           fxLayout="row"
           fxLayoutAlign="start center"
