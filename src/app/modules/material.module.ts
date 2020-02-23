@@ -9,6 +9,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 const modules = [
   MatToolbarModule,
@@ -21,6 +23,8 @@ const modules = [
   MatTooltipModule,
   MatSnackBarModule,
   MatBadgeModule,
+  MatChipsModule,
+  MatCheckboxModule,
 ];
 
 @NgModule({
