@@ -225,44 +225,46 @@
 </mat-sidenav-container>
 
 <mat-menu #addMemberMenu="matMenu" class="add-member-menu">
-  <div fxLayout="column" fxLayoutGap="5px" (click)="$event.stopPropagation()">
-    <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
-      <span>Add Member To Board</span>
-      <button
-        mat-icon-button
-        (click)="newMemberNameControl.reset(); menuTrigger.closeMenu()"
-      >
-        <mat-icon>clear</mat-icon>
-      </button>
+  <ng-template matMenuContent>
+    <div fxLayout="column" fxLayoutGap="5px" (click)="$event.stopPropagation()">
+      <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+        <span>Add Member To Board</span>
+        <button
+          mat-icon-button
+          (click)="newMemberNameControl.reset(); menuTrigger.closeMenu()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="body" fxLayout="column">
+        <mat-form-field appearance="outline">
+          <mat-label>Write new member username</mat-label>
+          <input
+            matInput
+            placeholder="john123"
+            [formControl]="newMemberNameControl"
+            (keyup.enter)="onAddNewMember()"
+          />
+          <mat-error *ngIf="newMemberNameControl.hasError('emptyValue')">
+            Please, provide valid username.
+          </mat-error>
+          <mat-error *ngIf="newMemberNameControl.hasError('selfInvitation')">
+            You can't invite yourself.
+          </mat-error>
+          <mat-error *ngIf="newMemberNameControl.hasError('alreadyMember')">
+            This user is already a board member.
+          </mat-error>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onAddNewMember()"
+          [disabled]="newMemberNameControl.invalid"
+        >
+          Add Member
+        </button>
+      </div>
     </div>
-    <mat-divider></mat-divider>
-    <div class="body" fxLayout="column">
-      <mat-form-field appearance="outline">
-        <mat-label>Write new member username</mat-label>
-        <input
-          matInput
-          placeholder="john123"
-          [formControl]="newMemberNameControl"
-          (keyup.enter)="onAddNewMember()"
-        />
-        <mat-error *ngIf="newMemberNameControl.hasError('emptyValue')">
-          Please, provide valid username.
-        </mat-error>
-        <mat-error *ngIf="newMemberNameControl.hasError('selfInvitation')">
-          You can't invite yourself.
-        </mat-error>
-        <mat-error *ngIf="newMemberNameControl.hasError('alreadyMember')">
-          This user is already a board member.
-        </mat-error>
-      </mat-form-field>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="onAddNewMember()"
-        [disabled]="newMemberNameControl.invalid"
-      >
-        Add Member
-      </button>
-    </div>
-  </div>
+  </ng-template>
 </mat-menu>
