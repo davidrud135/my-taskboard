@@ -38,3 +38,16 @@ body {
   background-color: $darkerWhiteColor;
   border-radius: 5px;
 }
+
+.cdk-global-overlay-wrapper {
+  display: flex;
+  position: absolute;
+  z-index: 1000;
+  overflow: auto;
+  pointer-events: auto;
+
+  .mat-dialog-container {
+    margin: 20px 0;
+    overflow-x: hidden !important;
+  }
+}

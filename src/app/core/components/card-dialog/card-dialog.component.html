@@ -15,7 +15,11 @@
     fxFlex
   >
     <div fxLayout="column">
-      <div fxLayout="row" class="content-block-header">
+      <div
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        class="content-block-header"
+      >
         <mat-icon>short_text</mat-icon>
         <div class="card-title-field-wrapper" fxFlex>
           <textarea
@@ -131,10 +135,6 @@
 
     <p>Actions</p>
     <div fxLayout="column" fxLayoutGap="10px" fxLayout.lt-sm="row wrap">
-      <button mat-stroked-button disabled>
-        <mat-icon>file_copy</mat-icon>
-        <span>Copy</span>
-      </button>
       <button mat-stroked-button disabled>
         <mat-icon>arrow_forward</mat-icon>
         <span>Move</span>

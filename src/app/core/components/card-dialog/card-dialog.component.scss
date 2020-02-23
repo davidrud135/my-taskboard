@@ -48,7 +48,7 @@
     }
 
     .content-block-body {
-      padding-left: 30px;
+      padding: 5px 0 0 30px;
 
       .card-location-text {
         font-size: 12px;
@@ -64,8 +64,6 @@
       }
 
       .tags-list {
-        padding-top: 5px;
-
         mat-chip {
           min-width: calc(25% - 8px);
           max-width: calc(50% - 8px);
