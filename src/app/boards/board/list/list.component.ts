@@ -37,10 +37,7 @@ export class ListComponent implements OnInit {
       this.list.title,
       Validators.required,
     );
-    this.cards$ = this.taskboardService.getListCards(
-      this.list.id,
-      this.listSortingStrategy$,
-    );
+    this.cards$ = this.taskboardService.getListCards(this.list.id);
   }
 
   onEditListTitle(oldListTitle: string): void {

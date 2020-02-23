@@ -11,6 +11,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { firestore } from 'firebase/app';
 import { Subscription } from 'rxjs';
 
@@ -19,6 +20,7 @@ import { AuthService } from './../../../auth/auth.service';
 import { User } from '../../models/user.model';
 import { Card } from './../../models/card.model';
 import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/removal-confirm-dialog.component';
+import { Tag } from '../../models/tag.model';
 
 interface DialogData {
   cardId: string;
@@ -36,10 +38,14 @@ export class CardDialogComponent implements OnInit {
   cardTitleField: ElementRef;
   @ViewChild('cardDescriptionField')
   cardDescriptionField: ElementRef;
+  @ViewChild(MatMenuTrigger)
+  menuTrigger: MatMenuTrigger;
   card: Card;
   currUser: User;
+  boardTags: Tag[];
   cardSub: Subscription;
   userSub: Subscription;
+  boardTagsSub: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -54,12 +60,13 @@ export class CardDialogComponent implements OnInit {
     const { listId, cardId } = this.data;
     this.cardSub = this.taskboardService
       .getCardData(listId, cardId)
-      .subscribe((cardData: Card) => {
-        this.card = cardData;
-      });
-    this.userSub = this.authService.getUser().subscribe((user: User) => {
-      this.currUser = user;
-    });
+      .subscribe((cardData: Card) => (this.card = cardData));
+    this.userSub = this.authService
+      .getUser()
+      .subscribe((user: User) => (this.currUser = user));
+    this.boardTagsSub = this.taskboardService
+      .getBoardTags()
+      .subscribe((boardTags: Tag[]) => (this.boardTags = boardTags));
   }
 
   onCardTitleEdit(oldCardTitle: string): void {
@@ -118,6 +125,37 @@ export class CardDialogComponent implements OnInit {
             this.snackBar.open(`❗${errMsg}❗`, 'OK');
           });
       });
+  }
+
+  cardHasTag(tagId: string): boolean {
+    return this.card.tags.some((cardTag: Tag) => cardTag.id === tagId);
+  }
+
+  onTagNameEdit(oldName: string, newName: string, tagId: string): void {
+    if (oldName !== newName) {
+      this.taskboardService.updateBoardTagName(tagId, newName);
+    }
+  }
+
+  onTagStateChange(tagId: string): void {
+    if (this.cardHasTag(tagId)) {
+      return this.removeTagFromCard(tagId);
+    }
+    this.addTagToCard(tagId);
+  }
+
+  addTagToCard(tagId: string): void {
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      tagsIds: firestore.FieldValue.arrayUnion(tagId),
+    });
+  }
+
+  removeTagFromCard(tagId: string): void {
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      tagsIds: firestore.FieldValue.arrayRemove(tagId),
+    });
   }
 
   ngOnDestroy(): void {

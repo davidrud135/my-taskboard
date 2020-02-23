@@ -62,6 +62,26 @@
       .card-description-field {
         min-height: 50px;
       }
+
+      .tags-list {
+        padding-top: 5px;
+
+        mat-chip {
+          min-width: calc(25% - 8px);
+          max-width: calc(50% - 8px);
+          color: $whiteColor;
+          justify-content: space-between;
+
+          .tag-name {
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+
+          mat-icon {
+            color: $whiteColor;
+          }
+        }
+      }
     }
 
     .lt-sm_content-block-body {
@@ -77,6 +97,65 @@
     button {
       margin-bottom: 10px;
       width: calc(50% - 10px);
+    }
+  }
+}
+
+.tags-menu {
+  width: 250px;
+  padding: 0 5px;
+  position: relative;
+
+  .close-menu-btn {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    top: -2px;
+    right: 2px;
+
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+
+  .header {
+    padding: 5px;
+    color: $darkBlueColor;
+  }
+
+  .body {
+    .tip-text {
+      padding: 10px 0;
+      font-size: 12px;
+      color: grey;
+    }
+    .tag-row {
+      padding-left: 5px;
+
+      .tag-field {
+        height: 30px;
+        color: $whiteColor;
+        border: 0;
+        outline: 0;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 5px;
+        padding: 2px 5px;
+        text-overflow: ellipsis;
+
+        &:hover {
+          opacity: 0.8;
+          cursor: pointer;
+        }
+
+        &:focus {
+          background-color: transparent !important;
+          color: #000;
+          cursor: text;
+          opacity: 1;
+        }
+      }
     }
   }
 }

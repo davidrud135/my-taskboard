@@ -48,6 +48,31 @@
       <span>{{ votesAmount }}</span>
     </div>
 
+    <div *ngIf="card.tags.length" fxLayout="column">
+      <div
+        fxLayout="row"
+        class="content-block-header"
+        fxLayoutAlign="start center"
+      >
+        <mat-icon>label</mat-icon>
+        <span class="label">Tags</span>
+      </div>
+      <div class="content-block-body">
+        <div class="tags-list">
+          <mat-chip-list>
+            <mat-chip
+              *ngFor="let tag of card.tags"
+              (removed)="removeTagFromCard(tag.id)"
+              [ngStyle]="{ 'background-color': tag.color }"
+            >
+              <span class="tag-name">{{ tag.name }}</span>
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-list>
+        </div>
+      </div>
+    </div>
+
     <div fxLayout="column">
       <div
         fxLayout="row"
@@ -90,7 +115,7 @@
         <mat-icon>people</mat-icon>
         <span>Members</span>
       </button>
-      <button mat-stroked-button disabled>
+      <button mat-stroked-button [matMenuTriggerFor]="tagsMenu">
         <mat-icon>label</mat-icon>
         <span>Tag</span>
       </button>
@@ -148,3 +173,56 @@
     <mat-spinner></mat-spinner>
   </div>
 </ng-template>
+
+<mat-menu #tagsMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <div fxLayout="column" class="tags-menu" (click)="$event.stopPropagation()">
+      <button
+        mat-icon-button
+        class="close-menu-btn"
+        (click)="menuTrigger.closeMenu()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+      <div class="header">
+        <span>Tags</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div fxLayout="column" class="body">
+        <span class="tip-text">Click on tag to modify its name.</span>
+        <div fxLayout="column" fxLayoutGap="5px">
+          <div
+            *ngFor="let boardTag of boardTags"
+            class="tag-row"
+            fxLayoutAlign="start center"
+            fxLayoutGap="10px"
+          >
+            <mat-checkbox
+              [checked]="cardHasTag(boardTag.id)"
+              onEditBoardTitle
+              (change)="onTagStateChange(boardTag.id)"
+            ></mat-checkbox>
+            <input
+              type="text"
+              class="tag-field"
+              [value]="boardTag.name"
+              [ngStyle]="{
+                'background-color': boardTag.color,
+                'border-color': boardTag.color
+              }"
+              (keyup.enter)="$event.target.blur()"
+              (focusout)="
+                onTagNameEdit(
+                  boardTag.name,
+                  $event.target.value.trim(),
+                  boardTag.id
+                )
+              "
+              fxFlex
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</mat-menu>

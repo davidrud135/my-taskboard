@@ -22,6 +22,9 @@ import { FirestoreCard } from './models/firestore-card.model';
 import { Card } from './models/card.model';
 import { ListSorting } from './models/list-sorting.model';
 import { FirestoreUser } from './models/firestore-user.model';
+import { FirestoreTag } from './models/firestore-tag.model';
+import { Tag } from './models/tag.model';
+import { BoardBackColor } from './models/board-back-color.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {
@@ -79,18 +82,27 @@ export class TaskboardService {
     );
   }
 
-  public createBoard(
+  public async createBoard(
     title: string,
     backgroundColor: string,
   ): Promise<firestore.DocumentReference> {
-    return this.afStore.collection<FirestoreBoard>('boards').add({
-      title,
-      backgroundColor,
-      adminId: this.currUserId,
-      membersIds: [this.currUserId],
-      createdAt: firestore.Timestamp.now(),
-      usersIdsWhoseBoardIsFavorite: [],
+    const boardDoc = await this.afStore
+      .collection<FirestoreBoard>('boards')
+      .add({
+        title,
+        backgroundColor,
+        adminId: this.currUserId,
+        membersIds: [this.currUserId],
+        createdAt: firestore.Timestamp.now(),
+        usersIdsWhoseBoardIsFavorite: [],
+      });
+    Object.values(BoardBackColor).forEach((color: string) => {
+      boardDoc.collection('tags').add({
+        color,
+        name: '',
+      });
     });
+    return boardDoc;
   }
 
   public updateBoardData(data: Partial<FirestoreBoard>): Promise<void> {
@@ -143,6 +155,21 @@ export class TaskboardService {
         return { members, ...boardData };
       }),
     );
+  }
+
+  public getBoardTags(): Observable<Tag[]> {
+    return this.currBoardDoc
+      .collection<FirestoreTag>('tags')
+      .valueChanges({ idField: 'id' });
+  }
+
+  public updateBoardTagName(tagId: string, newTagName: string): Promise<void> {
+    return this.currBoardDoc
+      .collection('tags')
+      .doc<FirestoreTag>(tagId)
+      .update({
+        name: newTagName,
+      });
   }
 
   public async removeBoard(): Promise<void> {
@@ -216,37 +243,69 @@ export class TaskboardService {
   // Card methods
 
   public getCardData(listId: string, cardId: string): Observable<Card> {
+    let cardData: any;
     return this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .doc<FirestoreCard>(cardId)
       .snapshotChanges()
-      .pipe(map(this.getDocDataWithId));
+      .pipe(
+        map(this.getDocDataWithId),
+        switchMap((firestoreCard: any) => {
+          const { tagsIds, ...card } = firestoreCard;
+          cardData = card;
+          const tags$: Observable<Tag>[] = tagsIds.map((tagId: string) => {
+            return this.currBoardDoc
+              .collection('tags')
+              .doc<FirestoreTag>(tagId)
+              .snapshotChanges()
+              .pipe(map(this.getDocDataWithId));
+          });
+          return tags$.length ? combineLatest(tags$) : of([]);
+        }),
+        map((tags: Tag[]) => {
+          return { tags, ...cardData };
+        }),
+      );
   }
 
-  public getListCards(
-    listId: string,
-    listSortingStrategy$: Observable<ListSorting>,
-  ): Observable<Card[]> {
-    return listSortingStrategy$.pipe(
-      switchMap((sorting: ListSorting) => {
-        return this.currBoardDoc
-          .collection<FirestoreCard>(
-            `lists/${listId}/cards`,
-            (ref: CollectionReference) => {
-              switch (sorting) {
-                case 'asc':
-                  return ref.orderBy('createdAt');
-                case 'desc':
-                  return ref.orderBy('createdAt', 'desc');
-                default:
-                  return ref.orderBy('title');
-              }
-            },
-          )
-          .valueChanges({ idField: 'id' });
-      }),
-    );
+  public getListCards(listId: string): Observable<Card[]> {
+    return this.currBoardDoc
+      .collection<FirestoreCard>(`lists/${listId}/cards`)
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        switchMap((cards: (FirestoreCard & { id: string })[]) => {
+          const cards$ = cards.map((card: FirestoreCard & { id: string }) =>
+            this.getCardData(listId, card.id),
+          );
+          return cards$.length ? combineLatest(cards$) : of([]);
+        }),
+      );
   }
+
+  // public getListCards(
+  //   listId: string,
+  //   listSortingStrategy$: Observable<ListSorting>,
+  // ): Observable<(FirestoreCard & { id: string })[]> {
+  //   return listSortingStrategy$.pipe(
+  //     switchMap((sorting: ListSorting) => {
+  //       return this.currBoardDoc
+  //         .collection<FirestoreCard>(
+  //           `lists/${listId}/cards`,
+  //           (ref: CollectionReference) => {
+  //             switch (sorting) {
+  //               case 'asc':
+  //                 return ref.orderBy('createdAt');
+  //               case 'desc':
+  //                 return ref.orderBy('createdAt', 'desc');
+  //               default:
+  //                 return ref.orderBy('title');
+  //             }
+  //           },
+  //         )
+  //         .valueChanges({ idField: 'id' });
+  //     }),
+  //   );
+  // }
 
   public createCard(
     listId: string,
@@ -259,6 +318,7 @@ export class TaskboardService {
         description: '',
         creatorId: this.currUserId,
         usersIdsWhoVoted: [],
+        tagsIds: [],
         createdAt: firestore.Timestamp.now(),
       });
   }

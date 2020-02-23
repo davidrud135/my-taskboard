@@ -26,6 +26,20 @@
       class="card"
       (click)="openCardDialog(card)"
     >
+      <div
+        *ngIf="card.tags.length"
+        fxLayout="row wrap"
+        class="card-tags-preview"
+      >
+        <div
+          *ngFor="let tag of card.tags"
+          fxLayoutAlign="start center"
+          class="card-tag"
+          [ngStyle]="{ 'background-color': tag.color }"
+        >
+          <span>{{ tag.name }}</span>
+        </div>
+      </div>
       <span class="title">{{ card.title }}</span>
       <div
         *ngIf="card.description.length || card.usersIdsWhoVoted.length"
@@ -88,7 +102,7 @@
       <mat-icon>add</mat-icon>
       <span>Add Card</span>
     </button>
-    <button mat-menu-item [matMenuTriggerFor]="listSortingSubmenu">
+    <button mat-menu-item [matMenuTriggerFor]="listSortingSubmenu" disabled>
       <mat-icon>sort</mat-icon>
       <span>Sort List</span>
     </button>
@@ -104,13 +118,15 @@
 </mat-menu>
 
 <mat-menu #listSortingSubmenu="matMenu">
-  <button mat-menu-item (click)="onListSort('asc')">
-    Ascending (Oldest First)
-  </button>
-  <button mat-menu-item (click)="onListSort('desc')">
-    Descending (Newest First)
-  </button>
-  <button mat-menu-item (click)="onListSort('alphabet')">
-    Card Title (Alphabetically)
-  </button>
+  <ng-template matMenuContent>
+    <button mat-menu-item (click)="onListSort('asc')">
+      Ascending (Oldest First)
+    </button>
+    <button mat-menu-item (click)="onListSort('desc')">
+      Descending (Newest First)
+    </button>
+    <button mat-menu-item (click)="onListSort('alphabet')">
+      Card Title (Alphabetically)
+    </button>
+  </ng-template>
 </mat-menu>
