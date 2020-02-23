@@ -171,7 +171,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     const newMemberUsername = this.newMemberNameControl.value.trim();
     this.taskboardService
       .addMemberToBoard(newMemberUsername)
-      .then(() => this.menuTrigger.closeMenu())
+      .then(() => {
+        this.newMemberNameControl.reset();
+        this.menuTrigger.closeMenu();
+      })
       .catch((errMsg: string) => {
         this.snackBar.open(`⚠️${errMsg}⚠️`, 'OK', {
           duration: 7000,
