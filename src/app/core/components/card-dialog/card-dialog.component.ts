@@ -12,6 +12,7 @@ import {
 } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { firestore } from 'firebase/app';
 import { Subscription } from 'rxjs';
 
@@ -21,6 +22,7 @@ import { User } from '../../models/user.model';
 import { Card } from './../../models/card.model';
 import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/removal-confirm-dialog.component';
 import { Tag } from '../../models/tag.model';
+import { CardAttachment } from './../../models/card-attachment.model';
 
 interface DialogData {
   cardId: string;
@@ -38,11 +40,15 @@ export class CardDialogComponent implements OnInit {
   cardTitleField: ElementRef;
   @ViewChild('cardDescriptionField')
   cardDescriptionField: ElementRef;
-  @ViewChild(MatMenuTrigger)
-  menuTrigger: MatMenuTrigger;
+  @ViewChild('tagsMenuTrigger')
+  tagsMenuTrigger: MatMenuTrigger;
+  @ViewChild('attachmentMenuTrigger')
+  attachmentMenuTrigger: MatMenuTrigger;
   card: Card;
   currUser: User;
   boardTags: Tag[];
+  isDropAreaHovered: boolean;
+  filesToUpload: File[] = [];
   cardSub: Subscription;
   userSub: Subscription;
   boardTagsSub: Subscription;
@@ -52,6 +58,7 @@ export class CardDialogComponent implements OnInit {
     private cardDialogRef: MatDialogRef<CardDialogComponent>,
     private taskboardService: TaskboardService,
     private authService: AuthService,
+    private afStorage: AngularFireStorage,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
   ) {}
@@ -156,6 +163,62 @@ export class CardDialogComponent implements OnInit {
     this.taskboardService.updateCardData(listId, cardId, {
       tagsIds: firestore.FieldValue.arrayRemove(tagId),
     });
+  }
+
+  onFilesUpload(files: FileList): void {
+    this.attachmentMenuTrigger.closeMenu();
+    for (let i = 0; i < files.length; i += 1) {
+      const file = files[i];
+      this.filesToUpload.push(file);
+    }
+  }
+
+  onFileUploaded(attachment: CardAttachment, index: number): void {
+    this.filesToUpload.splice(index, 1);
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      attachments: firestore.FieldValue.arrayUnion(attachment),
+    });
+  }
+
+  toggleDropAreaHover(event: boolean): void {
+    this.isDropAreaHovered = event;
+  }
+
+  attachmentIsImage(attachment: CardAttachment): boolean {
+    return attachment.type.includes('image');
+  }
+
+  getReadableAttachmentSize(attachment: CardAttachment): string {
+    const megabyteSize = 1000000;
+    const kilobyteSize = 1000;
+    const { size } = attachment;
+    if (size >= megabyteSize) {
+      const sizeInMegabytes = (size / megabyteSize).toFixed(1);
+      return `${sizeInMegabytes} MB`;
+    }
+    const sizeInKilobytes = (size / kilobyteSize).toFixed(1);
+    return `${sizeInKilobytes} KB`;
+  }
+
+  getReadableAttachmentTimestamp(attachment: CardAttachment): string {
+    const formattingOptions = {
+      day: 'numeric',
+      month: 'long',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    return attachment.attachedAt
+      .toDate()
+      .toLocaleDateString('en-US', formattingOptions);
+  }
+
+  removeCardAttachment(attachment: CardAttachment) {
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      attachments: firestore.FieldValue.arrayRemove(attachment),
+    });
+    this.afStorage.storage.refFromURL(attachment.url).delete();
   }
 
   ngOnDestroy(): void {

@@ -80,10 +80,71 @@
           }
         }
       }
+
+      .attachments-list {
+        .attachment-card {
+          $previewBlockHeight: 120px;
+
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          width: 41%;
+          margin-bottom: 10px;
+
+          &:hover {
+            box-shadow: 0 5px 10px 0 rgba($primaryColor, 0.4);
+          }
+
+          a {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: lightgrey;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: $primaryColor;
+            text-decoration: none;
+            text-transform: uppercase;
+            height: $previewBlockHeight;
+
+            .preview-wrapper {
+              position: relative;
+              width: 100%;
+              height: 100%;
+
+              img,
+              span {
+                object-fit: scale-down;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                max-height: $previewBlockHeight;
+              }
+            }
+          }
+
+          mat-card-content {
+            font-size: 0.8rem;
+            word-break: break-word;
+            padding-top: $previewBlockHeight - 5px;
+            margin-bottom: 5px;
+          }
+
+          mat-card-actions {
+            padding: 0;
+          }
+        }
+
+        .xs_attachment-card {
+          width: 80%;
+        }
+      }
     }
 
     .lt-sm_content-block-body {
-      padding: 0;
+      padding-left: 0;
     }
   }
 
@@ -99,7 +160,7 @@
   }
 }
 
-.tags-menu {
+.card-action-menu {
   width: 250px;
   padding: 0 5px;
   position: relative;
@@ -122,36 +183,57 @@
     color: $darkBlueColor;
   }
 
-  .body {
-    .tip-text {
-      padding: 10px 0;
+  &.tags-menu {
+    .body {
+      .tip-text {
+        padding: 10px 0;
+        font-size: 12px;
+        color: grey;
+      }
+      .tag-row {
+        padding-left: 5px;
+
+        .tag-field {
+          height: 30px;
+          color: $whiteColor;
+          border: 0;
+          outline: 0;
+          border-width: 1px;
+          border-style: solid;
+          border-radius: 5px;
+          padding: 2px 5px;
+          text-overflow: ellipsis;
+
+          &:hover {
+            opacity: 0.8;
+            cursor: pointer;
+          }
+
+          &:focus {
+            background-color: transparent !important;
+            color: #000;
+            cursor: text;
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
+  &.attachment-menu {
+    .body {
+      height: 150px;
+      padding-top: 5px;
       font-size: 12px;
       color: grey;
-    }
-    .tag-row {
-      padding-left: 5px;
 
-      .tag-field {
-        height: 30px;
-        color: $whiteColor;
-        border: 0;
-        outline: 0;
-        border-width: 1px;
-        border-style: solid;
+      .drop-area {
+        border: 2px dashed $primaryColor;
         border-radius: 5px;
-        padding: 2px 5px;
-        text-overflow: ellipsis;
 
-        &:hover {
-          opacity: 0.8;
-          cursor: pointer;
-        }
-
-        &:focus {
-          background-color: transparent !important;
-          color: #000;
-          cursor: text;
-          opacity: 1;
+        &.hovered {
+          border-style: solid;
+          color: $primaryColor;
         }
       }
     }
