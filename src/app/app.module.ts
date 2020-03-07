@@ -19,6 +19,7 @@ import { BoardComponent } from './boards/board/board.component';
 import { ListComponent } from './boards/board/list/list.component';
 import { CardDialogComponent } from './core/components/card-dialog/card-dialog.component';
 import { RemovalConfirmDialogComponent } from './core/components/removal-confirm-dialog/removal-confirm-dialog.component';
+import { DropAreaDirective } from './utils/drop-area.directive';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { RemovalConfirmDialogComponent } from './core/components/removal-confirm
     ListComponent,
     CardDialogComponent,
     RemovalConfirmDialogComponent,
+    DropAreaDirective,
   ],
   imports: [
     BrowserModule,
