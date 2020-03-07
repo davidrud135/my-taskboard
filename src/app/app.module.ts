@@ -19,6 +19,7 @@ import { BoardComponent } from './boards/board/board.component';
 import { ListComponent } from './boards/board/list/list.component';
 import { CardDialogComponent } from './core/components/card-dialog/card-dialog.component';
 import { RemovalConfirmDialogComponent } from './core/components/removal-confirm-dialog/removal-confirm-dialog.component';
+import { CardFileUploadComponent } from './core/components/card-file-upload/card-file-upload.component';
 import { DropAreaDirective } from './utils/drop-area.directive';
 
 @NgModule({
@@ -31,6 +32,7 @@ import { DropAreaDirective } from './utils/drop-area.directive';
     ListComponent,
     CardDialogComponent,
     RemovalConfirmDialogComponent,
+    CardFileUploadComponent,
     DropAreaDirective,
   ],
   imports: [
