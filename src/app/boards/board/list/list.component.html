@@ -42,7 +42,11 @@
       </div>
       <span class="title">{{ card.title }}</span>
       <div
-        *ngIf="card.description.length || card.usersIdsWhoVoted.length"
+        *ngIf="
+          card.description.length ||
+          card.usersIdsWhoVoted.length ||
+          card.attachments.length
+        "
         class="content-preview"
         fxLayout="row"
         fxLayoutAlign="start center"
@@ -57,13 +61,23 @@
         </div>
         <div
           *ngIf="card.usersIdsWhoVoted.length as votesAmount"
-          class="votes"
+          class="highlighted"
           fxLayout="row"
           fxLayoutAlign="start center"
           fxLayoutGap="5px"
         >
           <mat-icon>thumb_up</mat-icon>
           <span>{{ votesAmount }}</span>
+        </div>
+        <div
+          *ngIf="card.attachments.length as attachmentsAmount"
+          class="highlighted"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          fxLayoutGap="3px"
+        >
+          <mat-icon>attach_file</mat-icon>
+          <span>{{ attachmentsAmount }}</span>
         </div>
       </div>
     </mat-card>

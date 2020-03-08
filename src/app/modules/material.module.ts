@@ -11,6 +11,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 const modules = [
   MatToolbarModule,
@@ -25,6 +26,7 @@ const modules = [
   MatBadgeModule,
   MatChipsModule,
   MatCheckboxModule,
+  MatProgressBarModule,
 ];
 
 @NgModule({

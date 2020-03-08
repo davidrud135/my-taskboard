@@ -57,7 +57,7 @@
           max-width: calc(100% - 5px);
           color: $whiteColor;
           border-radius: 5px;
-          padding: 1px 3px;
+          padding: 1px 4px;
 
           span {
             font-weight: 500;
@@ -80,10 +80,10 @@
           height: 14px;
         }
 
-        .votes {
+        .highlighted {
           font-size: 14px;
           background-color: $darkerWhiteColor;
-          padding: 2px;
+          padding: 1px 4px;
           border-radius: 5px;
         }
       }

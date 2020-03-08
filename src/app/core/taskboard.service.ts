@@ -20,7 +20,6 @@ import { User } from './models/user.model';
 import { List } from './models/list.model';
 import { FirestoreCard } from './models/firestore-card.model';
 import { Card } from './models/card.model';
-import { ListSorting } from './models/list-sorting.model';
 import { FirestoreUser } from './models/firestore-user.model';
 import { FirestoreTag } from './models/firestore-tag.model';
 import { Tag } from './models/tag.model';
@@ -319,6 +318,7 @@ export class TaskboardService {
         creatorId: this.currUserId,
         usersIdsWhoVoted: [],
         tagsIds: [],
+        attachments: [],
         createdAt: firestore.Timestamp.now(),
       });
   }
