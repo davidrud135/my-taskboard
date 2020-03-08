@@ -12,6 +12,7 @@ import { CardAttachment } from './card-attachment.model';
  * @property {string[]} usersIdsWhoVoted - array of user's ids who have voted for the card.
  * @property {Tag[]} tagsIds - array of card's tags.
  * @property {CardAttachment[]} attachments - array of card's attachments.
+ * @property {string} wallpaperURL - card's wallpaper URL.
  * @property {firestore.Timestamp} createdAt - timestamp when card was created.
  */
 export interface Card {
@@ -22,5 +23,6 @@ export interface Card {
   usersIdsWhoVoted: string[];
   tags: Tag[];
   attachments: CardAttachment[];
+  wallpaperURL: string;
   createdAt: firestore.Timestamp;
 }

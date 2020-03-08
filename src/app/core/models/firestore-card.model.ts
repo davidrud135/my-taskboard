@@ -9,6 +9,7 @@ import { firestore } from 'firebase/app';
  * @property {string[]} usersIdsWhoVoted - array of user's ids who have voted for the card.
  * @property {string[]} tagsIds - array of card tag's ids.
  * @property {CardAttachment[]} attachments - array of card's attachments.
+ * @property {string} wallpaperURL - card's wallpaper URL.
  * @property {firestore.Timestamp} createdAt - timestamp when card was created.
  */
 export interface FirestoreCard {
@@ -18,5 +19,6 @@ export interface FirestoreCard {
   usersIdsWhoVoted: any;
   tagsIds: any;
   attachments: any;
+  wallpaperURL: string;
   createdAt: firestore.Timestamp;
 }
