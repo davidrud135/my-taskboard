@@ -48,6 +48,18 @@
     .card {
       padding: 10px;
 
+      .wallpaper-preview-wrapper {
+        margin: -10px -10px 5px -10px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          object-fit: scale-down;
+        }
+      }
+
       .card-tags-preview {
         .card-tag {
           margin: 0 5px 5px 0;

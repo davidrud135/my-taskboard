@@ -319,6 +319,7 @@ export class TaskboardService {
         usersIdsWhoVoted: [],
         tagsIds: [],
         attachments: [],
+        wallpaperURL: '',
         createdAt: firestore.Timestamp.now(),
       });
   }
