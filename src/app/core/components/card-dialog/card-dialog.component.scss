@@ -1,8 +1,29 @@
 @import '../../../../scss/variables.scss';
+$dialogPadding: 24;
+$cardWallpaperHeight: 200;
 
 .wrapper {
   position: relative;
   color: $darkBlueColor;
+
+  .card-wallpaper-wrapper {
+    position: absolute;
+    top: -$dialogPadding * 1px;
+    left: -$dialogPadding * 1px;
+    width: calc(100% + #{$dialogPadding * 2}px);
+    height: $cardWallpaperHeight * 1px;
+    display: flex;
+    justify-content: center;
+    background-color: darkturquoise;
+
+    &:hover {
+      background-color: darken(darkturquoise, 5%);
+    }
+
+    img {
+      object-fit: scale-down;
+    }
+  }
 
   button[mat-icon-button][mat-dialog-close] {
     position: absolute;
@@ -13,6 +34,10 @@
 
   .card-content-section {
     padding-right: 15px;
+
+    &.card-with-wallpaper {
+      padding-top: $cardWallpaperHeight - 15 * 1px;
+    }
 
     .content-block-header {
       min-height: 25px;
@@ -150,6 +175,10 @@
 
   .card-panel {
     padding-top: 20px;
+
+    &.card-with-wallpaper {
+      padding-top: $cardWallpaperHeight - 25 * 1px;
+    }
   }
 
   .lt-sm_card-panel {
@@ -236,6 +265,53 @@
           color: $primaryColor;
         }
       }
+    }
+  }
+
+  &.wallpaper-menu {
+    .body {
+      .image-attachments-list {
+        height: 180px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 5px;
+        margin-bottom: 5px;
+
+        &::-webkit-scrollbar-thumb {
+          background-color: $primaryColor;
+        }
+
+        .image-attachment {
+          display: flex;
+          width: 48%;
+          background-color: lightgrey;
+          border-radius: 4px;
+          height: 80px;
+          margin-bottom: 5px;
+
+          img {
+            object-fit: scale-down;
+            width: 100%;
+          }
+
+          &.current-wallpaper {
+            box-shadow: 0 0 0 2px $primaryColor;
+          }
+
+          &:hover {
+            opacity: 0.8;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .no-image-attachments-block {
+      height: 150px;
+      font-size: 12px;
+      color: grey;
     }
   }
 }

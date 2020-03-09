@@ -4,12 +4,22 @@
   fxLayout="row"
   fxLayout.lt-sm="column"
 >
+  <a
+    *ngIf="card.wallpaperURL as wallpaperURL"
+    [href]="wallpaperURL"
+    target="_blank"
+    class="card-wallpaper-wrapper"
+  >
+    <img [src]="wallpaperURL" />
+  </a>
+
   <button mat-icon-button mat-dialog-close>
     <mat-icon>clear</mat-icon>
   </button>
 
   <section
     class="card-content-section"
+    [ngClass]="{ 'card-with-wallpaper': card.wallpaperURL }"
     fxLayout="column"
     fxLayoutGap="15px"
     fxFlex
@@ -168,13 +178,19 @@
             <mat-card-actions fxLayoutAlign="space-between center">
               <button
                 mat-button
-                color="primary"
+                [color]="attachmentIsWallpaper(attachment) ? 'warn' : 'primary'"
                 [style.visibility]="
                   attachmentIsImage(attachment) ? 'visible' : 'hidden'
                 "
-                disabled
+                (click)="onSetCardWallpaper(attachment)"
               >
-                <span>Set Wallpaper</span>
+                <span>
+                  {{
+                    attachmentIsWallpaper(attachment)
+                      ? 'Remove Wallpaper'
+                      : 'Set Wallpaper'
+                  }}</span
+                >
               </button>
               <button
                 mat-icon-button
@@ -194,6 +210,7 @@
 
   <section
     class="card-panel"
+    [ngClass]="{ 'card-with-wallpaper': card.wallpaperURL }"
     ngClass.lt-sm="lt-sm_card-panel"
     fxFlex.gt-sm="20%"
     fxLayout="column"
@@ -216,6 +233,14 @@
       >
         <mat-icon>attachment</mat-icon>
         <span>Attachment</span>
+      </button>
+      <button
+        mat-stroked-button
+        [matMenuTriggerFor]="wallpaperMenu"
+        #wallpaperMenuTrigger="matMenuTrigger"
+      >
+        <mat-icon>wallpaper</mat-icon>
+        <span>Wallpaper</span>
       </button>
     </div>
 
@@ -356,6 +381,77 @@
           />
         </div>
       </div>
+    </div>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #wallpaperMenu="matMenu">
+  <ng-template matMenuContent>
+    <div
+      fxLayout="column"
+      class="card-action-menu wallpaper-menu"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        mat-icon-button
+        class="close-menu-btn"
+        (click)="wallpaperMenuTrigger.closeMenu()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+      <div class="header">
+        <span>Wallpaper</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div
+        *ngIf="getImageAttachments().length; else noImageAttachments"
+        fxLayout="column"
+        class="body"
+      >
+        <div class="image-attachments-list thin-scrollbar" fxLayout="row wrap">
+          <div
+            *ngFor="let imageAttachment of getImageAttachments()"
+            class="image-attachment"
+            [ngClass]="{
+              'current-wallpaper': imageAttachment.url === card.wallpaperURL
+            }"
+            (click)="onSetCardWallpaper(imageAttachment)"
+          >
+            <img [src]="imageAttachment.url" [alt]="imageAttachment.name" />
+          </div>
+        </div>
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="onWallpaperRemove()"
+          [disabled]="!card.wallpaperURL"
+        >
+          Remove Wallpaper
+        </button>
+      </div>
+      <ng-template #noImageAttachments>
+        <div
+          fxLayout="column"
+          fxLayoutAlign="center center"
+          class="no-image-attachments-block"
+        >
+          <span>You don't have any image attachments.</span>
+          <span
+            >Try to
+            <button
+              mat-button
+              color="primary"
+              (click)="
+                wallpaperMenuTrigger.closeMenu();
+                attachmentMenuTrigger.openMenu()
+              "
+            >
+              Add Attachment
+            </button>
+            first.
+          </span>
+        </div>
+      </ng-template>
     </div>
   </ng-template>
 </mat-menu>

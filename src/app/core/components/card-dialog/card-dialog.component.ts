@@ -44,6 +44,8 @@ export class CardDialogComponent implements OnInit {
   tagsMenuTrigger: MatMenuTrigger;
   @ViewChild('attachmentMenuTrigger')
   attachmentMenuTrigger: MatMenuTrigger;
+  @ViewChild('wallpaperMenuTrigger')
+  wallpaperMenuTrigger: MatMenuTrigger;
   card: Card;
   currUser: User;
   boardTags: Tag[];
@@ -189,6 +191,14 @@ export class CardDialogComponent implements OnInit {
     return attachment.type.includes('image');
   }
 
+  attachmentIsWallpaper(attachment: CardAttachment): boolean {
+    return this.card.wallpaperURL === attachment.url;
+  }
+
+  getImageAttachments(): CardAttachment[] {
+    return this.card.attachments.filter(this.attachmentIsImage);
+  }
+
   getReadableAttachmentSize(attachment: CardAttachment): string {
     const megabyteSize = 1000000;
     const kilobyteSize = 1000;
@@ -213,12 +223,26 @@ export class CardDialogComponent implements OnInit {
       .toLocaleDateString('en-US', formattingOptions);
   }
 
-  removeCardAttachment(attachment: CardAttachment) {
+  removeCardAttachment(attachment: CardAttachment): void {
     const { listId, cardId } = this.data;
     this.taskboardService.updateCardData(listId, cardId, {
       attachments: firestore.FieldValue.arrayRemove(attachment),
     });
     this.afStorage.storage.refFromURL(attachment.url).delete();
+  }
+
+  onSetCardWallpaper(attachment: CardAttachment): void {
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      wallpaperURL: attachment.url,
+    });
+  }
+
+  onWallpaperRemove(): void {
+    const { listId, cardId } = this.data;
+    this.taskboardService.updateCardData(listId, cardId, {
+      wallpaperURL: '',
+    });
   }
 
   ngOnDestroy(): void {
