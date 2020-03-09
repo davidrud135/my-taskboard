@@ -26,6 +26,9 @@
       class="card"
       (click)="openCardDialog(card)"
     >
+      <div *ngIf="card.wallpaperURL as wallpaperURL" class="wallpaper-preview-wrapper">
+        <img [src]="wallpaperURL" />
+      </div>
       <div
         *ngIf="card.tags.length"
         fxLayout="row wrap"
