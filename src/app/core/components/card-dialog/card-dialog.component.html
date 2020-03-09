@@ -178,19 +178,25 @@
             <mat-card-actions fxLayoutAlign="space-between center">
               <button
                 mat-button
-                [color]="attachmentIsWallpaper(attachment) ? 'warn' : 'primary'"
+                color="primary"
+                *ngIf="!attachmentIsWallpaper(attachment)"
                 [style.visibility]="
                   attachmentIsImage(attachment) ? 'visible' : 'hidden'
                 "
                 (click)="onSetCardWallpaper(attachment)"
               >
-                <span>
-                  {{
-                    attachmentIsWallpaper(attachment)
-                      ? 'Remove Wallpaper'
-                      : 'Set Wallpaper'
-                  }}</span
-                >
+                <span>Set Wallpaper</span>
+              </button>
+              <button
+                mat-button
+                color="warn"
+                *ngIf="attachmentIsWallpaper(attachment)"
+                [style.visibility]="
+                  attachmentIsImage(attachment) ? 'visible' : 'hidden'
+                "
+                (click)="removeCardWallpaper()"
+              >
+                Remove Wallpaper
               </button>
               <button
                 mat-icon-button
@@ -423,7 +429,7 @@
         <button
           mat-raised-button
           color="warn"
-          (click)="onWallpaperRemove()"
+          (click)="removeCardWallpaper()"
           [disabled]="!card.wallpaperURL"
         >
           Remove Wallpaper

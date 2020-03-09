@@ -229,6 +229,9 @@ export class CardDialogComponent implements OnInit {
       attachments: firestore.FieldValue.arrayRemove(attachment),
     });
     this.afStorage.storage.refFromURL(attachment.url).delete();
+    if (this.attachmentIsWallpaper(attachment)) {
+      this.removeCardWallpaper();
+    }
   }
 
   onSetCardWallpaper(attachment: CardAttachment): void {
@@ -238,7 +241,7 @@ export class CardDialogComponent implements OnInit {
     });
   }
 
-  onWallpaperRemove(): void {
+  removeCardWallpaper(): void {
     const { listId, cardId } = this.data;
     this.taskboardService.updateCardData(listId, cardId, {
       wallpaperURL: '',
