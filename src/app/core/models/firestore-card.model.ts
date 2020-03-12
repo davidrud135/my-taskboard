@@ -6,6 +6,7 @@ import { firestore } from 'firebase/app';
  * @property {string} title - card title.
  * @property {string} description - card description.
  * @property {string} creatorId - card creator id.
+ * @property {string[]} membersIds - array of card members' ids.
  * @property {string[]} usersIdsWhoVoted - array of user's ids who have voted for the card.
  * @property {string[]} tagsIds - array of card tag's ids.
  * @property {CardAttachment[]} attachments - array of card's attachments.
@@ -16,6 +17,7 @@ export interface FirestoreCard {
   title: string;
   description: string;
   creatorId: string;
+  membersIds: any;
   usersIdsWhoVoted: any;
   tagsIds: any;
   attachments: any;
