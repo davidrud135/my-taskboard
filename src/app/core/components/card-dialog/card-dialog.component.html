@@ -51,6 +51,33 @@
       </div>
     </div>
 
+    <div fxLayout="column" *ngIf="card.members.length">
+      <div
+        fxLayout="row"
+        class="content-block-header"
+        fxLayoutAlign="start center"
+      >
+        <mat-icon>people</mat-icon>
+        <span class="label">Members</span>
+      </div>
+      <div
+        class="content-block-body"
+        fxLayout="column"
+        fxLayoutGap="10px"
+        ngClass.lt-sm="lt-sm_content-block-body"
+      >
+        <div fxLayout="row wrap" fxLayoutGap="2px" class="members-list">
+          <div
+            class="member-avatar"
+            *ngFor="let member of card.members"
+            [matTooltip]="member.username"
+          >
+            <img [src]="member.avatarURL" [alt]="member.username" />
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div
       *ngIf="card.usersIdsWhoVoted.length as votesAmount"
       fxLayout="row"
@@ -226,6 +253,14 @@
     <div fxLayout="column" fxLayoutGap="10px" fxLayout.lt-sm="row wrap">
       <button
         mat-stroked-button
+        [matMenuTriggerFor]="membersMenu"
+        #membersMenuTrigger="matMenuTrigger"
+      >
+        <mat-icon>people</mat-icon>
+        <span>Members</span>
+      </button>
+      <button
+        mat-stroked-button
         [matMenuTriggerFor]="tagsMenu"
         #tagsMenuTrigger="matMenuTrigger"
       >
@@ -316,8 +351,8 @@
           >
             <mat-checkbox
               [checked]="cardHasTag(boardTag.id)"
-              onEditBoardTitle
               (change)="onTagStateChange(boardTag.id)"
+              color="primary"
             ></mat-checkbox>
             <input
               type="text"
@@ -458,6 +493,52 @@
           </span>
         </div>
       </ng-template>
+    </div>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #membersMenu="matMenu">
+  <ng-template matMenuContent>
+    <div
+      fxLayout="column"
+      class="card-action-menu members-menu"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        mat-icon-button
+        class="close-menu-btn"
+        (click)="membersMenuTrigger.closeMenu()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+      <div class="header">
+        <span>Members</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div fxLayout="column" class="body thin-scrollbar">
+        <mat-selection-list
+          *ngIf="boardMembers; else loading"
+          (selectionChange)="onChangeCardMemberState($event)"
+          color="primary"
+        >
+          <mat-list-option
+            *ngFor="let member of boardMembers"
+            [selected]="cardHasMember(member.id)"
+            [value]="member.id"
+          >
+            <img
+              matListAvatar
+              [src]="member.avatarURL"
+              [alt]="member.username"
+            />
+            <h6 matLine>{{ member.fullName }}</h6>
+            <span matLine>@{{ member.username }}</span>
+          </mat-list-option>
+        </mat-selection-list>
+        <ng-template #loading>
+          <span>Loading members...</span>
+        </ng-template>
+      </div>
     </div>
   </ng-template>
 </mat-menu>
