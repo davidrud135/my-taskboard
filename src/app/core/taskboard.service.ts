@@ -249,20 +249,36 @@ export class TaskboardService {
       .snapshotChanges()
       .pipe(
         map(this.getDocDataWithId),
-        switchMap((firestoreCard: any) => {
-          const { tagsIds, ...card } = firestoreCard;
+        switchMap((firestoreCard: FirestoreCard) => {
+          const { tagsIds, membersIds, ...card } = firestoreCard;
           cardData = card;
-          const tags$: Observable<Tag>[] = tagsIds.map((tagId: string) => {
+          const tagsArray$: Observable<Tag>[] = tagsIds.map((tagId: string) => {
             return this.currBoardDoc
               .collection('tags')
               .doc<FirestoreTag>(tagId)
               .snapshotChanges()
               .pipe(map(this.getDocDataWithId));
           });
-          return tags$.length ? combineLatest(tags$) : of([]);
+          const membersArray$: Observable<User>[] = membersIds.map(
+            (userId: string) => {
+              return this.afStore
+                .collection('users')
+                .doc<FirestoreUser>(userId)
+                .snapshotChanges()
+                .pipe(map(this.getDocDataWithId));
+            },
+          );
+          const tags$: Observable<Tag[]> = tagsArray$.length
+            ? combineLatest(tagsArray$)
+            : of([]);
+          const members$: Observable<User[]> = membersArray$.length
+            ? combineLatest(membersArray$)
+            : of([]);
+          return combineLatest(tags$, members$);
         }),
-        map((tags: Tag[]) => {
-          return { tags, ...cardData };
+        map((transformedData: any[]) => {
+          const [tags, members] = transformedData;
+          return { tags, members, ...cardData };
         }),
       );
   }
@@ -316,6 +332,7 @@ export class TaskboardService {
         title,
         description: '',
         creatorId: this.currUserId,
+        membersIds: [],
         usersIdsWhoVoted: [],
         tagsIds: [],
         attachments: [],

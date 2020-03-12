@@ -88,6 +88,24 @@ $cardWallpaperHeight: 200;
         min-height: 50px;
       }
 
+      .members-list {
+        .member-avatar {
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          overflow: hidden;
+
+          &:hover {
+            cursor: pointer;
+            opacity: 0.9;
+          }
+
+          img {
+            width: 100%;
+          }
+        }
+      }
+
       .tags-list {
         mat-chip {
           min-width: calc(25% - 8px);
@@ -312,6 +330,32 @@ $cardWallpaperHeight: 200;
       height: 150px;
       font-size: 12px;
       color: grey;
+    }
+  }
+
+  &.members-menu {
+    .body {
+      max-height: 220px;
+      margin: 0 -5px;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar-thumb {
+        background-color: $primaryColor;
+      }
+
+      .mat-list-base {
+        padding-top: 0;
+
+        .mat-list-option {
+          height: 55px;
+
+          img.mat-list-avatar {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
     }
   }
 }

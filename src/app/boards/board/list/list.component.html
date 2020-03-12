@@ -26,7 +26,10 @@
       class="card"
       (click)="openCardDialog(card)"
     >
-      <div *ngIf="card.wallpaperURL as wallpaperURL" class="wallpaper-preview-wrapper">
+      <div
+        *ngIf="card.wallpaperURL as wallpaperURL"
+        class="wallpaper-preview-wrapper"
+      >
         <img [src]="wallpaperURL" />
       </div>
       <div
@@ -81,6 +84,22 @@
         >
           <mat-icon>attach_file</mat-icon>
           <span>{{ attachmentsAmount }}</span>
+        </div>
+      </div>
+
+      <div
+        *ngIf="card.members.length"
+        fxLayout="row wrap"
+        fxLayoutAlign="end center"
+        fxLayoutGap="2px"
+        class="members-preview"
+      >
+        <div
+          class="member-avatar-block"
+          *ngFor="let member of card.members"
+          [matTooltip]="member.username"
+        >
+          <img [src]="member.avatarURL" [alt]="member.username" />
         </div>
       </div>
     </mat-card>

@@ -2,6 +2,7 @@
 import { firestore } from 'firebase/app';
 import { Tag } from './tag.model';
 import { CardAttachment } from './card-attachment.model';
+import { User } from './user.model';
 
 /**
  * Defines model for Card data.
@@ -9,6 +10,7 @@ import { CardAttachment } from './card-attachment.model';
  * @property {string} title - card title.
  * @property {string} description - card description.
  * @property {string} creatorId - card creator id.
+ * @property {User} members - array of card's members.
  * @property {string[]} usersIdsWhoVoted - array of user's ids who have voted for the card.
  * @property {Tag[]} tagsIds - array of card's tags.
  * @property {CardAttachment[]} attachments - array of card's attachments.
@@ -20,6 +22,7 @@ export interface Card {
   title: string;
   description: string;
   creatorId: string;
+  members: User[];
   usersIdsWhoVoted: string[];
   tags: Tag[];
   attachments: CardAttachment[];
