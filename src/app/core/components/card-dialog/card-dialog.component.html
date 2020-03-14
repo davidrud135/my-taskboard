@@ -449,7 +449,10 @@
         fxLayout="column"
         class="body"
       >
-        <div class="image-attachments-list thin-scrollbar" fxLayout="row wrap">
+        <div
+          class="image-attachments-list scrollbar-y scrollbar-thin"
+          fxLayout="row wrap"
+        >
           <div
             *ngFor="let imageAttachment of getImageAttachments()"
             class="image-attachment"
@@ -515,7 +518,7 @@
         <span>Members</span>
       </div>
       <mat-divider></mat-divider>
-      <div fxLayout="column" class="body thin-scrollbar">
+      <div fxLayout="column" class="body scrollbar-y scrollbar-thin">
         <mat-selection-list
           *ngIf="boardMembers; else loading"
           (selectionChange)="onChangeCardMemberState($event)"

@@ -20,7 +20,11 @@
     </button>
   </div>
 
-  <div class="body thin-scrollbar" fxLayout="column" fxLayoutGap="5px">
+  <div
+    class="body scrollbar-y scrollbar-thin scrollbar-white"
+    fxLayout="column"
+    fxLayoutGap="5px"
+  >
     <mat-card
       *ngFor="let card of cards$ | async"
       class="card"

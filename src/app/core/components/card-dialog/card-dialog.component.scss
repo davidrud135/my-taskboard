@@ -271,17 +271,11 @@ $cardWallpaperHeight: 200;
   &.wallpaper-menu {
     .body {
       .image-attachments-list {
-        height: 180px;
-        overflow-x: hidden;
-        overflow-y: auto;
+        max-height: 180px;
         justify-content: space-between;
         align-items: flex-start;
         padding: 5px;
-        margin-bottom: 5px;
-
-        &::-webkit-scrollbar-thumb {
-          background-color: $primaryColor;
-        }
+        margin-top: 5px;
 
         .image-attachment {
           display: flex;
@@ -318,13 +312,7 @@ $cardWallpaperHeight: 200;
   &.members-menu {
     .body {
       max-height: 220px;
-      margin: 0 -5px;
-      overflow-x: hidden;
-      overflow-y: auto;
-
-      &::-webkit-scrollbar-thumb {
-        background-color: $primaryColor;
-      }
+      margin: 0 -2px 0 -5px;
 
       .mat-list-base {
         padding-top: 0;
