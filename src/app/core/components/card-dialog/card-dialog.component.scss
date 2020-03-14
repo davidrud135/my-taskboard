@@ -88,24 +88,6 @@ $cardWallpaperHeight: 200;
         min-height: 50px;
       }
 
-      .members-list {
-        .member-avatar {
-          width: 35px;
-          height: 35px;
-          border-radius: 50%;
-          overflow: hidden;
-
-          &:hover {
-            cursor: pointer;
-            opacity: 0.9;
-          }
-
-          img {
-            width: 100%;
-          }
-        }
-      }
-
       .tags-list {
         mat-chip {
           min-width: calc(25% - 8px);

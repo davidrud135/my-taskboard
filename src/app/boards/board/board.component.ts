@@ -158,10 +158,6 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
-  applyBoardMemberAvatar(avatarURL: string): string {
-    return `url(${avatarURL})`;
-  }
-
   isBoardAdmin(adminId: string, memberId: string): boolean {
     return adminId === memberId;
   }

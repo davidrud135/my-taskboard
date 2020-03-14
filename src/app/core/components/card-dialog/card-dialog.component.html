@@ -66,9 +66,9 @@
         fxLayoutGap="10px"
         ngClass.lt-sm="lt-sm_content-block-body"
       >
-        <div fxLayout="row wrap" fxLayoutGap="2px" class="members-list">
+        <div fxLayout="row wrap" fxLayoutGap="2px">
           <div
-            class="member-avatar"
+            class="user-avatar-wrapper"
             *ngFor="let member of card.members"
             [matTooltip]="member.username"
           >

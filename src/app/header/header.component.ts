@@ -21,10 +21,6 @@ export class HeaderComponent implements OnInit {
     this.user$ = this.authService.getUser();
   }
 
-  applyUserAvatar(user: User): string {
-    return `url(${user.avatarURL})`;
-  }
-
   onSignOut(): void {
     this.authService.signOut();
   }

@@ -10,11 +10,12 @@
     <span class="header-proj-title">{{ projectTitle }}</span>
     <div
       *ngIf="user$ | async as user"
-      class="user-avatar"
+      class="user-avatar-wrapper"
       [matMenuTriggerFor]="userMenu"
       [matMenuTriggerData]="user"
-      [style.background-image]="applyUserAvatar(user)"
-    ></div>
+    >
+      <img [src]="user.avatarURL" [alt]="user.username" />
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 

@@ -20,6 +20,16 @@ body {
   color: $primaryColor;
 }
 
+.user-avatar-wrapper {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+  }
+}
 .thick-scrollbar::-webkit-scrollbar {
   width: 10px;
 }
