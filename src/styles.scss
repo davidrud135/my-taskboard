@@ -68,6 +68,31 @@ body {
   }
 }
 
+.card-action-menu,
+.list-action-menu {
+  width: 250px;
+  padding: 0 5px;
+  position: relative;
+
+  .close-menu-btn {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    top: -2px;
+    right: 2px;
+
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+
+  .header {
+    padding: 5px;
+    color: $darkBlueColor;
+  }
+}
+
 .cdk-global-overlay-wrapper {
   display: flex;
   position: absolute;
