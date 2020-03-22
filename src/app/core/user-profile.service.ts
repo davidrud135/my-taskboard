@@ -55,7 +55,10 @@ export class UserProfileService {
     if (this.defaultAvatarImageURL === avatarURL) {
       return Promise.reject();
     }
-    return this.afStorage.storage.refFromURL(avatarURL).delete();
+    return this.afStorage.storage
+      .refFromURL(avatarURL)
+      .delete()
+      .catch(this.handleProfileError);
   }
 
   public async setDefaultUserAvatarImage(): Promise<any> {
@@ -66,7 +69,10 @@ export class UserProfileService {
   }
 
   public updateProfileData(data: Partial<User>): Promise<void> {
-    return this.afStore.doc<User>(`users/${this.currUser.id}`).update(data);
+    return this.afStore
+      .doc<User>(`users/${this.currUser.id}`)
+      .update(data)
+      .catch(this.handleProfileError);
   }
 
   private getClearImageName(originalImageName: string): string {
@@ -74,5 +80,9 @@ export class UserProfileService {
       .toLowerCase()
       .replace(/\.[^/.]+$/, '')
       .replace(/\W/g, '');
+  }
+
+  private handleProfileError(err: any): void {
+    console.error(err);
   }
 }
