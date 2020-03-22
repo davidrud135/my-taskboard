@@ -4,6 +4,7 @@ import {
   Inject,
   ViewChild,
   ElementRef,
+  Renderer2,
 } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -60,6 +61,7 @@ export class CardDialogComponent implements OnInit {
   userSub: Subscription;
   boardTagsSub: Subscription;
   boardMembersSub: Subscription;
+  dialogOverlayWrapperElem: HTMLElement;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -69,10 +71,19 @@ export class CardDialogComponent implements OnInit {
     private afStorage: AngularFireStorage,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-  ) {}
+    private renderer: Renderer2,
+  ) {
+    this.dialogOverlayWrapperElem = document.querySelector(
+      'div.cdk-global-overlay-wrapper',
+    );
+  }
 
   ngOnInit(): void {
     const { listId, cardId } = this.data;
+    this.renderer.addClass(
+      this.dialogOverlayWrapperElem,
+      'card-dialog-overlay',
+    );
     this.cardSub = this.taskboardService
       .getCardData(listId, cardId)
       .subscribe((cardData: Card) => (this.card = cardData));
@@ -274,6 +285,10 @@ export class CardDialogComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    this.renderer.removeClass(
+      this.dialogOverlayWrapperElem,
+      'card-dialog-overlay',
+    );
     this.cardSub.unsubscribe();
     this.userSub.unsubscribe();
     this.boardTagsSub.unsubscribe();
