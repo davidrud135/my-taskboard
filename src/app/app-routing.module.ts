@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'boards',
+    redirectTo: '/boards',
   },
   {
     path: 'boards',
@@ -27,8 +27,8 @@ const routes: Routes = [
   },
   {
     path: 'profile',
-    canActivate: [AuthGuard],
     component: UserProfileComponent,
+    canActivate: [AuthGuard],
   },
 ];
 
