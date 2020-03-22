@@ -1,0 +1,23 @@
+<mat-nav-list>
+  <a mat-list-item (click)="openFileDialog()">
+    <input
+      type="file"
+      #fileInput
+      (change)="onFileSelected($event)"
+      accept="image/*"
+      hidden
+    />
+    <span mat-line>Upload New Image</span>
+    <mat-icon>cloud_upload</mat-icon>
+  </a>
+
+  <a mat-list-item class="remove-image-item" (click)="onImageDelete()">
+    <span mat-line>Delete Image (set default)</span>
+    <mat-icon>delete</mat-icon>
+  </a>
+
+  <a mat-list-item (click)="onCancel()">
+    <span mat-line>Cancel</span>
+    <mat-icon>clear</mat-icon>
+  </a>
+</mat-nav-list>
