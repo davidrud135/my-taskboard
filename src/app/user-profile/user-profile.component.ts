@@ -15,7 +15,6 @@ import { noEmptyValueValidator } from '../utils/no-empty-value.validator';
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
   user: User;
@@ -93,6 +92,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.userProfileForm.reset(this.user);
   }
 
+  clearFormDataValues(data: object): object {
+    for (const key in data) {
+      data[key] = data[key].trim();
+    }
+    return data;
+  }
+
+  // tslint:disable: semicolon
   handleProfileAvatarActionsResponse = (
     resp: ProfileAvatarActionsResponse | undefined,
   ): void => {
@@ -108,13 +115,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.snackBar.open('⚠️ Avatar can be only of image type!', 'OK');
     }
   };
-
-  clearFormDataValues(data: object): object {
-    for (const key in data) {
-      data[key] = data[key].trim();
-    }
-    return data;
-  }
 
   ngOnDestroy(): void {
     this.userSub.unsubscribe();
