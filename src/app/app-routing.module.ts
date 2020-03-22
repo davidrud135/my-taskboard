@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { environment } from 'src/environments/environment';
 import { BoardsComponent } from './boards/boards.component';
 import { AuthGuard } from './auth/auth.guard';
-import { environment } from 'src/environments/environment';
 import { BoardComponent } from './boards/board/board.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,11 @@ const routes: Routes = [
       },
       { path: ':id', component: BoardComponent },
     ],
+  },
+  {
+    path: 'profile',
+    canActivate: [AuthGuard],
+    component: UserProfileComponent,
   },
 ];
 

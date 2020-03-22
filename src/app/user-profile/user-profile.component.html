@@ -1,0 +1,63 @@
+<section class="user-profile-wrapper" fxLayoutAlign="center center" fxFlexFill>
+  <mat-card
+    *ngIf="user; else loadingUserProfile"
+    fxLayout="column"
+    fxLayoutGap="10px"
+    fxFlex="600px"
+    fxFlex.xs="95%"
+  >
+    <mat-card-header fxLayout="column" fxLayoutAlign="center center">
+      <mat-card-title>PROFILE</mat-card-title>
+      <div
+        class="user-avatar-wrapper"
+        (click)="openAvatarActions()"
+        [ngClass]="{ 'in-process': isAvatarImageInProcess }"
+      >
+        <img [src]="user.avatarURL" [alt]="user.username" />
+        <mat-spinner *ngIf="isAvatarImageInProcess"></mat-spinner>
+      </div>
+    </mat-card-header>
+    <div>
+      <mat-divider></mat-divider>
+    </div>
+    <mat-card-content>
+      <form
+        fxLayout="column"
+        [formGroup]="userProfileForm"
+        (ngSubmit)="onSaveForm()"
+      >
+        <mat-form-field appearance="outline">
+          <mat-label>Full Name</mat-label>
+          <input matInput type="text" formControlName="fullName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput type="text" formControlName="username" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [value]="user.email" readonly />
+        </mat-form-field>
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <button mat-stroked-button type="button" (click)="resetForm()">
+            <mat-icon>undo</mat-icon>
+            Reset
+          </button>
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            [disabled]="userProfileForm.invalid || userProfileForm.pristine"
+          >
+            <mat-icon>done</mat-icon>
+            SAVE
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <ng-template #loadingUserProfile>
+    <mat-spinner></mat-spinner>
+  </ng-template>
+</section>

@@ -22,6 +22,7 @@ import { RemovalConfirmDialogComponent } from './core/components/removal-confirm
 import { CardFileUploadComponent } from './core/components/card-file-upload/card-file-upload.component';
 import { DropAreaDirective } from './utils/drop-area.directive';
 import { ProfileAvatarActionsComponent } from './core/components/profile-avatar-actions/profile-avatar-actions.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ProfileAvatarActionsComponent } from './core/components/profile-avatar-
     CardFileUploadComponent,
     DropAreaDirective,
     ProfileAvatarActionsComponent,
+    UserProfileComponent,
   ],
   imports: [
     BrowserModule,
