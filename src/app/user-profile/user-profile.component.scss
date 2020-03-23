@@ -1,0 +1,39 @@
+@import '../../scss/variables.scss';
+
+section.user-profile-wrapper {
+  background-image: url('../../assets/images/background1.png');
+  background-size: cover;
+
+  mat-card {
+    mat-card-header {
+      .user-avatar-wrapper {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        border: 1px solid $whiteColor;
+        box-shadow: 0 0 0 2px $primaryColor;
+        transition: all ease 300ms;
+
+        &:hover {
+          box-shadow: 0 0 0 4px $primaryColor;
+          opacity: 0.9;
+          cursor: pointer;
+        }
+
+        &.in-process {
+          pointer-events: none;
+          box-shadow: none;
+
+          img {
+            opacity: 0.5;
+          }
+
+          mat-spinner {
+            position: absolute;
+            top: 0;
+          }
+        }
+      }
+    }
+  }
+}
