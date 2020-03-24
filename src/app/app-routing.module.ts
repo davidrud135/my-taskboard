@@ -29,6 +29,7 @@ const routes: Routes = [
     path: 'profile',
     component: UserProfileComponent,
     canActivate: [AuthGuard],
+    data: { routeTitle: `Profile | ${environment.projectTitle}` },
   },
 ];
 

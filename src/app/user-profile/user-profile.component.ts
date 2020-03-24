@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute, Data } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from './../auth/auth.service';
@@ -28,9 +30,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private userProfileService: UserProfileService,
     private bottomSheet: MatBottomSheet,
     private snackBar: MatSnackBar,
+    private route: ActivatedRoute,
+    private titleService: Title,
   ) {}
 
   ngOnInit(): void {
+    this.route.data.subscribe((data: Data) => {
+      this.titleService.setTitle(data['routeTitle']);
+    });
     this.userSub = this.authService.getUser().subscribe((user: User) => {
       this.user = user;
       this.userProfileForm = new FormGroup({
