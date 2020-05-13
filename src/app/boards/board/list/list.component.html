@@ -1,0 +1,172 @@
+<div class="list" fxLayout="column">
+  <div class="header" fxLayout="row" fxLayoutAlign="start start">
+    <div class="field-wrapper" fxFlex>
+      <textarea
+        matInput
+        class="field"
+        cdkTextareaAutosize
+        [formControl]="listTitleControl"
+        (keydown.enter)="$event.preventDefault()"
+        (keyup.enter)="$event.target.blur()"
+        (focusout)="onEditListTitle(list.title)"
+      ></textarea>
+    </div>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="listMenu"
+      [matMenuTriggerData]="{ listId: list.id, listTitle: list.title }"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+
+  <div
+    class="body scrollbar-y scrollbar-thin scrollbar-white"
+    fxLayout="column"
+    fxLayoutGap="5px"
+  >
+    <mat-card
+      *ngFor="let card of cards$ | async"
+      class="card"
+      (click)="openCardDialog(card)"
+    >
+      <div
+        *ngIf="card.wallpaperURL as wallpaperURL"
+        class="wallpaper-preview-wrapper"
+      >
+        <img [src]="wallpaperURL" />
+      </div>
+      <div
+        *ngIf="card.tags.length"
+        fxLayout="row wrap"
+        class="card-tags-preview"
+      >
+        <div
+          *ngFor="let tag of card.tags"
+          fxLayoutAlign="start center"
+          class="card-tag"
+          [ngStyle]="{ 'background-color': tag.color }"
+        >
+          <span>{{ tag.name }}</span>
+        </div>
+      </div>
+      <span class="title">{{ card.title }}</span>
+      <div
+        *ngIf="
+          card.description.length ||
+          card.usersIdsWhoVoted.length ||
+          card.attachments.length
+        "
+        class="content-preview"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        fxLayoutGap="5px"
+      >
+        <div
+          *ngIf="card.description.length"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+        >
+          <mat-icon>description</mat-icon>
+        </div>
+        <div
+          *ngIf="card.usersIdsWhoVoted.length as votesAmount"
+          class="highlighted"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          fxLayoutGap="5px"
+        >
+          <mat-icon>thumb_up</mat-icon>
+          <span>{{ votesAmount }}</span>
+        </div>
+        <div
+          *ngIf="card.attachments.length as attachmentsAmount"
+          class="highlighted"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          fxLayoutGap="3px"
+        >
+          <mat-icon>attach_file</mat-icon>
+          <span>{{ attachmentsAmount }}</span>
+        </div>
+      </div>
+
+      <div
+        *ngIf="card.members.length"
+        fxLayout="row wrap"
+        fxLayoutAlign="end center"
+        fxLayoutGap="2px"
+        class="members-preview"
+      >
+        <div
+          class="user-avatar-wrapper"
+          *ngFor="let member of card.members"
+          [matTooltip]="member.username"
+        >
+          <img [src]="member.avatarURL" [alt]="member.username" />
+        </div>
+      </div>
+    </mat-card>
+
+    <button
+      mat-flat-button
+      [fxHide]="isNewCardTemplateOpened"
+      (click)="openNewCardTemplate()"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Add Card</span>
+    </button>
+
+    <mat-card
+      fxLayout="column"
+      [fxShow]="isNewCardTemplateOpened"
+      (focusout)="closeNewCardTemplate()"
+    >
+      <mat-form-field>
+        <mat-label>New Card Title</mat-label>
+        <textarea
+          #newCardTitleField
+          matInput
+          cdkTextareaAutosize
+          (keydown.enter)="$event.preventDefault()"
+          (keyup.enter)="onAddCardToList()"
+        ></textarea>
+      </mat-form-field>
+    </mat-card>
+  </div>
+</div>
+
+<mat-menu #listMenu="matMenu">
+  <ng-template matMenuContent let-id="listId" let-title="listTitle">
+    <button mat-menu-item (click)="openNewCardTemplate()">
+      <mat-icon>add</mat-icon>
+      <span>Add Card</span>
+    </button>
+    <button mat-menu-item [matMenuTriggerFor]="listSortingSubmenu" disabled>
+      <mat-icon>sort</mat-icon>
+      <span>Sort List</span>
+    </button>
+    <button
+      mat-menu-item
+      (click)="openListRemovalConfirmDialog()"
+      class="remove-list-btn"
+    >
+      <mat-icon color="warn">delete</mat-icon>
+      <span>Remove List</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #listSortingSubmenu="matMenu">
+  <ng-template matMenuContent>
+    <button mat-menu-item (click)="onListSort('asc')">
+      Ascending (Oldest First)
+    </button>
+    <button mat-menu-item (click)="onListSort('desc')">
+      Descending (Newest First)
+    </button>
+    <button mat-menu-item (click)="onListSort('alphabet')">
+      Card Title (Alphabetically)
+    </button>
+  </ng-template>
+</mat-menu>

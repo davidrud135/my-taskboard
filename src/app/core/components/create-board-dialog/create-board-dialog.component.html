@@ -1,0 +1,42 @@
+<div fxLayout="column" class="wrapper" ngClass.xs="xs_wrapper">
+  <mat-dialog-content fxLayout="column">
+    <mat-form-field appearance="outline">
+      <mat-label>Board Title:</mat-label>
+      <input
+        matInput
+        (keyup.enter)="onBoardCreate()"
+        [formControl]="boardTitleControl"
+      />
+      <mat-error
+        align="end"
+        *ngIf="boardTitleControl.invalid && boardTitleControl.touched"
+      >
+        Please, provide valid board title
+      </mat-error>
+    </mat-form-field>
+    <p>Board Color:</p>
+    <div fxLayout="row wrap" fxLayoutAlign="center center">
+      <mat-card
+        *ngFor="let color of boardBackColors"
+        class="color-card"
+        [ngStyle]="{ 'background-color': color }"
+        fxLayout="row"
+        fxLayoutAlign="center center"
+        (click)="boardSelectedBackColor = color"
+      >
+        <mat-icon *ngIf="boardSelectedBackColor === color">check</mat-icon>
+      </mat-card>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onBoardCreate()"
+      [disabled]="boardTitleControl.invalid"
+    >
+      Create Board
+    </button>
+    <button mat-stroked-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</div>

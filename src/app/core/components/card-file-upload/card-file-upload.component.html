@@ -1,0 +1,14 @@
+<div fxLayout="column" class="file-upload-block">
+  <div class="header">
+    <h4>{{ file.name }}</h4>
+  </div>
+  <div class="body" fxLayout="column" fxLayoutGap="5px">
+    <span class="upload-status" *ngIf="uploadProgress !== 100; else almostDone">
+      Uploading ({{ uploadProgress }}%)
+    </span>
+    <ng-template #almostDone>
+      <span class="upload-status">Almost done...</span>
+    </ng-template>
+    <mat-progress-bar [value]="uploadProgress"></mat-progress-bar>
+  </div>
+</div>

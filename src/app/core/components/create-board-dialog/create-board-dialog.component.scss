@@ -1,0 +1,20 @@
+.wrapper {
+  width: 350px;
+
+  .color-card {
+    width: calc(25% - 5px);
+    height: 50px;
+    box-sizing: border-box;
+    color: whitesmoke;
+    margin: 0 5px 10px 0;
+    cursor: pointer;
+  }
+
+  p {
+    margin-top: 0;
+  }
+}
+
+.xs_wrapper {
+  width: 100%;
+}

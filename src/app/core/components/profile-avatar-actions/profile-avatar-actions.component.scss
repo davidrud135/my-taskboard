@@ -1,0 +1,7 @@
+@import '../../../../scss/variables.scss';
+
+mat-nav-list {
+  a.remove-image-item {
+    color: $warnColor !important;
+  }
+}

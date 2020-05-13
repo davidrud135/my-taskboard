@@ -1,0 +1,19 @@
+div.wrapper {
+  background-image: url('../../assets/images/background1.png');
+  background-size: cover;
+
+  .method-separator {
+    margin: 7px 0;
+  }
+
+  .bottom-form-link {
+    padding-top: 15px;
+
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+}

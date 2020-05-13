@@ -1,0 +1,67 @@
+<div class="wrapper" fxLayout="row" fxLayoutAlign="center center" fxFlexFill>
+  <ng-template #loading>
+    <mat-card fxFlex="40%" fxFlex.xs="95%">
+      <mat-card-content fxLayout="column" fxLayoutAlign="center center">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Loading...</p>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
+  <mat-card fxFlex="40%" fxFlex.xs="95%" *ngIf="!isLoading; else loading">
+    <form [formGroup]="signInForm" (ngSubmit)="onSignIn()">
+      <mat-card-header fxLayout="row" fxLayoutAlign="center">
+        <mat-card-title>
+          Login to
+          <span class="proj-title">{{projectTitle}}</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content fxLayout="column">
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="pass" />
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="signInForm.invalid"
+        >
+          Sign In
+        </button>
+        <div
+          class="method-separator"
+          fxLayout="row"
+          fxLayoutAlign="center center"
+        >
+          <span>OR</span>
+        </div>
+        <button
+          type="button"
+          mat-stroked-button
+          color="primary"
+          (click)="onGoogleSignIn()"
+        >
+          Login with Google
+        </button>
+      </mat-card-content>
+    </form>
+    <mat-divider></mat-divider>
+    <div
+      class="bottom-form-link"
+      fxLayout="row"
+      fxLayout.xs="column"
+      fxLayoutAlign="center center"
+      fxLayoutGap="5px"
+    >
+      <span>Don't have an account?</span>
+      <a routerLink="/sign-up">Create one.</a>
+    </div>
+  </mat-card>
+</div>

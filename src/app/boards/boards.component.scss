@@ -1,0 +1,60 @@
+@import '../../scss/variables.scss';
+
+.boards-section {
+  padding: 10px;
+  box-sizing: border-box;
+
+  .header {
+    padding: 10px 7px;
+
+    .title {
+      color: $darkBlueColor;
+
+      h4 {
+        display: inline-block;
+        margin: 0;
+      }
+    }
+  }
+
+  .no-items-label {
+    font-size: 14px;
+    color: grey;
+  }
+
+  .board-card {
+    box-sizing: border-box;
+    min-height: 80px;
+    margin: 0 7px 10px 7px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1;
+    outline: none;
+
+    mat-card-header {
+      width: 100%;
+      max-height: 45px;
+      color: whitesmoke;
+      word-break: break-all;
+      overflow: hidden;
+
+      mat-card-title {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .board-card:hover {
+    opacity: 0.75;
+  }
+}
+
+.board-card-xs {
+  width: 100% !important;
+  margin: 0 0 10px 0 !important;
+  min-height: 40px !important;
+}
