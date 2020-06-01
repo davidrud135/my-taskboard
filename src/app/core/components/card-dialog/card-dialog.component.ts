@@ -16,7 +16,9 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSelectionListChange } from '@angular/material/list';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { firestore } from 'firebase/app';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { TaskboardService } from './../../taskboard.service';
 import { AuthService } from './../../../auth/auth.service';
@@ -26,11 +28,13 @@ import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/remov
 import { Tag } from '../../models/tag.model';
 import { CardAttachment } from './../../models/card-attachment.model';
 import { Board } from './../../models/board.model';
+import { List } from '../../models/list.model';
 
 interface DialogData {
   cardId: string;
   listId: string;
   listTitle: string;
+  isLastCardInList: boolean;
 }
 
 @Component({
@@ -51,10 +55,18 @@ export class CardDialogComponent implements OnInit {
   wallpaperMenuTrigger: MatMenuTrigger;
   @ViewChild('membersMenuTrigger')
   membersMenuTrigger: MatMenuTrigger;
+  @ViewChild('moveCardMenuTrigger')
+  moveCardMenuTrigger: MatMenuTrigger;
   card: Card;
   currUser: User;
   boardTags: Tag[];
   boardMembers: User[];
+  boardLists$: Observable<List[]>;
+  selectedListId: string;
+  selectedListCards: Card[];
+  selectedListCardsSub: Subscription;
+  selectedCardPosition: number;
+  inProcessOfMovingCard: boolean = false;
   isDropAreaHovered: boolean;
   filesToUpload: File[] = [];
   cardSub: Subscription;
@@ -96,6 +108,15 @@ export class CardDialogComponent implements OnInit {
     this.boardMembersSub = this.taskboardService
       .getBoardData()
       .subscribe((data: Board) => (this.boardMembers = data.members));
+    this.boardLists$ = this.taskboardService.getBoardLists().pipe(
+      tap((lists: List[]) => {
+        const currList = lists.find(
+          (list: List) => list.id === this.data.listId,
+        );
+        this.selectedListId = currList.id;
+        this.loadSelectedListCards();
+      }),
+    );
   }
 
   onCardTitleEdit(oldCardTitle: string): void {
@@ -146,7 +167,7 @@ export class CardDialogComponent implements OnInit {
       .subscribe((isConfirmed: boolean) => {
         if (!isConfirmed) return;
         this.taskboardService
-          .removeCard(this.data.listId, cardId)
+          .removeCard(this.data.listId, cardId, this.data.isLastCardInList)
           .then(() => {
             this.cardDialogRef.close();
           })
@@ -284,6 +305,50 @@ export class CardDialogComponent implements OnInit {
     });
   }
 
+  loadSelectedListCards(): void {
+    this.selectedListCardsSub = this.taskboardService
+      .getListCards(this.selectedListId)
+      .subscribe((selectedListCards: Card[]) => {
+        this.selectedListCards = selectedListCards;
+        const isOriginalList = this.data.listId === this.selectedListId;
+        const currCard = selectedListCards.find(
+          (card: Card) => card.id === this.card.id,
+        );
+        this.selectedCardPosition = isOriginalList
+          ? currCard.positionNumber
+          : selectedListCards.length + 1;
+      });
+  }
+
+  onMoveCard(): void {
+    this.inProcessOfMovingCard = true;
+    if (this.selectedListId === this.data.listId) {
+      moveItemInArray(
+        this.selectedListCards,
+        this.card.positionNumber - 1,
+        this.selectedCardPosition - 1,
+      );
+      this.taskboardService
+        .updateCardsPositionNumber(this.selectedListId, this.selectedListCards)
+        .then(() => (this.inProcessOfMovingCard = false));
+    } else {
+      this.taskboardService
+        .moveCardToAnotherList(
+          this.data.listId,
+          this.selectedListId,
+          this.card.id,
+          this.selectedCardPosition,
+          !this.data.isLastCardInList,
+          this.selectedCardPosition !== this.selectedListCards.length + 1,
+        )
+        .then(() => {
+          this.inProcessOfMovingCard = false;
+          this.moveCardMenuTrigger.closeMenu();
+          this.cardDialogRef.close();
+        });
+    }
+  }
+
   ngOnDestroy(): void {
     this.renderer.removeClass(
       this.dialogOverlayWrapperElem,
@@ -293,5 +358,6 @@ export class CardDialogComponent implements OnInit {
     this.userSub.unsubscribe();
     this.boardTagsSub.unsubscribe();
     this.boardMembersSub.unsubscribe();
+    if (this.selectedListCardsSub) this.selectedListCardsSub.unsubscribe();
   }
 }

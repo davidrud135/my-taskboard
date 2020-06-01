@@ -306,4 +306,10 @@ $cardWallpaperHeight: 200;
       }
     }
   }
+
+  &.move-card-menu {
+    .body {
+      padding-top: 10px;
+    }
+  }
 }

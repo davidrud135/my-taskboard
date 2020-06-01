@@ -43,6 +43,11 @@
     padding: 5px;
     margin-right: 3px;
 
+    &.loading-cards {
+      text-align: center;
+      color: $whiteColor;
+    }
+
     .card {
       padding: 10px;
 

@@ -288,6 +288,14 @@
     <p>Actions</p>
     <div fxLayout="column" fxLayoutGap="10px" fxLayout.lt-sm="row wrap">
       <button
+        mat-stroked-button
+        [matMenuTriggerFor]="moveCardMenu"
+        #moveCardMenuTrigger="matMenuTrigger"
+      >
+        <mat-icon>trending_flat </mat-icon>
+        <span>Move</span>
+      </button>
+      <button
         *ngIf="card.usersIdsWhoVoted.includes(currUser?.id)"
         mat-flat-button
         color="primary"
@@ -542,6 +550,104 @@
           <span>Loading members...</span>
         </ng-template>
       </div>
+    </div>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #moveCardMenu="matMenu">
+  <ng-template matMenuContent>
+    <div
+      fxLayout="column"
+      class="card-action-menu move-card-menu"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        mat-icon-button
+        class="close-menu-btn"
+        (click)="moveCardMenuTrigger.closeMenu()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+      <div class="header">
+        <span>Move Card</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div
+        *ngIf="!inProcessOfMovingCard; else inProcessOfMovingCardBlock"
+        fxLayout="column"
+        class="body"
+      >
+        <div
+          fxLayout="column"
+          *ngIf="boardLists$ | async as boardLists; else loadingBoardLists"
+        >
+          <mat-form-field appearance="fill">
+            <mat-label>List</mat-label>
+            <mat-select
+              [(value)]="selectedListId"
+              (selectionChange)="loadSelectedListCards()"
+            >
+              <mat-option *ngFor="let list of boardLists" [value]="list.id">
+                {{ list.title }}
+                <span *ngIf="list.id === data.listId">(current)</span>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div
+            fxLayout="column"
+            *ngIf="selectedListCards; else loadingSelectedListCards"
+          >
+            <mat-form-field appearance="fill">
+              <mat-label>Position</mat-label>
+              <mat-select [(value)]="selectedCardPosition">
+                <mat-option
+                  *ngFor="let selectedListCard of selectedListCards"
+                  [value]="selectedListCard.positionNumber"
+                >
+                  {{ selectedListCard.positionNumber }}
+                  <span
+                    *ngIf="
+                      data.listId === data.listId &&
+                      selectedListCard.id === card.id
+                    "
+                    >(current)
+                  </span>
+                </mat-option>
+                <mat-option
+                  *ngIf="data.listId !== selectedListId"
+                  [value]="this.selectedCardPosition"
+                >
+                  {{ this.selectedCardPosition }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="onMoveCard()"
+              [disabled]="
+                data.listId === selectedListId &&
+                selectedCardPosition === card.positionNumber
+              "
+            >
+              Move
+            </button>
+          </div>
+          <ng-template #loadingSelectedListCards>
+            <span>Loading cards...</span>
+          </ng-template>
+        </div>
+        <ng-template #loadingBoardLists>
+          <span>Loading board lists...</span>
+        </ng-template>
+      </div>
+      <ng-template #inProcessOfMovingCardBlock>
+        <div class="body" fxLayout="column" fxLayoutAlign="center center">
+          <mat-spinner></mat-spinner>
+          <br />
+          <span>Moving card...</span>
+        </div>
+      </ng-template>
     </div>
   </ng-template>
 </mat-menu>
