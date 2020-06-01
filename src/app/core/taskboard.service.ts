@@ -285,7 +285,10 @@ export class TaskboardService {
 
   public getListCards(listId: string): Observable<Card[]> {
     return this.currBoardDoc
-      .collection<FirestoreCard>(`lists/${listId}/cards`)
+      .collection<FirestoreCard>(
+        `lists/${listId}/cards`,
+        (ref: CollectionReference) => ref.orderBy('positionNumber'),
+      )
       .valueChanges({ idField: 'id' })
       .pipe(
         switchMap((cards: (FirestoreCard & { id: string })[]) => {
@@ -325,11 +328,13 @@ export class TaskboardService {
   public createCard(
     listId: string,
     title: string,
+    positionNumber: number,
   ): Promise<firestore.DocumentReference> {
     return this.currBoardDoc
       .collection<FirestoreCard>(`lists/${listId}/cards`)
       .add({
         title,
+        positionNumber,
         description: '',
         creatorId: this.currUserId,
         membersIds: [],
@@ -352,7 +357,11 @@ export class TaskboardService {
       .update(data);
   }
 
-  public removeCard(listId: string, cardId: string): Promise<void> {
+  public removeCard(
+    listId: string,
+    cardId: string,
+    isLastInList: boolean,
+  ): Promise<void> {
     return this.currBoardDoc
       .collection(`lists/${listId}/cards`)
       .doc(cardId)
@@ -363,10 +372,74 @@ export class TaskboardService {
             'Only admin or creator have permission to delete this card.',
           );
         }
+      })
+      .then(() => {
+        if (!isLastInList) {
+          return this.updateCardsPositionNumber(listId);
+        }
       });
   }
 
   // Additional methods
+
+  public async updateCardsPositionNumber(
+    listId: string,
+    modifiedCards?: Card[],
+  ): Promise<void> {
+    const batch = this.afStore.firestore.batch();
+    if (modifiedCards) {
+      modifiedCards.forEach((card, index) => {
+        const cardDocRef = this.currBoardDoc
+          .collection(`lists/${listId}/cards`)
+          .doc(card.id).ref;
+        batch.update(cardDocRef, { positionNumber: index + 1 });
+      });
+    } else {
+      const cardsSnapshot = await this.currBoardDoc
+        .collection(`lists/${listId}/cards`)
+        .ref.orderBy('positionNumber')
+        .get();
+      cardsSnapshot.docs.forEach((cardDocRef, index) => {
+        batch.update(cardDocRef.ref, { positionNumber: index + 1 });
+      });
+    }
+    return batch.commit();
+  }
+
+  public async moveCardToAnotherList(
+    srcListId: string,
+    destListId: string,
+    cardId: string,
+    newCardPosition: number,
+    isLastInSrcList: boolean,
+    isLastInDestList: boolean,
+  ) {
+    const srcList = this.currBoardDoc.collection(`lists/${srcListId}/cards`);
+    const destList = this.currBoardDoc.collection(`lists/${destListId}/cards`);
+    const cardDocSnapshot = await srcList
+      .doc<FirestoreCard>(cardId)
+      .get()
+      .toPromise();
+    const cardData = cardDocSnapshot.data();
+    cardData['positionNumber'] = isLastInDestList
+      ? newCardPosition - 0.5
+      : newCardPosition;
+    await destList
+      .doc(cardId)
+      .set({ ...cardData })
+      .catch(console.error);
+    const res = await srcList
+      .doc(cardId)
+      .delete()
+      .catch(console.error);
+    if (isLastInSrcList) {
+      this.updateCardsPositionNumber(srcListId);
+    }
+    if (isLastInDestList) {
+      this.updateCardsPositionNumber(destListId);
+    }
+    return res;
+  }
 
   private async removeAllBoardLists(): Promise<void> {
     const listsQuerySnapshot: firestore.QuerySnapshot = await this.currBoardDoc
