@@ -3,7 +3,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { TaskboardService } from './../../../core/taskboard.service';
 import { Card } from './../../../core/models/card.model';
@@ -19,7 +19,8 @@ import { RemovalConfirmDialogComponent } from './../../../core/components/remova
 })
 export class ListComponent implements OnInit {
   @Input('listData') list: List;
-  cards$: Observable<Card[]>;
+  cards: Card[];
+  cardsSub: Subscription;
   listSortingStrategy$ = new BehaviorSubject<ListSorting>('asc');
   listTitleControl: FormControl;
   @ViewChild('newCardTitleField')
@@ -37,7 +38,9 @@ export class ListComponent implements OnInit {
       this.list.title,
       Validators.required,
     );
-    this.cards$ = this.taskboardService.getListCards(this.list.id);
+    this.cardsSub = this.taskboardService
+      .getListCards(this.list.id)
+      .subscribe((cards: Card[]) => (this.cards = cards));
   }
 
   onEditListTitle(oldListTitle: string): void {
@@ -54,6 +57,7 @@ export class ListComponent implements OnInit {
         cardId: card.id,
         listId: this.list.id,
         listTitle: this.list.title,
+        isLastCardInList: card.positionNumber === this.cards.length,
       },
       autoFocus: false,
       maxWidth: '95vw',
@@ -78,7 +82,11 @@ export class ListComponent implements OnInit {
   onAddCardToList() {
     const newCardTitle = this.newCardTitleField.nativeElement.value.trim();
     if (!newCardTitle) return;
-    this.taskboardService.createCard(this.list.id, newCardTitle);
+    this.taskboardService.createCard(
+      this.list.id,
+      newCardTitle,
+      this.cards.length + 1,
+    );
     this.closeNewCardTemplate();
   }
 

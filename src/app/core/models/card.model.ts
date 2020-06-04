@@ -9,6 +9,7 @@ import { User } from './user.model';
  * @property {string} id - card's unique id.
  * @property {string} title - card title.
  * @property {string} description - card description.
+ * @property {number} positionNumber - card's position number in list. Starts from 1.
  * @property {string} creatorId - card creator id.
  * @property {User} members - array of card's members.
  * @property {string[]} usersIdsWhoVoted - array of user's ids who have voted for the card.
@@ -21,6 +22,7 @@ export interface Card {
   id: string;
   title: string;
   description: string;
+  positionNumber: number;
   creatorId: string;
   members: User[];
   usersIdsWhoVoted: string[];
