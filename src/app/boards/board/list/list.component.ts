@@ -3,7 +3,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { TaskboardService } from './../../../core/taskboard.service';
 import { Card } from './../../../core/models/card.model';
@@ -21,7 +21,6 @@ export class ListComponent implements OnInit {
   @Input('listData') list: List;
   cards: Card[];
   cardsSub: Subscription;
-  listSortingStrategy$ = new BehaviorSubject<ListSorting>('asc');
   listTitleControl: FormControl;
   @ViewChild('newCardTitleField')
   newCardTitleField: ElementRef;
@@ -111,7 +110,27 @@ export class ListComponent implements OnInit {
       });
   }
 
-  onListSort(sorting: ListSorting): void {
-    this.listSortingStrategy$.next(sorting);
+  onListSort(sorting: ListSorting | null): void {
+    switch (sorting) {
+      case 'asc':
+        this.cards.sort(
+          (card1, card2) => card1.createdAt.seconds - card2.createdAt.seconds,
+        );
+        break;
+      case 'desc':
+        this.cards.sort(
+          (card1, card2) => card2.createdAt.seconds - card1.createdAt.seconds,
+        );
+        break;
+      case 'alphabet':
+        this.cards.sort((card1, card2) =>
+          card1.title.localeCompare(card2.title),
+        );
+        break;
+      default:
+        this.cards.sort(
+          (card1, card2) => card1.positionNumber - card2.positionNumber,
+        );
+    }
   }
 }

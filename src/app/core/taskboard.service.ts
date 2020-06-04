@@ -300,31 +300,6 @@ export class TaskboardService {
       );
   }
 
-  // public getListCards(
-  //   listId: string,
-  //   listSortingStrategy$: Observable<ListSorting>,
-  // ): Observable<(FirestoreCard & { id: string })[]> {
-  //   return listSortingStrategy$.pipe(
-  //     switchMap((sorting: ListSorting) => {
-  //       return this.currBoardDoc
-  //         .collection<FirestoreCard>(
-  //           `lists/${listId}/cards`,
-  //           (ref: CollectionReference) => {
-  //             switch (sorting) {
-  //               case 'asc':
-  //                 return ref.orderBy('createdAt');
-  //               case 'desc':
-  //                 return ref.orderBy('createdAt', 'desc');
-  //               default:
-  //                 return ref.orderBy('title');
-  //             }
-  //           },
-  //         )
-  //         .valueChanges({ idField: 'id' });
-  //     }),
-  //   );
-  // }
-
   public createCard(
     listId: string,
     title: string,
