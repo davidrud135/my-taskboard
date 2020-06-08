@@ -338,8 +338,8 @@ export class CardDialogComponent implements OnInit {
           this.selectedListId,
           this.card.id,
           this.selectedCardPosition,
-          !this.data.isLastCardInList,
-          this.selectedCardPosition !== this.selectedListCards.length + 1,
+          this.data.isLastCardInList,
+          this.selectedCardPosition === this.selectedListCards.length + 1,
         )
         .then(() => {
           this.inProcessOfMovingCard = false;
