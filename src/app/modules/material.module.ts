@@ -13,6 +13,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatSelectModule } from '@angular/material/select';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 const modules = [
   MatToolbarModule,
@@ -29,6 +31,8 @@ const modules = [
   MatCheckboxModule,
   MatProgressBarModule,
   MatBottomSheetModule,
+  MatSelectModule,
+  DragDropModule,
 ];
 
 @NgModule({
