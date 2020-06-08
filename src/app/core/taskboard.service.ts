@@ -407,10 +407,10 @@ export class TaskboardService {
       .doc(cardId)
       .delete()
       .catch(console.error);
-    if (isLastInSrcList) {
+    if (!isLastInSrcList) {
       this.updateCardsPositionNumber(srcListId);
     }
-    if (isLastInDestList) {
+    if (!isLastInDestList) {
       this.updateCardsPositionNumber(destListId);
     }
     return res;

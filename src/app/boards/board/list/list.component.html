@@ -25,12 +25,18 @@
     class="body scrollbar-y scrollbar-thin scrollbar-white"
     fxLayout="column"
     fxLayoutGap="5px"
+    cdkDropList
+    [cdkDropListData]="[list.id, cards.length]"
+    (cdkDropListDropped)="onCardDrop($event)"
   >
     <mat-card
       *ngFor="let card of cards"
       class="card"
       (click)="openCardDialog(card)"
+      cdkDrag
+      [cdkDragData]="card"
     >
+      <div class="card-drag-placeholder" *cdkDragPlaceholder></div>
       <div
         *ngIf="card.wallpaperURL as wallpaperURL"
         class="wallpaper-preview-wrapper"
@@ -108,7 +114,9 @@
         </div>
       </div>
     </mat-card>
+  </div>
 
+  <div class="footer" fxLayout="column">
     <button
       mat-flat-button
       [fxHide]="isNewCardTemplateOpened"
