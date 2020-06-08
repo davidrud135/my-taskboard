@@ -11,6 +11,7 @@ import { List } from './../../../core/models/list.model';
 import { ListSorting } from './../../../core/models/list-sorting.model';
 import { CardDialogComponent } from './../../../core/components/card-dialog/card-dialog.component';
 import { RemovalConfirmDialogComponent } from './../../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-list',
@@ -113,5 +114,25 @@ export class ListComponent implements OnInit {
 
   onListSort(sorting: ListSorting): void {
     this.listSortingStrategy$.next(sorting);
+  }
+
+  onCardDrop(event: CdkDragDrop<any>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.cards, event.previousIndex, event.currentIndex);
+      this.taskboardService.updateCardsPositionNumber(this.list.id, this.cards);
+    } else {
+      const { id } = event.item.data;
+      const { previousIndex, currentIndex } = event;
+      const [srcListId, srcListCardsNumber] = event.previousContainer.data;
+      const [destListId, destListCardsNumber] = event.container.data;
+      this.taskboardService.moveCardToAnotherList(
+        srcListId,
+        destListId,
+        id,
+        currentIndex,
+        srcListCardsNumber === previousIndex + 1,
+        destListCardsNumber === currentIndex,
+      );
+    }
   }
 }
