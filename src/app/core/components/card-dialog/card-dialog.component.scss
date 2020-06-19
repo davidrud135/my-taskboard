@@ -6,6 +6,15 @@ $cardWallpaperHeight: 200;
   position: relative;
   color: $darkBlueColor;
 
+  &.mobile-wrapper {
+    margin-left: -10px;
+    margin-right: -10px;
+
+    .card-content-section {
+      padding-right: 0;
+    }
+  }
+
   .card-wallpaper-wrapper {
     position: absolute;
     top: -$dialogPadding * 1px;

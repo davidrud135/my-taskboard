@@ -1,6 +1,7 @@
 <div
   *ngIf="card; else loadingCardData"
   class="wrapper"
+  ngClass.xs="mobile-wrapper"
   fxLayout="row"
   fxLayout.lt-sm="column"
 >
@@ -22,7 +23,7 @@
     [ngClass]="{ 'card-with-wallpaper': card.wallpaperURL }"
     fxLayout="column"
     fxLayoutGap="15px"
-    fxFlex
+    fxFlex="auto"
   >
     <div fxLayout="column">
       <div
@@ -330,7 +331,7 @@
   </div>
 </ng-template>
 
-<mat-menu #tagsMenu="matMenu" xPosition="before">
+<mat-menu #tagsMenu="matMenu" xPosition="before" yPosition="above">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
@@ -387,7 +388,7 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #attachmentMenu="matMenu">
+<mat-menu #attachmentMenu="matMenu" xPosition="before" yPosition="above">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
@@ -434,7 +435,7 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #wallpaperMenu="matMenu">
+<mat-menu #wallpaperMenu="matMenu" xPosition="before" yPosition="above">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
@@ -508,7 +509,7 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #membersMenu="matMenu">
+<mat-menu #membersMenu="matMenu" xPosition="before" yPosition="above">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
@@ -554,7 +555,7 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #moveCardMenu="matMenu">
+<mat-menu #moveCardMenu="matMenu" xPosition="before" yPosition="above">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
