@@ -12,18 +12,18 @@ import {
 import { Observable, of, combineLatest } from 'rxjs';
 import { switchMap, filter, map } from 'rxjs/operators';
 
-import { AuthService } from '../auth/auth.service';
-import { FirestoreBoard } from './models/firestore-board.model';
-import { FirestoreList } from './models/firestore-list.model';
-import { Board } from './models/board.model';
-import { User } from './models/user.model';
-import { List } from './models/list.model';
-import { FirestoreCard } from './models/firestore-card.model';
-import { Card } from './models/card.model';
-import { FirestoreUser } from './models/firestore-user.model';
-import { FirestoreTag } from './models/firestore-tag.model';
-import { Tag } from './models/tag.model';
-import { BoardBackColor } from './models/board-back-color.model';
+import { AuthService } from '@app/auth/auth.service';
+import { FirestoreBoard } from '@core/models/firestore-board.model';
+import { FirestoreList } from '@core/models/firestore-list.model';
+import { Board } from '@core/models/board.model';
+import { User } from '@core/models/user.model';
+import { List } from '@core/models/list.model';
+import { FirestoreCard } from '@core/models/firestore-card.model';
+import { Card } from '@core/models/card.model';
+import { FirestoreUser } from '@core/models/firestore-user.model';
+import { FirestoreTag } from '@core/models/firestore-tag.model';
+import { Tag } from '@core/models/tag.model';
+import { BoardBackColor } from '@core/models/board-back-color.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaskboardService {

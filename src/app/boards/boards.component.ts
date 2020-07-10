@@ -4,11 +4,11 @@ import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
-import { User } from '../core/models/user.model';
-import { FirestoreBoard } from '../core/models/firestore-board.model';
-import { AuthService } from './../auth/auth.service';
-import { TaskboardService } from './../core/taskboard.service';
-import { CreateBoardDialogComponent } from './../core/components/create-board-dialog/create-board-dialog.component';
+import { AuthService } from '@app/auth/auth.service';
+import { TaskboardService } from '@core/taskboard.service';
+import { User } from '@core/models/user.model';
+import { FirestoreBoard } from '@core/models/firestore-board.model';
+import { CreateBoardDialogComponent } from '@components/create-board-dialog/create-board-dialog.component';
 
 @Component({
   selector: 'app-boards',

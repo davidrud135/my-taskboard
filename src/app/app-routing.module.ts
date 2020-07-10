@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { environment } from 'src/environments/environment';
-import { BoardsComponent } from './boards/boards.component';
-import { AuthGuard } from './auth/auth.guard';
-import { BoardComponent } from './boards/board/board.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { environment } from '@env/environment';
+import { AuthGuard } from '@app/auth/auth.guard';
+import { BoardsComponent } from '@app/boards/boards.component';
+import { BoardComponent } from '@app/boards/board/board.component';
+import { UserProfileComponent } from '@app/user-profile/user-profile.component';
 
 const routes: Routes = [
   {

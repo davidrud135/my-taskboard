@@ -6,8 +6,8 @@ import {
 } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 
-import { TaskboardService } from '../../taskboard.service';
-import { CardAttachment } from './../../models/card-attachment.model';
+import { CardAttachment } from '@core/models/card-attachment.model';
+import { TaskboardService } from '@core/taskboard.service';
 
 @Component({
   selector: 'app-card-file-upload',

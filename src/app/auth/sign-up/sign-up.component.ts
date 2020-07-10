@@ -4,8 +4,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Data } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { environment } from './../../../environments/environment';
-import { AuthService } from './../auth.service';
+import { environment } from '@env/environment';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-sign-up',

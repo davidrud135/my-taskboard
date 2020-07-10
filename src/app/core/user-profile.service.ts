@@ -6,8 +6,8 @@ import {
 } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 
-import { User } from './models/user.model';
-import { AuthService } from '../auth/auth.service';
+import { User } from '@core/models/user.model';
+import { AuthService } from '@app/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',

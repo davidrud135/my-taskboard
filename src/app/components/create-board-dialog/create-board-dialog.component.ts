@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
-import { BoardBackColor } from './../../models/board-back-color.model';
-import { TaskboardService } from './../../taskboard.service';
-import { noEmptyValueValidator } from './../../../utils/no-empty-value.validator';
+import { TaskboardService } from '@core/taskboard.service';
+import { BoardBackColor } from '@core/models/board-back-color.model';
+import { noEmptyValueValidator } from '@app/utils/no-empty-value.validator';
 
 @Component({
   selector: 'app-create-board-dialog',
