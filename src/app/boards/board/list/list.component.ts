@@ -3,15 +3,15 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 
-import { TaskboardService } from './../../../core/taskboard.service';
-import { Card } from './../../../core/models/card.model';
-import { List } from './../../../core/models/list.model';
-import { ListSorting } from './../../../core/models/list-sorting.model';
-import { CardDialogComponent } from './../../../core/components/card-dialog/card-dialog.component';
-import { RemovalConfirmDialogComponent } from './../../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { List } from '@core/models/list.model';
+import { Card } from '@core/models/card.model';
+import { TaskboardService } from '@core/taskboard.service';
+import { ListSorting } from '@core/models/list-sorting.model';
+import { CardDialogComponent } from '@components/card-dialog/card-dialog.component';
+import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
 
 @Component({
   selector: 'app-list',

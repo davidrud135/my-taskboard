@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { AuthService } from '../auth/auth.service';
-import { environment } from './../../environments/environment.prod';
-import { User } from '../core/models/user.model';
+import { AuthService } from '@app/auth/auth.service';
+import { environment } from '@env/environment.prod';
+import { User } from '@core/models/user.model';
 
 @Component({
   selector: 'app-header',

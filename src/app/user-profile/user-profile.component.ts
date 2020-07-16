@@ -6,12 +6,12 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
-import { AuthService } from './../auth/auth.service';
-import { UserProfileService } from './../core/user-profile.service';
-import { User } from '../core/models/user.model';
-import { ProfileAvatarActionsComponent } from '../core/components/profile-avatar-actions/profile-avatar-actions.component';
-import { ProfileAvatarActionsResponse } from '../core/models/profile-avatar-actions-response.model';
-import { noEmptyValueValidator } from '../utils/no-empty-value.validator';
+import { AuthService } from '@app/auth/auth.service';
+import { UserProfileService } from '@core/user-profile.service';
+import { User } from '@core/models/user.model';
+import { noEmptyValueValidator } from '@app/utils/no-empty-value.validator';
+import { ProfileAvatarActionsResponse } from '@core/models/profile-avatar-actions-response.model';
+import { ProfileAvatarActionsComponent } from '@components/profile-avatar-actions/profile-avatar-actions.component';
 
 @Component({
   selector: 'app-user-profile',

@@ -18,15 +18,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
 
-import { environment } from './../../../environments/environment.prod';
-import { Board } from './../../core/models/board.model';
-import { TaskboardService } from './../../core/taskboard.service';
-import { List } from './../../core/models/list.model';
-import { RemovalConfirmDialogComponent } from './../../core/components/removal-confirm-dialog/removal-confirm-dialog.component';
-import { BoardBackColor } from './../../core/models/board-back-color.model';
-import { User } from './../../core/models/user.model';
-import { AuthService } from './../../auth/auth.service';
-import { noEmptyValueValidator } from './../../utils/no-empty-value.validator';
+import { environment } from '@env/environment';
+import { TaskboardService } from '@core/taskboard.service';
+import { AuthService } from '@app/auth/auth.service';
+import { Board } from '@core/models/board.model';
+import { List } from '@core/models/list.model';
+import { User } from '@core/models/user.model';
+import { BoardBackColor } from '@core/models/board-back-color.model';
+import { noEmptyValueValidator } from '@app/utils/no-empty-value.validator';
+import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
 
 @Component({
   selector: 'app-board',

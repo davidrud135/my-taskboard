@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { environment } from './../../environments/environment';
 
 // Material modules
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -15,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 
+import { environment } from '@env/environment';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { AnonymousGuard } from './anonymous.guard';
@@ -23,7 +23,7 @@ const routes: Routes = [
   {
     path: 'sign-up',
     component: SignUpComponent,
-    // canActivate: [AnonymousGuard],
+    canActivate: [AnonymousGuard],
     data: {
       routeTitle: `Register | ${environment.projectTitle}`,
     },
@@ -31,7 +31,7 @@ const routes: Routes = [
   {
     path: 'sign-in',
     component: SignInComponent,
-    // canActivate: [AnonymousGuard],
+    canActivate: [AnonymousGuard],
     data: {
       routeTitle: `Login | ${environment.projectTitle}`,
     },

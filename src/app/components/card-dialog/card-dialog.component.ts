@@ -14,21 +14,21 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSelectionListChange } from '@angular/material/list';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { firestore } from 'firebase/app';
 import { Subscription, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { TaskboardService } from './../../taskboard.service';
-import { AuthService } from './../../../auth/auth.service';
-import { User } from '../../models/user.model';
-import { Card } from './../../models/card.model';
-import { RemovalConfirmDialogComponent } from './../removal-confirm-dialog/removal-confirm-dialog.component';
-import { Tag } from '../../models/tag.model';
-import { CardAttachment } from './../../models/card-attachment.model';
-import { Board } from './../../models/board.model';
-import { List } from '../../models/list.model';
+import { AuthService } from '@app/auth/auth.service';
+import { TaskboardService } from '@core/taskboard.service';
+import { Card } from '@core/models/card.model';
+import { User } from '@core/models/user.model';
+import { Tag } from '@core/models/tag.model';
+import { List } from '@core/models/list.model';
+import { Board } from '@core/models/board.model';
+import { CardAttachment } from '@core/models/card-attachment.model';
+import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
 
 interface DialogData {
   cardId: string;

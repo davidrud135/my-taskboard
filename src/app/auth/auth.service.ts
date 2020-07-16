@@ -9,11 +9,11 @@ import {
 } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { auth } from 'firebase/app';
-import { Observable, of, AsyncSubject } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { User } from '../core/models/user.model';
-import { FirestoreUser } from './../core/models/firestore-user.model';
+import { User } from '@core/models/user.model';
+import { FirestoreUser } from '@core/models/firestore-user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

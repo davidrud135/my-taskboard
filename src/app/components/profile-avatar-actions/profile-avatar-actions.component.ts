@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 
-import { ProfileAvatarActionsResponse } from '../../models/profile-avatar-actions-response.model';
+import { ProfileAvatarActionsResponse } from '@core/models/profile-avatar-actions-response.model';
 
 @Component({
   selector: 'app-profile-avatar-actions',
