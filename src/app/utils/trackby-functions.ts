@@ -10,24 +10,24 @@ export function trackByIndexFn(idx: number): number {
 }
 
 export function boardTrackByFn(
-  _idx: number,
+  idx: number,
   board: FirestoreBoard & { id: string },
 ): string {
   return board.id;
 }
 
-export function listTrackByFn(_idx: number, list: List): string {
+export function listTrackByFn(idx: number, list: List): string {
   return list.id;
 }
 
-export function cardTrackByFn(_idx: number, card: Card): string {
+export function cardTrackByFn(idx: number, card: Card): string {
   return card.id;
 }
 
-export function memberTrackByFn(_idx: number, member: User): string {
+export function memberTrackByFn(idx: number, member: User): string {
   return member.id;
 }
 
-export function tagTrackByFn(_idx: number, tag: Tag): string {
+export function tagTrackByFn(idx: number, tag: Tag): string {
   return tag.id;
 }
