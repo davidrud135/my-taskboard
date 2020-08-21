@@ -30,7 +30,7 @@
     (cdkDropListDropped)="onCardDrop($event)"
   >
     <mat-card
-      *ngFor="let card of cards"
+      *ngFor="let card of cards; trackBy: cardTrackByFn"
       class="card"
       (click)="openCardDialog(card)"
       cdkDrag
@@ -49,7 +49,7 @@
         class="card-tags-preview"
       >
         <div
-          *ngFor="let tag of card.tags"
+          *ngFor="let tag of card.tags; trackBy: tagTrackByFn"
           fxLayoutAlign="start center"
           class="card-tag"
           [ngStyle]="{ 'background-color': tag.color }"
@@ -107,7 +107,7 @@
       >
         <div
           class="user-avatar-wrapper"
-          *ngFor="let member of card.members"
+          *ngFor="let member of card.members; trackBy: memberTrackByFn"
           [matTooltip]="member.username"
         >
           <img [src]="member.avatarURL" [alt]="member.username" />

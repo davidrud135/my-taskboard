@@ -16,7 +16,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
-import { tap, filter } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { TaskboardService } from '@core/taskboard.service';
@@ -27,6 +27,7 @@ import { User } from '@core/models/user.model';
 import { BoardBackColor } from '@core/models/board-back-color.model';
 import { noEmptyValueValidator } from '@app/utils/no-empty-value.validator';
 import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
+import { listTrackByFn, memberTrackByFn } from '@app/utils/trackby-functions';
 
 @Component({
   selector: 'app-board',
@@ -49,6 +50,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   isBoardBackColorsBlockOpened = false;
   boardBackColors: string[];
   currUser: User;
+  listTrackByFn = listTrackByFn;
+  memberTrackByFn = memberTrackByFn;
 
   constructor(
     private taskboardService: TaskboardService,
