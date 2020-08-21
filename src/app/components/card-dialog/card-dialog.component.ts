@@ -29,6 +29,13 @@ import { List } from '@core/models/list.model';
 import { Board } from '@core/models/board.model';
 import { CardAttachment } from '@core/models/card-attachment.model';
 import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
+import {
+  memberTrackByFn,
+  tagTrackByFn,
+  trackByIndexFn,
+  listTrackByFn,
+  cardTrackByFn,
+} from '@app/utils/trackby-functions';
 
 interface DialogData {
   cardId: string;
@@ -74,6 +81,11 @@ export class CardDialogComponent implements OnInit {
   boardTagsSub: Subscription;
   boardMembersSub: Subscription;
   dialogOverlayWrapperElem: HTMLElement;
+  memberTrackByFn = memberTrackByFn;
+  tagTrackByFn = tagTrackByFn;
+  trackByIndexFn = trackByIndexFn;
+  listTrackByFn = listTrackByFn;
+  cardTrackByFn = cardTrackByFn;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,

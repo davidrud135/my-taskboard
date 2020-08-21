@@ -9,6 +9,7 @@ import { TaskboardService } from '@core/taskboard.service';
 import { User } from '@core/models/user.model';
 import { FirestoreBoard } from '@core/models/firestore-board.model';
 import { CreateBoardDialogComponent } from '@components/create-board-dialog/create-board-dialog.component';
+import { boardTrackByFn } from '@app/utils/trackby-functions';
 
 @Component({
   selector: 'app-boards',
@@ -19,6 +20,7 @@ export class BoardsComponent implements OnInit {
   currUser$: Observable<User>;
   personalBoards$: Observable<(FirestoreBoard & { id: string })[]>;
   favoriteBoards$: Observable<(FirestoreBoard & { id: string })[]>;
+  boardTrackByFn = boardTrackByFn;
 
   constructor(
     private route: ActivatedRoute,

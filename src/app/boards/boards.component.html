@@ -21,7 +21,7 @@
     fxLayoutAlign.xs="center stretch"
   >
     <mat-card
-      *ngFor="let board of favoriteBoards$ | async"
+      *ngFor="let board of favoriteBoards$ | async; trackBy: boardTrackByFn"
       class="board-card"
       ngClass.xs="board-card-xs"
       [ngStyle]="{ 'background-color': board.backgroundColor }"
@@ -82,7 +82,7 @@
       fxLayoutAlign.xs="center stretch"
     >
       <mat-card
-        *ngFor="let board of personalBoards"
+        *ngFor="let board of personalBoards; trackBy: boardTrackByFn"
         class="board-card"
         ngClass.xs="board-card-xs"
         matBadge="★"

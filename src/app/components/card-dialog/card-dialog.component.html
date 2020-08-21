@@ -70,7 +70,7 @@
         <div fxLayout="row wrap" fxLayoutGap="2px">
           <div
             class="user-avatar-wrapper"
-            *ngFor="let member of card.members"
+            *ngFor="let member of card.members; trackBy: memberTrackByFn"
             [matTooltip]="member.username"
           >
             <img [src]="member.avatarURL" [alt]="member.username" />
@@ -103,7 +103,7 @@
         <div class="tags-list">
           <mat-chip-list>
             <mat-chip
-              *ngFor="let tag of card.tags"
+              *ngFor="let tag of card.tags; trackBy: tagTrackByFn"
               (removed)="removeTagFromCard(tag.id)"
               [ngStyle]="{ 'background-color': tag.color }"
             >
@@ -175,7 +175,7 @@
           fxLayoutAlign.xs="center center"
         >
           <mat-card
-            *ngFor="let attachment of card.attachments"
+            *ngFor="let attachment of card.attachments; trackBy: trackByIndexFn"
             class="attachment-card"
             [ngClass]="{
               'non-graphical-attachment': !attachmentIsImage(attachment)
@@ -353,7 +353,7 @@
         <span class="tip-text">Click on tag to modify its name.</span>
         <div fxLayout="column" fxLayoutGap="5px">
           <div
-            *ngFor="let boardTag of boardTags"
+            *ngFor="let boardTag of boardTags; trackBy: tagTrackByFn"
             class="tag-row"
             fxLayoutAlign="start center"
             fxLayoutGap="10px"
@@ -463,7 +463,10 @@
           fxLayout="row wrap"
         >
           <div
-            *ngFor="let imageAttachment of getImageAttachments()"
+            *ngFor="
+              let imageAttachment of getImageAttachments();
+              trackBy: trackByIndexFn
+            "
             class="image-attachment"
             [ngClass]="{
               'current-wallpaper': imageAttachment.url === card.wallpaperURL
@@ -534,7 +537,7 @@
           color="primary"
         >
           <mat-list-option
-            *ngFor="let member of boardMembers"
+            *ngFor="let member of boardMembers; trackBy: memberTrackByFn"
             [selected]="cardHasMember(member.id)"
             [value]="member.id"
           >
@@ -588,7 +591,10 @@
               [(value)]="selectedListId"
               (selectionChange)="loadSelectedListCards()"
             >
-              <mat-option *ngFor="let list of boardLists" [value]="list.id">
+              <mat-option
+                *ngFor="let list of boardLists; trackBy: listTrackByFn"
+                [value]="list.id"
+              >
                 {{ list.title }}
                 <span *ngIf="list.id === data.listId">(current)</span>
               </mat-option>
@@ -602,7 +608,10 @@
               <mat-label>Position</mat-label>
               <mat-select [(value)]="selectedCardPosition">
                 <mat-option
-                  *ngFor="let selectedListCard of selectedListCards"
+                  *ngFor="
+                    let selectedListCard of selectedListCards;
+                    trackBy: cardTrackByFn
+                  "
                   [value]="selectedListCard.positionNumber"
                 >
                   {{ selectedListCard.positionNumber }}

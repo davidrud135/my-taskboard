@@ -12,6 +12,11 @@ import { TaskboardService } from '@core/taskboard.service';
 import { ListSorting } from '@core/models/list-sorting.model';
 import { CardDialogComponent } from '@components/card-dialog/card-dialog.component';
 import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
+import {
+  cardTrackByFn,
+  memberTrackByFn,
+  tagTrackByFn,
+} from '@app/utils/trackby-functions';
 
 @Component({
   selector: 'app-list',
@@ -26,6 +31,9 @@ export class ListComponent implements OnInit {
   @ViewChild('newCardTitleField')
   newCardTitleField: ElementRef;
   isNewCardTemplateOpened = false;
+  cardTrackByFn = cardTrackByFn;
+  memberTrackByFn = memberTrackByFn;
+  tagTrackByFn = tagTrackByFn;
 
   constructor(
     private taskboardService: TaskboardService,
