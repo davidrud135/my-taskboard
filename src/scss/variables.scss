@@ -6,7 +6,7 @@ $warnColor: #f44336;
 // Custom colors
 $darkBlueColor: #172b4d;
 $whiteColor: #ffffff;
-$darkerWhiteColor: #dcdcdc;
+$darkerWhiteColor: darken($whiteColor, 10%);
 
 // Board variables
 $defaultBackgroundColor: #3cb44b;
