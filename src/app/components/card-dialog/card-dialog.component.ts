@@ -268,18 +268,6 @@ export class CardDialogComponent implements OnInit {
     return this.card.attachments.filter(this.attachmentIsImage);
   }
 
-  getReadableAttachmentSize(attachment: CardAttachment): string {
-    const megabyteSize = 1000000;
-    const kilobyteSize = 1000;
-    const { size } = attachment;
-    if (size >= megabyteSize) {
-      const sizeInMegabytes = (size / megabyteSize).toFixed(1);
-      return `${sizeInMegabytes} MB`;
-    }
-    const sizeInKilobytes = (size / kilobyteSize).toFixed(1);
-    return `${sizeInKilobytes} KB`;
-  }
-
   getReadableAttachmentTimestamp(attachment: CardAttachment): string {
     const formattingOptions = {
       day: 'numeric',

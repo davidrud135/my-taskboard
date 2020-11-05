@@ -12,6 +12,7 @@ import { AppRoutingModule } from '@app/app-routing.module';
 import { MaterialModule } from '@app/modules/material.module';
 import { AuthModule } from '@app/auth/auth.module';
 import { DropAreaDirective } from '@app/utils/drop-area.directive';
+import { FileSizePipe } from '@core/pipes/file-size.pipe';
 
 import { AppComponent } from '@app/app.component';
 import { HeaderComponent } from '@app/header/header.component';
@@ -39,6 +40,7 @@ import { ProfileAvatarActionsComponent } from '@components/profile-avatar-action
     DropAreaDirective,
     ProfileAvatarActionsComponent,
     UserProfileComponent,
+    FileSizePipe,
   ],
   imports: [
     BrowserModule,

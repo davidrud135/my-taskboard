@@ -196,7 +196,7 @@
             </a>
             <mat-card-content>
               <h3>{{ attachment.name }}</h3>
-              <span>Size: {{ getReadableAttachmentSize(attachment) }}</span>
+              <span>Size: {{ attachment.size | fileSize }}</span>
               <br />
               <span>
                 Attached:
