@@ -15,6 +15,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatSelectModule } from '@angular/material/select';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 const modules = [
   MatToolbarModule,
@@ -33,6 +34,7 @@ const modules = [
   MatBottomSheetModule,
   MatSelectModule,
   DragDropModule,
+  MatExpansionModule,
 ];
 
 @NgModule({

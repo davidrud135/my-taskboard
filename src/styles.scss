@@ -14,6 +14,11 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+img {
+  display: block;
+  max-width: 100%;
+}
+
 .proj-title {
   font-family: 'Lobster', cursive;
   font-size: 22.5px;
