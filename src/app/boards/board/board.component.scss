@@ -56,21 +56,34 @@ mat-sidenav-container {
       }
 
       .body {
-        .board-back-colors-block {
-          padding: 5px;
-
-          .color-card {
-            width: calc(50% - 5px);
-            height: 50px;
-            box-sizing: border-box;
-            color: white;
-            margin: 0 5px 10px 0;
-            opacity: 1;
+        mat-accordion mat-expansion-panel {
+          &:not(.mat-expanded) {
+            box-shadow: none;
+            border-radius: 0;
           }
 
-          .color-card:hover {
-            cursor: pointer;
-            opacity: 0.8;
+          mat-expansion-panel-header {
+            padding: 0 22px;
+
+            .exp-panel-title {
+              font-size: 1rem;
+            }
+          }
+
+          .board-color-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: 1fr;
+            gap: 0.5rem;
+
+            mat-card {
+              color: #fff;
+
+              &:hover {
+                cursor: pointer;
+                opacity: 0.8;
+              }
+            }
           }
         }
 

@@ -142,32 +142,6 @@
               }}
             </h3>
           </mat-list-item>
-          <mat-list-item (click)="toggleBoardBackColorBlock()">
-            <mat-icon matListIcon>color_lens</mat-icon>
-            <h3 matLine>Change Background Color</h3>
-            <mat-icon>{{
-              isBoardBackColorsBlockOpened ? 'arrow_drop_up' : 'arrow_drop_down'
-            }}</mat-icon>
-          </mat-list-item>
-          <div
-            *ngIf="isBoardBackColorsBlockOpened"
-            class="board-back-colors-block"
-          >
-            <mat-card fxLayout="row wrap" fxLayoutAlign="center center">
-              <mat-card
-                *ngFor="let color of boardBackColors"
-                class="color-card"
-                [ngStyle]="{ 'background-color': color }"
-                fxLayout="row"
-                fxLayoutAlign="center center"
-                (click)="onChangeBoardBackColor(board.backgroundColor, color)"
-              >
-                <mat-icon *ngIf="board.backgroundColor === color"
-                  >check</mat-icon
-                >
-              </mat-card>
-            </mat-card>
-          </div>
           <mat-list-item
             *ngIf="isBoardAdmin(board.adminId, currUser.id)"
             class="warn-color"
@@ -185,6 +159,30 @@
             <h3 matLine>Leave Board</h3>
           </mat-list-item>
         </mat-action-list>
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title fxLayoutAlign="start center" fxLayoutGap="18px">
+                <mat-icon>color_lens</mat-icon>
+                <span class="exp-panel-title">Change Board Color</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <div class="board-color-cards-grid">
+                <mat-card
+                  *ngFor="let color of boardBackColors"
+                  [ngStyle]="{ 'background-color': color }"
+                  fxLayoutAlign="center center"
+                  (click)="onChangeBoardBackColor(board.backgroundColor, color)"
+                >
+                  <mat-icon *ngIf="board.backgroundColor === color">
+                    check
+                  </mat-icon>
+                </mat-card>
+              </div>
+            </ng-template>
+          </mat-expansion-panel>
+        </mat-accordion>
         <mat-list>
           <h3 matSubheader>Members ({{ board.members.length }})</h3>
           <mat-list-item
