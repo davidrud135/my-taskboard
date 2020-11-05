@@ -200,7 +200,9 @@
               <br />
               <span>
                 Attached:
-                {{ getReadableAttachmentTimestamp(attachment) }}
+                {{
+                  attachment.attachedAt.toMillis() | date: 'MMM d, y, h:mm a'
+                }}
               </span>
             </mat-card-content>
             <mat-card-actions fxLayoutAlign="space-between center">

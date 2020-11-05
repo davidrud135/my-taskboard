@@ -268,18 +268,6 @@ export class CardDialogComponent implements OnInit {
     return this.card.attachments.filter(this.attachmentIsImage);
   }
 
-  getReadableAttachmentTimestamp(attachment: CardAttachment): string {
-    const formattingOptions = {
-      day: 'numeric',
-      month: 'long',
-      hour: 'numeric',
-      minute: 'numeric',
-    };
-    return attachment.attachedAt
-      .toDate()
-      .toLocaleDateString('en-US', formattingOptions);
-  }
-
   removeCardAttachment(attachment: CardAttachment): void {
     const { listId, cardId } = this.data;
     this.taskboardService.updateCardData(listId, cardId, {
