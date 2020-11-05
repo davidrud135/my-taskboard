@@ -5,6 +5,7 @@ import {
   ViewChild,
   ElementRef,
   Renderer2,
+  OnDestroy,
 } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -49,7 +50,7 @@ interface DialogData {
   templateUrl: './card-dialog.component.html',
   styleUrls: ['./card-dialog.component.scss'],
 })
-export class CardDialogComponent implements OnInit {
+export class CardDialogComponent implements OnInit, OnDestroy {
   @ViewChild('cardTitleField')
   cardTitleField: ElementRef;
   @ViewChild('cardDescriptionField')
@@ -342,10 +343,10 @@ export class CardDialogComponent implements OnInit {
       this.dialogOverlayWrapperElem,
       'card-dialog-overlay',
     );
-    this.cardSub.unsubscribe();
-    this.userSub.unsubscribe();
-    this.boardTagsSub.unsubscribe();
-    this.boardMembersSub.unsubscribe();
-    if (this.selectedListCardsSub) this.selectedListCardsSub.unsubscribe();
+    this.cardSub?.unsubscribe();
+    this.userSub?.unsubscribe();
+    this.boardTagsSub?.unsubscribe();
+    this.boardMembersSub?.unsubscribe();
+    this.selectedListCardsSub?.unsubscribe();
   }
 }
