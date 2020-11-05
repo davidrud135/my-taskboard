@@ -169,10 +169,9 @@
         ></app-card-file-upload>
         <div
           class="attachments-list"
-          fxLayout="row wrap"
-          fxLayoutAlign="space-between stretch"
-          fxLayout.xs="column"
-          fxLayoutAlign.xs="center center"
+          gdColumns="1fr"
+          gdColumns.gt-xs="1fr 1fr"
+          gdGap="1rem"
         >
           <mat-card
             *ngFor="let attachment of card.attachments; trackBy: trackByIndexFn"
@@ -180,7 +179,6 @@
             [ngClass]="{
               'non-graphical-attachment': !attachmentIsImage(attachment)
             }"
-            ngClass.xs="xs_attachment-card"
           >
             <a [href]="attachment.url" target="_blank">
               <div class="preview-wrapper">

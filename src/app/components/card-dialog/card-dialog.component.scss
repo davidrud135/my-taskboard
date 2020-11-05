@@ -122,8 +122,6 @@ $cardWallpaperHeight: 200;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          width: 41%;
-          margin-bottom: 10px;
 
           &:hover {
             box-shadow: 0 5px 10px 0 rgba($primaryColor, 0.4);
@@ -169,10 +167,6 @@ $cardWallpaperHeight: 200;
           mat-card-actions {
             padding: 0;
           }
-        }
-
-        .xs_attachment-card {
-          width: 80%;
         }
       }
     }
