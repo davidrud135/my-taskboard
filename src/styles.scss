@@ -100,6 +100,18 @@ img {
   }
 }
 
+.snackbar {
+  &-success {
+    background-color: $successColor;
+  }
+  &-warning {
+    background-color: $accentColor;
+  }
+  &-error {
+    background-color: $warnColor;
+  }
+}
+
 .cdk-global-overlay-wrapper.card-dialog-overlay {
   overflow: auto;
   pointer-events: auto;
