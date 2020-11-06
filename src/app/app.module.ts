@@ -15,11 +15,11 @@ import { DropAreaDirective } from '@app/utils/drop-area.directive';
 import { FileSizePipe } from '@core/pipes/file-size.pipe';
 
 import { AppComponent } from '@app/app.component';
-import { HeaderComponent } from '@app/header/header.component';
 import { BoardsComponent } from '@app/boards/boards.component';
 import { BoardComponent } from '@app/boards/board/board.component';
 import { ListComponent } from '@app/boards/board/list/list.component';
 import { UserProfileComponent } from '@app/user-profile/user-profile.component';
+import { HeaderComponent } from '@components/header/header.component';
 import { CreateBoardDialogComponent } from '@components/create-board-dialog/create-board-dialog.component';
 import { CardDialogComponent } from '@components/card-dialog/card-dialog.component';
 import { RemovalConfirmDialogComponent } from '@components/removal-confirm-dialog/removal-confirm-dialog.component';
