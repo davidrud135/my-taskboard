@@ -40,6 +40,9 @@ export class BoardsComponent implements OnInit {
   }
 
   onCreateBoard() {
-    this.dialog.open(CreateBoardDialogComponent);
+    this.dialog.open(CreateBoardDialogComponent, {
+      maxWidth: '95vw',
+      width: '400px',
+    });
   }
 }
