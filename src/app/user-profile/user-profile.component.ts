@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 
 import { AuthService } from '@app/auth/auth.service';
 import { UserProfileService } from '@core/user-profile.service';
@@ -18,39 +19,42 @@ import { ProfileAvatarActionsComponent } from '@components/profile-avatar-action
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
 })
-export class UserProfileComponent implements OnInit, OnDestroy {
-  user: User;
+export class UserProfileComponent implements OnInit {
+  user$: Observable<User>;
   userProfileForm: FormGroup;
   isAvatarImageInProcess = false;
   snackBarDuration = 3000;
-  userSub: Subscription;
 
   constructor(
     private authService: AuthService,
     private userProfileService: UserProfileService,
-    private bottomSheet: MatBottomSheet,
-    private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private titleService: Title,
+    private bottomSheet: MatBottomSheet,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
+    this.userProfileForm = new FormGroup({
+      fullName: new FormControl(null, [
+        Validators.required,
+        noEmptyValueValidator,
+      ]),
+      username: new FormControl(null, [
+        Validators.required,
+        noEmptyValueValidator,
+      ]),
+    });
     this.route.data.subscribe((data: Data) => {
       this.titleService.setTitle(data['routeTitle']);
     });
-    this.userSub = this.authService.getUser().subscribe((user: User) => {
-      this.user = user;
-      this.userProfileForm = new FormGroup({
-        fullName: new FormControl(user.fullName, [
-          Validators.required,
-          noEmptyValueValidator,
-        ]),
-        username: new FormControl(user.username, [
-          Validators.required,
-          noEmptyValueValidator,
-        ]),
-      });
-    });
+    this.user$ = this.authService.getUser().pipe(
+      filter((user: User | null) => !!user),
+      tap((user: User) => {
+        this.userProfileForm.get('fullName').setValue(user.fullName);
+        this.userProfileForm.get('username').setValue(user.username);
+      }),
+    );
   }
 
   openAvatarActions(): void {
@@ -60,12 +64,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       .subscribe(this.handleProfileAvatarActionsResponse);
   }
 
-  onAvatarImageUpload(image: File) {
+  onAvatarImageUpload(image: File): void {
     this.isAvatarImageInProcess = true;
     this.userProfileService.uploadAvatarImage(image).then(() => {
       this.isAvatarImageInProcess = false;
-      this.snackBar.open('✔️ Avatar updated.', '', {
+      this.snackBar.open('Avatar successfully updated.', null, {
         duration: this.snackBarDuration,
+        panelClass: 'snackbar-success',
       });
     });
   }
@@ -75,28 +80,33 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.userProfileService
       .setDefaultUserAvatarImage()
       .then(() => {
-        this.snackBar.open('✔️ Avatar removed.', '', {
+        this.snackBar.open('Avatar successfully removed.', null, {
           duration: this.snackBarDuration,
+          panelClass: 'snackbar-success',
         });
       })
       .catch(() => {
-        this.snackBar.open("❌ Can't remove default avatar image!", 'OK');
+        this.snackBar.open("Can't remove the default avatar image!", 'OK', {
+          panelClass: 'snackbar-error',
+        });
       })
       .finally(() => (this.isAvatarImageInProcess = false));
   }
 
-  onSaveForm() {
+  onSaveForm(): void {
     const { value } = this.userProfileForm;
     const cleanProfileData = this.clearFormDataValues(value);
     this.userProfileService.updateProfileData(cleanProfileData).then(() => {
-      this.snackBar.open('✔️ Profile data updated.', '', {
+      this.userProfileForm.markAsPristine();
+      this.snackBar.open('Profile data successfully updated.', null, {
         duration: this.snackBarDuration,
+        panelClass: 'snackbar-success',
       });
     });
   }
 
-  resetForm() {
-    this.userProfileForm.reset(this.user);
+  resetForm(originalUserData: User): void {
+    this.userProfileForm.reset(originalUserData);
   }
 
   clearFormDataValues(data: object): object {
@@ -119,11 +129,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.onAvatarImageRemove();
         break;
       case 'not-image':
-        this.snackBar.open('⚠️ Avatar can be only of image type!', 'OK');
+        this.snackBar.open('Avatar can be only of image type!', 'OK', {
+          panelClass: 'snackbar-warning',
+        });
     }
   };
-
-  ngOnDestroy(): void {
-    this.userSub.unsubscribe();
-  }
 }

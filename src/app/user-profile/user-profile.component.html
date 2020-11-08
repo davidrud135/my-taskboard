@@ -1,10 +1,10 @@
 <section class="user-profile-wrapper" fxLayoutAlign="center center" fxFlexFill>
   <mat-card
-    *ngIf="user; else loadingUserProfile"
+    *ngIf="user$ | async as user; else loadingUserProfile"
     fxLayout="column"
     fxLayoutGap="10px"
-    fxFlex="600px"
-    fxFlex.xs="95%"
+    fxFlex="95%"
+    fxFlex.gt-xs="600px"
   >
     <mat-card-header fxLayout="column" fxLayoutAlign="center center">
       <mat-card-title>PROFILE</mat-card-title>
@@ -14,7 +14,10 @@
         [ngClass]="{ 'in-process': isAvatarImageInProcess }"
       >
         <img [src]="user.avatarURL" [alt]="user.username" />
-        <mat-spinner *ngIf="isAvatarImageInProcess"></mat-spinner>
+        <mat-spinner
+          *ngIf="isAvatarImageInProcess"
+          strokeWidth="5"
+        ></mat-spinner>
       </div>
     </mat-card-header>
     <div>
@@ -39,7 +42,7 @@
           <input matInput type="email" [value]="user.email" readonly />
         </mat-form-field>
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <button mat-stroked-button type="button" (click)="resetForm()">
+          <button mat-stroked-button type="button" (click)="resetForm(user)">
             <mat-icon>undo</mat-icon>
             Reset
           </button>
