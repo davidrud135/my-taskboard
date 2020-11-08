@@ -175,10 +175,8 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.menuTrigger.closeMenu();
       })
       .catch((errMsg: string) => {
-        this.snackBar.open(`⚠️${errMsg}⚠️`, 'OK', {
-          duration: 7000,
-          horizontalPosition: 'left',
-          verticalPosition: 'top',
+        this.snackBar.open(errMsg, 'OK', {
+          panelClass: 'snackbar-error',
         });
       });
   }

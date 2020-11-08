@@ -114,7 +114,7 @@ export class ListComponent implements OnInit {
         this.taskboardService
           .removeList(id, creatorId)
           .catch((errMsg: string) => {
-            this.snackBar.open(`❗${errMsg}❗`, 'OK');
+            this.snackBar.open(errMsg, 'OK', { panelClass: 'snackbar-error' });
           });
       });
   }

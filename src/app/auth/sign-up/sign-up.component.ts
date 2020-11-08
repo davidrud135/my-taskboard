@@ -68,6 +68,7 @@ export class SignUpComponent implements OnInit {
   showErrorSnackBar = (errMsg: string): void => {
     this.snackBar.open(errMsg, 'OK', {
       verticalPosition: 'top',
+      panelClass: 'snackbar-error',
     });
     this.isLoading = false;
   };

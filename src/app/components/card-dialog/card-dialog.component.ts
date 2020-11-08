@@ -185,7 +185,7 @@ export class CardDialogComponent implements OnInit, OnDestroy {
             this.cardDialogRef.close();
           })
           .catch((errMsg: string) => {
-            this.snackBar.open(`❗${errMsg}❗`, 'OK');
+            this.snackBar.open(errMsg, 'OK', { panelClass: 'snackbar-error' });
           });
       });
   }
