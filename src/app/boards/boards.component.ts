@@ -3,6 +3,7 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { AuthService } from '@app/auth/auth.service';
 import { TaskboardService } from '@core/taskboard.service';
@@ -36,10 +37,12 @@ export class BoardsComponent implements OnInit {
     });
     this.currUser$ = this.authService.getUser();
     this.personalBoards$ = this.taskboardService.getPersonalBoards();
-    this.favoriteBoards$ = this.taskboardService.getFavoriteBoards();
+    this.favoriteBoards$ = this.taskboardService
+      .getFavoriteBoards()
+      .pipe(map(favBoards => (favBoards.length ? favBoards : null)));
   }
 
-  onCreateBoard() {
+  onCreateBoard(): void {
     this.dialog.open(CreateBoardDialogComponent, {
       maxWidth: '95vw',
       width: '400px',

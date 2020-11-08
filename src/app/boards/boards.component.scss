@@ -1,60 +1,69 @@
 @import '../../scss/variables.scss';
+@import '~@angular/flex-layout/mq';
 
 .boards-section {
-  padding: 10px;
-  box-sizing: border-box;
+  padding: 0.5rem 1rem;
 
   .header {
-    padding: 10px 7px;
+    padding: 0.5rem 0;
 
     .title {
       color: $darkBlueColor;
 
-      h4 {
-        display: inline-block;
+      h3 {
         margin: 0;
       }
     }
   }
 
-  .no-items-label {
-    font-size: 14px;
-    color: grey;
-  }
+  .boards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 6rem;
+    gap: 1rem;
 
-  .board-card {
-    box-sizing: border-box;
-    min-height: 80px;
-    margin: 0 7px 10px 7px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    opacity: 1;
-    outline: none;
+    .board-card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 1.5rem;
+      text-align: center;
+      outline: none;
+      transition: 0.3s ease;
 
-    mat-card-header {
-      width: 100%;
-      max-height: 45px;
-      color: whitesmoke;
-      word-break: break-all;
-      overflow: hidden;
-
-      mat-card-title {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      &:hover {
+        cursor: pointer;
+        opacity: 0.8;
       }
+
+      @include layout-bp(gt-xs) {
+        justify-content: flex-start;
+        align-items: flex-start;
+        text-align: left;
+        font-size: 1.25rem;
+      }
+    }
+
+    @include layout-bp(sm) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include layout-bp(md) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @include layout-bp(lg) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    @include layout-bp(gt-lg) {
+      grid-template-columns: repeat(7, 1fr);
     }
   }
 
-  .board-card:hover {
-    opacity: 0.75;
+  .no-personal-boards {
+    font-size: 1rem;
+    color: grey;
   }
-}
-
-.board-card-xs {
-  width: 100% !important;
-  margin: 0 0 10px 0 !important;
-  min-height: 40px !important;
 }
