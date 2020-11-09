@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '/boards',
+    redirectTo: 'boards',
   },
   {
     path: 'boards',
@@ -31,6 +31,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { routeTitle: `Profile | ${environment.projectTitle}` },
   },
+  { path: '**', redirectTo: 'boards' },
 ];
 
 @NgModule({
