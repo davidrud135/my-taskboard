@@ -192,127 +192,114 @@ $cardWallpaperHeight: 200;
   }
 }
 
-.card-action-menu {
-  &.tags-menu {
-    .body {
-      .tip-text {
-        padding: 10px 0;
-        font-size: 12px;
-        color: grey;
+.members-menu .body {
+  $maxMembersPerView: 4;
+  $listItemHeight: 4rem;
+  max-height: $listItemHeight * $maxMembersPerView;
+
+  .mat-list-base {
+    padding-top: 0;
+
+    .mat-list-option {
+      height: $listItemHeight;
+    }
+  }
+}
+
+.tags-menu .body {
+  .tip-text {
+    padding-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: grey;
+  }
+  .tag-row {
+    mat-checkbox {
+      margin: 0 0.5rem;
+    }
+
+    .tag-field {
+      height: 2rem;
+      color: $whiteColor;
+      outline: 0;
+      border-width: 1px;
+      border-style: solid;
+      border-radius: 0.25rem;
+      padding: 0.5rem;
+      text-overflow: ellipsis;
+
+      &:hover {
+        opacity: 0.8;
+        cursor: pointer;
       }
-      .tag-row {
-        padding-left: 5px;
 
-        .tag-field {
-          height: 30px;
-          color: $whiteColor;
-          border: 0;
-          outline: 0;
-          border-width: 1px;
-          border-style: solid;
-          border-radius: 5px;
-          padding: 2px 5px;
-          text-overflow: ellipsis;
+      &:focus {
+        background-color: transparent !important;
+        color: #000;
+        cursor: text;
+        opacity: 1;
+      }
+    }
+  }
+}
 
-          &:hover {
-            opacity: 0.8;
-            cursor: pointer;
-          }
+.attachment-menu .body {
+  height: 150px;
+  font-size: 0.8rem;
+  color: grey;
 
-          &:focus {
-            background-color: transparent !important;
-            color: #000;
-            cursor: text;
-            opacity: 1;
-          }
+  .drop-area {
+    border: 2px dashed $primaryColor;
+
+    &.hovered {
+      border-style: solid;
+      color: $primaryColor;
+    }
+  }
+}
+
+.wallpaper-menu {
+  .body {
+    .image-attachments-grid {
+      $maxAttachmentRowsPerView: 3;
+      $attachmentItemHeight: 5rem;
+      $attachmentsGridGap: 0.5rem;
+
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $attachmentsGridGap;
+      max-height: $attachmentItemHeight * $maxAttachmentRowsPerView +
+        $attachmentsGridGap * ($maxAttachmentRowsPerView - 1);
+      padding-right: 0.25rem;
+
+      .image-attachment {
+        display: flex;
+        background-color: lightgrey;
+        height: $attachmentItemHeight;
+        border-radius: 0.25rem;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+
+        img {
+          object-fit: scale-down;
+          width: 100%;
+        }
+
+        &.current-wallpaper {
+          border-color: $primaryColor;
+          pointer-events: none;
+        }
+
+        &:hover {
+          border-color: #000;
+          cursor: pointer;
         }
       }
     }
   }
 
-  &.attachment-menu {
-    .body {
-      height: 150px;
-      padding-top: 5px;
-      font-size: 12px;
-      color: grey;
-
-      .drop-area {
-        border: 2px dashed $primaryColor;
-        border-radius: 5px;
-
-        &.hovered {
-          border-style: solid;
-          color: $primaryColor;
-        }
-      }
-    }
-  }
-
-  &.wallpaper-menu {
-    .body {
-      .image-attachments-list {
-        max-height: 180px;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 5px;
-        margin-top: 5px;
-
-        .image-attachment {
-          display: flex;
-          width: 48%;
-          background-color: lightgrey;
-          border-radius: 4px;
-          height: 80px;
-          margin-bottom: 5px;
-
-          img {
-            object-fit: scale-down;
-            width: 100%;
-          }
-
-          &.current-wallpaper {
-            box-shadow: 0 0 0 2px $primaryColor;
-          }
-
-          &:hover {
-            opacity: 0.8;
-            cursor: pointer;
-          }
-        }
-      }
-    }
-
-    .no-image-attachments-block {
-      height: 150px;
-      font-size: 12px;
-      color: grey;
-    }
-  }
-
-  &.members-menu {
-    .body {
-      max-height: 220px;
-      margin: 0 -2px 0 -5px;
-
-      .mat-list-base {
-        padding-top: 0;
-
-        .mat-list-option {
-          height: 55px;
-
-          img.mat-list-avatar {
-            width: 30px;
-            height: 30px;
-          }
-        }
-      }
-    }
-  }
-
-  &.move-card-menu {
-    .body {
-      padding-top: 10px;
-    }
+  .no-image-attachments-block {
+    height: 150px;
+    font-size: 0.8rem;
+    color: grey;
   }
 }

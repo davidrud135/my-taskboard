@@ -76,27 +76,34 @@ img {
 }
 
 .card-action-menu,
-.list-action-menu {
-  width: 250px;
-  padding: 0 5px;
-  position: relative;
+.add-member-menu {
+  width: 300px;
+  padding: 0 0.5rem;
+  margin: 0 0.5rem;
+  box-sizing: border-box;
 
-  .close-menu-btn {
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    position: absolute;
-    top: -2px;
-    right: 2px;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $darkBlueColor;
+    padding-left: 0.25rem;
+    font-weight: 500;
 
-    mat-icon {
-      font-size: 20px;
+    .close-menu-btn {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+
+      mat-icon {
+        font-size: 20px;
+        line-height: 20px;
+      }
     }
   }
 
-  .header {
-    padding: 5px;
-    color: $darkBlueColor;
+  .body {
+    margin-top: 0.5rem;
   }
 }
 

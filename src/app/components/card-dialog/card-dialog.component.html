@@ -331,32 +331,75 @@
   </div>
 </ng-template>
 
-<mat-menu #tagsMenu="matMenu" xPosition="before" yPosition="above">
+<!-- Card Menus -->
+
+<mat-menu #membersMenu="matMenu" class="card-action-menu">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
-      class="card-action-menu tags-menu"
+      class="members-menu"
       (click)="$event.stopPropagation()"
     >
-      <button
-        mat-icon-button
-        class="close-menu-btn"
-        (click)="tagsMenuTrigger.closeMenu()"
-      >
-        <mat-icon>clear</mat-icon>
-      </button>
+      <div class="header">
+        <span>Members</span>
+        <button
+          mat-icon-button
+          class="close-menu-btn"
+          (click)="membersMenuTrigger.closeMenu()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <mat-divider></mat-divider>
+      <div fxLayout="column" class="body scrollbar-y scrollbar-thin">
+        <mat-selection-list
+          *ngIf="boardMembers; else loading"
+          (selectionChange)="onChangeCardMemberState($event)"
+          color="primary"
+        >
+          <mat-list-option
+            *ngFor="let member of boardMembers; trackBy: memberTrackByFn"
+            [selected]="cardHasMember(member.id)"
+            [value]="member.id"
+          >
+            <img
+              matListAvatar
+              [src]="member.avatarURL"
+              [alt]="member.username"
+            />
+            <h6 matLine>{{ member.fullName }}</h6>
+            <span matLine>@{{ member.username }}</span>
+          </mat-list-option>
+        </mat-selection-list>
+        <ng-template #loading>
+          <span>Loading members...</span>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #tagsMenu="matMenu" class="card-action-menu">
+  <ng-template matMenuContent>
+    <div fxLayout="column" class="tags-menu" (click)="$event.stopPropagation()">
       <div class="header">
         <span>Tags</span>
+        <button
+          mat-icon-button
+          class="close-menu-btn"
+          (click)="tagsMenuTrigger.closeMenu()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
       <mat-divider></mat-divider>
       <div fxLayout="column" class="body">
         <span class="tip-text">Click on tag to modify its name.</span>
-        <div fxLayout="column" fxLayoutGap="5px">
+        <div fxLayout="column" fxLayoutGap="0.5rem">
           <div
             *ngFor="let boardTag of boardTags; trackBy: tagTrackByFn"
             class="tag-row"
             fxLayoutAlign="start center"
-            fxLayoutGap="10px"
           >
             <mat-checkbox
               [checked]="cardHasTag(boardTag.id)"
@@ -366,6 +409,7 @@
             <input
               type="text"
               class="tag-field"
+              fxFlex
               [value]="boardTag.name"
               [ngStyle]="{
                 'background-color': boardTag.color,
@@ -379,7 +423,6 @@
                   boardTag.id
                 )
               "
-              fxFlex
             />
           </div>
         </div>
@@ -388,22 +431,22 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #attachmentMenu="matMenu" xPosition="before" yPosition="above">
+<mat-menu #attachmentMenu="matMenu" class="card-action-menu">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
-      class="card-action-menu attachment-menu"
+      class="attachment-menu"
       (click)="$event.stopPropagation()"
     >
-      <button
-        mat-icon-button
-        class="close-menu-btn"
-        (click)="attachmentMenuTrigger.closeMenu()"
-      >
-        <mat-icon>clear</mat-icon>
-      </button>
       <div class="header">
         <span>Attachment</span>
+        <button
+          mat-icon-button
+          class="close-menu-btn"
+          (click)="attachmentMenuTrigger.closeMenu()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
       <mat-divider></mat-divider>
       <div fxLayout="column" class="body">
@@ -435,33 +478,31 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #wallpaperMenu="matMenu" xPosition="before" yPosition="above">
+<mat-menu #wallpaperMenu="matMenu" class="card-action-menu">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
-      class="card-action-menu wallpaper-menu"
+      class="wallpaper-menu"
       (click)="$event.stopPropagation()"
     >
-      <button
-        mat-icon-button
-        class="close-menu-btn"
-        (click)="wallpaperMenuTrigger.closeMenu()"
-      >
-        <mat-icon>clear</mat-icon>
-      </button>
       <div class="header">
         <span>Wallpaper</span>
+        <button
+          mat-icon-button
+          class="close-menu-btn"
+          (click)="wallpaperMenuTrigger.closeMenu()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
       <mat-divider></mat-divider>
       <div
         *ngIf="getImageAttachments().length; else noImageAttachments"
         fxLayout="column"
+        fxLayoutGap="0.5rem"
         class="body"
       >
-        <div
-          class="image-attachments-list scrollbar-y scrollbar-thin"
-          fxLayout="row wrap"
-        >
+        <div class="image-attachments-grid scrollbar-y scrollbar-thin">
           <div
             *ngFor="
               let imageAttachment of getImageAttachments();
@@ -485,6 +526,7 @@
           Remove Wallpaper
         </button>
       </div>
+
       <ng-template #noImageAttachments>
         <div
           fxLayout="column"
@@ -512,68 +554,22 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #membersMenu="matMenu" xPosition="before" yPosition="above">
+<mat-menu #moveCardMenu="matMenu" class="card-action-menu">
   <ng-template matMenuContent>
     <div
       fxLayout="column"
-      class="card-action-menu members-menu"
+      class="move-card-menu"
       (click)="$event.stopPropagation()"
     >
-      <button
-        mat-icon-button
-        class="close-menu-btn"
-        (click)="membersMenuTrigger.closeMenu()"
-      >
-        <mat-icon>clear</mat-icon>
-      </button>
-      <div class="header">
-        <span>Members</span>
-      </div>
-      <mat-divider></mat-divider>
-      <div fxLayout="column" class="body scrollbar-y scrollbar-thin">
-        <mat-selection-list
-          *ngIf="boardMembers; else loading"
-          (selectionChange)="onChangeCardMemberState($event)"
-          color="primary"
-        >
-          <mat-list-option
-            *ngFor="let member of boardMembers; trackBy: memberTrackByFn"
-            [selected]="cardHasMember(member.id)"
-            [value]="member.id"
-          >
-            <img
-              matListAvatar
-              [src]="member.avatarURL"
-              [alt]="member.username"
-            />
-            <h6 matLine>{{ member.fullName }}</h6>
-            <span matLine>@{{ member.username }}</span>
-          </mat-list-option>
-        </mat-selection-list>
-        <ng-template #loading>
-          <span>Loading members...</span>
-        </ng-template>
-      </div>
-    </div>
-  </ng-template>
-</mat-menu>
-
-<mat-menu #moveCardMenu="matMenu" xPosition="before" yPosition="above">
-  <ng-template matMenuContent>
-    <div
-      fxLayout="column"
-      class="card-action-menu move-card-menu"
-      (click)="$event.stopPropagation()"
-    >
-      <button
-        mat-icon-button
-        class="close-menu-btn"
-        (click)="moveCardMenuTrigger.closeMenu()"
-      >
-        <mat-icon>clear</mat-icon>
-      </button>
       <div class="header">
         <span>Move Card</span>
+        <button
+          mat-icon-button
+          class="close-menu-btn"
+          (click)="moveCardMenuTrigger.closeMenu()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
       <mat-divider></mat-divider>
       <div
