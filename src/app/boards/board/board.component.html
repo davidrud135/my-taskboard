@@ -1,15 +1,11 @@
-<mat-sidenav-container *ngIf="board">
+<mat-sidenav-container *ngIf="board" fxFlexFill>
   <mat-sidenav-content
     class="board-wrapper"
     fxLayout="column"
     [ngStyle]="{ 'background-color': board.backgroundColor }"
   >
-    <div
-      class="board-panel"
-      fxLayout="row"
-      fxLayoutAlign="space-between center"
-    >
-      <div fxLayout="row" fxLayoutGap="5px">
+    <div class="board-panel" fxLayoutAlign="space-between center">
+      <div fxLayout="row" fxLayoutGap="0.5rem">
         <input
           type="text"
           class="title-field"
@@ -17,23 +13,21 @@
           (keyup.enter)="$event.target.blur()"
           (focusout)="onEditBoardTitle(board.title)"
         />
-        <mat-divider [vertical]="true"></mat-divider>
-        <div *ngIf="!mobileQuery.matches" fxLayout="row" fxLayoutGap="5px">
+        <mat-divider vertical></mat-divider>
+        <div fxHide fxShow.gt-xs fxLayout="row" fxLayoutGap="0.5rem">
           <button
             mat-icon-button
             color="accent"
-            (click)="changeBoardFavor()"
+            (click)="onChangeBoardFavor()"
             [matTooltip]="
-              isUsersFavoriteBoard()
-                ? 'Remove from favorites'
-                : 'Add to favorites'
+              isFavoriteBoard ? 'Remove from favorites' : 'Add to favorites'
             "
           >
             <mat-icon>
-              {{ isUsersFavoriteBoard() ? 'start' : 'star_border' }}
+              {{ isFavoriteBoard ? 'start' : 'star_border' }}
             </mat-icon>
           </button>
-          <mat-divider [vertical]="true"></mat-divider>
+          <mat-divider vertical></mat-divider>
           <div fxLayout="row" fxLayoutAlign="start center">
             <div
               *ngFor="let member of board.members; trackBy: memberTrackByFn"
@@ -49,11 +43,11 @@
           </button>
         </div>
       </div>
-      <button mat-stroked-button (click)="boardMenu.toggle()" fxHide.xs>
+      <button mat-stroked-button (click)="sidenavMenu.toggle()" fxHide.xs>
         <mat-icon>menu</mat-icon>
         Board Menu
       </button>
-      <button mat-icon-button fxHide fxShow.xs (click)="boardMenu.toggle()">
+      <button mat-icon-button fxHide fxShow.xs (click)="sidenavMenu.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
     </div>
@@ -70,32 +64,42 @@
         [listData]="list"
       ></app-list>
 
-      <div class="new-list" fxLayout="column">
-        <button
-          mat-flat-button
-          [fxHide]="isNewListTemplateOpened"
-          (click)="openNewListTemplate()"
-        >
-          <mat-icon>add</mat-icon>
-          <span>Add List</span>
-        </button>
+      <div class="new-list">
+        <mat-accordion class="new-board-item-exp-panel">
+          <mat-expansion-panel
+            [expanded]="isNewListPanelOpened"
+            (opened)="openNewListPanel()"
+            hideToggle
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>add</mat-icon>
+                Add List
+              </mat-panel-title>
+            </mat-expansion-panel-header>
 
-        <mat-card
-          fxLayout="column"
-          [fxShow]="isNewListTemplateOpened"
-          (focusout)="closeNewListTemplate()"
-        >
-          <mat-form-field>
-            <mat-label>New List Title</mat-label>
-            <textarea
-              #newListTitleField
-              matInput
-              cdkTextareaAutosize
-              (keydown.enter)="$event.preventDefault()"
-              (keyup.enter)="onAddListToBoard()"
-            ></textarea>
-          </mat-form-field>
-        </mat-card>
+            <mat-form-field appearance="fill" fxFlex>
+              <mat-label>New List Title</mat-label>
+              <input
+                matInput
+                [formControl]="newListTitleControl"
+                (keyup.enter)="onAddListToBoard()"
+              />
+            </mat-form-field>
+
+            <mat-action-row fxLayoutAlign="space-between center">
+              <button mat-button (click)="closeNewListPanel()">Close</button>
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="onAddListToBoard()"
+                [disabled]="newListTitleControl.invalid"
+              >
+                Add
+              </button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </mat-accordion>
       </div>
     </section>
 
@@ -108,17 +112,15 @@
 
   <mat-sidenav
     fxLayout="column"
-    #boardMenu
+    #sidenavMenu
     position="end"
-    [mode]="mobileQuery.matches ? 'over' : 'side'"
+    mode="over"
+    autoFocus="false"
   >
     <div class="board-menu-container">
       <div fxLayout="row" fxLayoutAlign="space-between center" class="header">
         <h4>Menu</h4>
-        <button
-          mat-icon-button
-          (click)="boardMenu.close(); isBoardBackColorsBlockOpened = false"
-        >
+        <button mat-icon-button (click)="sidenavMenu.close()">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -126,24 +128,24 @@
       <div fxLayout="column" class="body">
         <mat-action-list>
           <h3 matSubheader>Actions</h3>
-          <mat-list-item (click)="boardMenu.close(); openNewListTemplate()">
+          <mat-list-item (click)="sidenavMenu.close(); openNewListPanel()">
             <mat-icon matListIcon>add</mat-icon>
             <h3 matLine>Add List</h3>
           </mat-list-item>
-          <mat-list-item (click)="changeBoardFavor()">
+          <mat-list-item (click)="onChangeBoardFavor()">
             <mat-icon matListIcon>{{
-              isUsersFavoriteBoard() ? 'star' : 'star_border'
+              isFavoriteBoard ? 'star' : 'star_border'
             }}</mat-icon>
             <h3 matLine>
               {{
-                isUsersFavoriteBoard()
+                isFavoriteBoard
                   ? 'Remove Board From Favorites'
                   : 'Add Board To Favorites'
               }}
             </h3>
           </mat-list-item>
           <mat-list-item
-            *ngIf="isBoardAdmin(board.adminId, currUser.id)"
+            *ngIf="isCurrUserBoardAdmin"
             class="warn-color"
             (click)="openBoardRemovalConfirmDialog(board.title)"
           >
@@ -152,7 +154,7 @@
           </mat-list-item>
           <mat-list-item
             class="warn-color"
-            *ngIf="!isBoardAdmin(board.adminId, currUser.id)"
+            *ngIf="currUser.id !== board.adminId"
             (click)="onRemoveMember(currUser.id)"
           >
             <mat-icon matListIcon>arrow_forward</mat-icon>
@@ -196,9 +198,7 @@
             <h3 matLine>
               {{ member.fullName }}
               <span class="member-role">
-                ({{
-                  isBoardAdmin(board.adminId, member.id) ? 'Admin' : 'Member'
-                }})
+                ({{ member.id === board.adminId ? 'Admin' : 'Member' }})
               </span>
             </h3>
             <p matLine>
@@ -208,10 +208,7 @@
               mat-icon-button
               color="warn"
               matTooltip="Remove from board"
-              *ngIf="
-                isBoardAdmin(board.adminId, currUser.id) &&
-                member.id !== board.adminId
-              "
+              *ngIf="isCurrUserBoardAdmin && member.id !== board.adminId"
               (click)="onRemoveMember(member.id)"
             >
               <mat-icon>remove_circle</mat-icon>
@@ -227,14 +224,19 @@
   </mat-sidenav>
 </mat-sidenav-container>
 
-<mat-menu #addMemberMenu="matMenu" class="add-member-menu">
+<mat-menu
+  #addMemberMenu="matMenu"
+  class="add-member-menu"
+  (closed)="newMemberNameControl.reset()"
+>
   <ng-template matMenuContent>
-    <div fxLayout="column" fxLayoutGap="5px" (click)="$event.stopPropagation()">
-      <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+    <div fxLayout="column" (click)="$event.stopPropagation()">
+      <div class="header">
         <span>Add Member To Board</span>
         <button
           mat-icon-button
-          (click)="newMemberNameControl.reset(); menuTrigger.closeMenu()"
+          class="close-menu-btn"
+          (click)="newMemberMenuTrigger.closeMenu()"
         >
           <mat-icon>clear</mat-icon>
         </button>
@@ -242,7 +244,7 @@
       <mat-divider></mat-divider>
       <div class="body" fxLayout="column">
         <mat-form-field appearance="outline">
-          <mat-label>Write new member username</mat-label>
+          <mat-label>New member's username</mat-label>
           <input
             matInput
             placeholder="john123"

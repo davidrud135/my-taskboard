@@ -119,6 +119,31 @@ img {
   }
 }
 
+mat-accordion.new-board-item-exp-panel mat-expansion-panel {
+  mat-expansion-panel-header {
+    height: 2.5rem !important;
+
+    &.mat-expanded {
+      display: none;
+    }
+
+    mat-panel-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+  }
+
+  .mat-expansion-panel-body {
+    padding: 1rem 0.5rem 0;
+  }
+
+  mat-action-row {
+    padding: 0.5rem;
+  }
+}
+
 .cdk-global-overlay-wrapper.card-dialog-overlay {
   overflow: auto;
   pointer-events: auto;

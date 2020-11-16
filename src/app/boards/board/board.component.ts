@@ -1,22 +1,12 @@
-// tslint:disable: align
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  ChangeDetectorRef,
-  OnDestroy,
-  ViewEncapsulation,
-} from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { Validators, FormControl } from '@angular/forms';
-import { MediaMatcher } from '@angular/cdk/layout';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Observable, Subscription, combineLatest } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { TaskboardService } from '@core/taskboard.service';
@@ -33,23 +23,20 @@ import { listTrackByFn, memberTrackByFn } from '@app/utils/trackby-functions';
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class BoardComponent implements OnInit, OnDestroy {
   board: Board;
+  boardSub: Subscription;
+  currUser: User;
+  lists$: Observable<List[]>;
+  isFavoriteBoard = false;
+  isNewListPanelOpened = false;
   boardTitleControl: FormControl;
   newMemberNameControl: FormControl;
-  @ViewChild('newListTitleField')
-  newListTitleField: ElementRef;
+  newListTitleControl: FormControl;
   @ViewChild(MatMenuTrigger)
-  menuTrigger: MatMenuTrigger;
-  lists$: Observable<List[]>;
-  isNewListTemplateOpened = false;
-  mobileQuery: MediaQueryList;
-  mobileMediaListener: any;
-  isBoardBackColorsBlockOpened = false;
+  newMemberMenuTrigger: MatMenuTrigger;
   boardBackColors: string[];
-  currUser: User;
   listTrackByFn = listTrackByFn;
   memberTrackByFn = memberTrackByFn;
 
@@ -58,78 +45,85 @@ export class BoardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private route: ActivatedRoute,
     private titleService: Title,
-    private changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-  ) {
-    this.mobileQuery = media.matchMedia('(max-width: 599px)');
-    this.mobileMediaListener = () => changeDetectorRef.detectChanges();
-    this.mobileQuery.addListener(this.mobileMediaListener);
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: Params) => {
-      const { id } = params;
-      this.taskboardService.setCurrBoardDoc(id);
-      this.taskboardService.getBoardData().subscribe((boardData: Board) => {
+    this.boardSub = this.route.params
+      .pipe(
+        map(params => params['id']),
+        tap((boardId: string) => {
+          this.taskboardService.setCurrBoardDoc(boardId);
+          this.lists$ = this.taskboardService.getBoardLists();
+        }),
+        switchMap(() =>
+          combineLatest([
+            this.taskboardService.getBoardData(),
+            this.authService.getUser(),
+          ]),
+        ),
+      )
+      .subscribe((data: [Board, User]) => {
+        const [boardData, currUser] = data;
+        const { title } = boardData;
         this.board = boardData;
-        this.boardTitleControl = new FormControl(
-          boardData.title,
-          Validators.required,
+        this.currUser = currUser;
+        this.isFavoriteBoard = boardData.usersIdsWhoseBoardIsFavorite.includes(
+          currUser.id,
         );
-        this.titleService.setTitle(
-          `${boardData.title} | ${environment.projectTitle}`,
-        );
+        this.boardTitleControl.setValue(title);
+        this.titleService.setTitle(`${title} | ${environment.projectTitle}`);
       });
-      this.lists$ = this.taskboardService.getBoardLists();
-    });
-    this.authService
-      .getUser()
-      .pipe(filter((user: User | null) => !!user))
-      .subscribe((user: User) => (this.currUser = user));
+    this.initControls();
     this.boardBackColors = Object.values(BoardBackColor);
-    this.newMemberNameControl = new FormControl('', [
+  }
+
+  initControls(): void {
+    this.boardTitleControl = new FormControl(null, [
+      Validators.required,
+      noEmptyValueValidator,
+    ]);
+    this.newListTitleControl = new FormControl(null, [
+      Validators.required,
+      noEmptyValueValidator,
+    ]);
+    this.newMemberNameControl = new FormControl(null, [
       Validators.required,
       noEmptyValueValidator,
       this.newMemberValidator,
     ]);
   }
 
-  ngOnDestroy(): void {
-    this.mobileQuery.removeListener(this.mobileMediaListener);
+  get isCurrUserBoardAdmin(): boolean {
+    return this.currUser.id === this.board.adminId;
   }
 
-  onEditBoardTitle(oldBoardTitle: string): void {
+  onEditBoardTitle(prevBoardTitle: string): void {
     const newBoardTitle = this.boardTitleControl.value.trim();
-    if (this.boardTitleControl.invalid || newBoardTitle === oldBoardTitle) {
-      return this.boardTitleControl.setValue(oldBoardTitle);
+    if (this.boardTitleControl.invalid || newBoardTitle === prevBoardTitle) {
+      return this.boardTitleControl.setValue(prevBoardTitle);
     }
     this.taskboardService.updateBoardData({ title: newBoardTitle });
   }
 
-  openNewListTemplate(): void {
-    this.isNewListTemplateOpened = true;
-    setTimeout(() => {
-      const { nativeElement } = this.newListTitleField;
-      nativeElement.focus();
-      nativeElement.style.height = '18px';
-    }, 50);
+  openNewListPanel(): void {
+    this.isNewListPanelOpened = true;
   }
 
-  closeNewListTemplate() {
-    this.isNewListTemplateOpened = false;
-    this.newListTitleField.nativeElement.value = '';
+  closeNewListPanel(): void {
+    this.newListTitleControl.reset();
+    this.isNewListPanelOpened = false;
   }
 
-  onAddListToBoard() {
-    const newListTitle = this.newListTitleField.nativeElement.value.trim();
+  onAddListToBoard(): void {
+    const newListTitle = this.newListTitleControl.value.trim();
     if (!newListTitle) return;
     this.taskboardService.createList(newListTitle);
-    this.closeNewListTemplate();
+    this.closeNewListPanel();
   }
 
-  openBoardRemovalConfirmDialog(boardTitle: string) {
+  openBoardRemovalConfirmDialog(boardTitle: string): void {
     this.dialog
       .open(RemovalConfirmDialogComponent, {
         data: {
@@ -146,23 +140,14 @@ export class BoardComponent implements OnInit, OnDestroy {
       });
   }
 
-  toggleBoardBackColorBlock(): void {
-    this.isBoardBackColorsBlockOpened = !this.isBoardBackColorsBlockOpened;
-  }
-
   onChangeBoardBackColor(
     currBoardBackColor: string,
     newBoardBackColor: string,
   ): void {
-    if (currBoardBackColor !== newBoardBackColor) {
-      this.taskboardService.updateBoardData({
-        backgroundColor: newBoardBackColor,
-      });
-    }
-  }
-
-  isBoardAdmin(adminId: string, memberId: string): boolean {
-    return adminId === memberId;
+    if (currBoardBackColor === newBoardBackColor) return;
+    this.taskboardService.updateBoardData({
+      backgroundColor: newBoardBackColor,
+    });
   }
 
   onAddNewMember(): void {
@@ -172,7 +157,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       .addMemberToBoard(newMemberUsername)
       .then(() => {
         this.newMemberNameControl.reset();
-        this.menuTrigger.closeMenu();
+        this.newMemberMenuTrigger.closeMenu();
       })
       .catch((errMsg: string) => {
         this.snackBar.open(errMsg, 'OK', {
@@ -185,14 +170,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.taskboardService.removeMemberFromBoard(memberId);
   }
 
-  changeBoardFavor(): void {
-    this.isUsersFavoriteBoard()
+  onChangeBoardFavor(): void {
+    this.isFavoriteBoard
       ? this.taskboardService.removeBoardFromFavorites()
       : this.taskboardService.addBoardToFavorites();
-  }
-
-  isUsersFavoriteBoard(): boolean {
-    return this.board.usersIdsWhoseBoardIsFavorite.includes(this.currUser.id);
   }
 
   // tslint:disable: semicolon
@@ -207,10 +188,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       const isAlreadyMember = this.board.members.find(
         (user: User) => user.username === newMemberUsername,
       );
-      if (isAlreadyMember) {
-        return { alreadyMember: true };
-      }
-      return null;
+      return isAlreadyMember ? { alreadyMember: true } : null;
     }
   };
+
+  ngOnDestroy(): void {
+    this.boardSub.unsubscribe();
+  }
 }
